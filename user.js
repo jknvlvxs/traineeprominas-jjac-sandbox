@@ -28,7 +28,7 @@ router.post('/', function (req, res) { //CREATE
   
   router.delete('/', function (req, res) { //DELETE ALL
     users = [];
-    res.send('Todos os Usuários foram removidos com sucesso!');
+    res.send('Todos os usuários foram removidos com sucesso!');
   })
 
   router.delete('/:id', function (req, res) { //DELETE FILTERED

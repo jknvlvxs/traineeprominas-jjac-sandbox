@@ -1,47 +1,51 @@
 const express = require('express');
 const router = express.Router();
 
+var id = 0;
 
-var students = [
-    {"id": 1, "name": "Marcos","lastName": "da Silva", "age": "18", "course": "Administração"},
-    {"id": 2, "name": "Pedro","lastName": "Souza", "age": "27", "course": "Advocacia"},
-    {"id": 3, "name": "Lucas","lastName": "Pereira", "age": "20", "course": "Educação Física"}]
+var teachers = [
+    {"id": id++, "name": "Marcos","lastName": "da Silva", "phd": "true"},
+    {"id": id++, "name": "Pedro","lastName": "Souza", "phd": "true"},
+    {"id": id++, "name": "Lucas","lastName": "Pereira", "phd": "false"}]
 
 router.post('/', function (req, res) { //CREATE
-    var student = req.body;
-    students.push(student);
-    res.send('Estudante cadastrado com sucesso!');
+    
+    var teacher = req.body;
+    teacher['id']=id++;
+
+    teachers.push(teacher);
+    res.send('Professor cadastrado com sucesso!');
   })
   
   router.get('/', function (req, res) { //READ ALL
-    res.send(students);
+    res.send(teachers);
   })
   
   router.get('/:id', function (req, res) { //READ FILTERED
     var id = req.params.id;
-    var filteredStudent = students.filter((s) => {return s.id == id; });
-    if (filteredStudent.length >= 1){
-      res.send(filteredStudent[0]);
+    var filteredteacher = teachers.filter((s) => {return s.id == id; });
+    if (filteredteacher.length >= 1){
+      res.send(filteredteacher[0]);
     } else{
-      res.status(404).send('Estudante não encontrado');
+      res.status(404).send('Professor não encontrado');
     }
   })
   
   router.delete('/', function (req, res) { //DELETE ALL
-    students = [];
-    res.send('Todos os estudantes foram removidos com sucesso!');
+    teachers = [];
+    res.send('Todos os professors foram removidos com sucesso!');
   })
 
   router.delete('/:id', function (req, res) { //DELETE FILTERED
     var id = req.params.id;
-    var deletedStudent = students.filter((s) => {return s.id == id; });
-    if (deletedStudent.length < 1){
-    res.status(404).send('Estudante não encontrado');
+    var deletedteacher = teachers.filter((s) => {return s.id == id; });
+    if (deletedteacher.length < 1){
+    res.status(404).send('Professor não encontrado');
     } else{
-      for (var i=0; i<students.length; i++){
-          if (students[i]['id'] == id){
-              students.splice(i, 1);
-              res.send('Estudante removido com sucesso!');
+      for (var i=0; i<teachers.length; i++){
+          if (teachers[i]['id'] == id){
+              teachers.splice(i, 1);
+              res.send('Professor removido com sucesso!');
           }
       }
     }
