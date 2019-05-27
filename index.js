@@ -11,7 +11,7 @@ var students = [
 {"name": "Lucas", "age": "20"}]
 
 app.get('/', function (req, res) {
-  res.send('Hello World - Conectado ao Git/Heroku');
+  res.send('Hello World - Conectado ao Git/Heroku 2');
 })
 
 app.post('/students', function (req, res) { //CREATE
