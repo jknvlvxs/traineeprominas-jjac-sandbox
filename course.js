@@ -1,50 +1,71 @@
 const express = require('express');
 const router = express.Router();
+const arqTeacher = require('./teacher');
 
+var id = 0;
 
-var students = [
-    {"id": 1, "name": "Marcos","lastName": "da Silva", "age": "18", "course": "Administração"},
-    {"id": 2, "name": "Pedro","lastName": "Souza", "age": "27", "course": "Advocacia"},
-    {"id": 3, "name": "Lucas","lastName": "Pereira", "age": "20", "course": "Educação Física"}]
+var courses = [];
 
 router.post('/', function (req, res) { //CREATE
-    var student = req.body;
-    students.push(student);
-    res.send('Estudante cadastrado com sucesso!');
+    
+    var course = req.body;
+    course['id']=id++;
+    for(var i = 0; i<course.teacher.length; i++){
+        var idTeacher = course.teacher[i];
+        if(arqTeacher.findbyId(idTeacher)){
+            course.teacher[i] = arqTeacher.findbyId(idTeacher);
+        }else{
+            course.teacher[i] = '';
+        }
+        
+    }
+
+    courses.push(course);
+    res.send('Curso cadastrado com sucesso!');
   })
   
   router.get('/', function (req, res) { //READ ALL
-    res.send(students);
+    res.send(courses);
   })
   
   router.get('/:id', function (req, res) { //READ FILTERED
     var id = req.params.id;
-    var filteredStudent = students.filter((s) => {return s.id == id; });
+    var filteredStudent = courses.filter((s) => {return s.id == id; });
     if (filteredStudent.length >= 1){
       res.send(filteredStudent[0]);
     } else{
-      res.status(404).send('Estudante não encontrado');
+      res.status(404).send('Curso não encontrado');
     }
   })
   
   router.delete('/', function (req, res) { //DELETE ALL
-    students = [];
-    res.send('Todos os estudantes foram removidos com sucesso!');
+    courses = [];
+    res.send('Todos os Cursos foram removidos com sucesso!');
   })
 
   router.delete('/:id', function (req, res) { //DELETE FILTERED
     var id = req.params.id;
-    var deletedStudent = students.filter((s) => {return s.id == id; });
+    var deletedStudent = courses.filter((s) => {return s.id == id; });
     if (deletedStudent.length < 1){
-    res.status(404).send('Estudante não encontrado');
+    res.status(404).send('Curso não encontrado');
     } else{
-      for (var i=0; i<students.length; i++){
-          if (students[i]['id'] == id){
-              students.splice(i, 1);
-              res.send('Estudante removido com sucesso!');
+      for (var i=0; i<courses.length; i++){
+          if (courses[i]['id'] == id){
+              courses.splice(i, 1);
+              res.send('Curso removido com sucesso!');
           }
       }
     }
   })
 
-  module.exports = router;
+    function findbyId(idCourse){
+        idCourse = parseInt(idCourse);
+        console.log(idCourse);
+        for (var i = 0; i<courses.length; i++){
+          if (idCourse == courses[i]['id']){
+             return courses[i];
+          }
+        }
+      } 
+
+  module.exports = {router, findbyId}

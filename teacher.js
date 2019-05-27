@@ -9,10 +9,8 @@ var teachers = [
     {"id": id++, "name": "Lucas","lastName": "Pereira", "phd": "false"}]
 
 router.post('/', function (req, res) { //CREATE
-    
     var teacher = req.body;
-    teacher['id']=id++;
-
+    teacher['id']= id++;
     teachers.push(teacher);
     res.send('Professor cadastrado com sucesso!');
   })
@@ -51,4 +49,12 @@ router.post('/', function (req, res) { //CREATE
     }
   })
 
-  module.exports = router;
+  function findbyId(idTeacher){
+    idTeacher = parseInt(idTeacher);
+    for (var i = 0; i<teachers.length; i++){
+      if (idTeacher == teachers[i]['id']){
+         return teachers[i];
+      }
+    }
+  } 
+  module.exports = {router, findbyId}
