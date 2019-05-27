@@ -39,4 +39,4 @@ app.delete('/students', function (req, res) { //DELETE ALL
   res.send('Todos os estudantes foram removidos com sucesso!');
 })
 
-app.listen(3000);
+app.listen(process.env.PORT);
