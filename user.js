@@ -3,15 +3,15 @@ const router = express.Router();
 
 var id = 0;
 
+var users = [];
+
 router.post('/', function (req, res) { //CREATE
-    
     var user = req.body;
     user['id']=id++;
-
     users.push(user);
     res.send('Usuário cadastrado com sucesso!');
   })
-  
+
   router.get('/', function (req, res) { //READ ALL
     res.send(users);
   })
@@ -26,6 +26,24 @@ router.post('/', function (req, res) { //CREATE
     }
   })
   
+  router.put('/:id', function (req, res) { //CREATE
+    var id = req.params.id;
+    for (var i = 0; i<users.length; i++){
+      if (id == users[i]['id']){
+        var user = req.body;
+        users[i]['name']=user.name || users[i]['name'];
+        users[i]['lastname']=user.lastname || users[i]['lastname'];
+        users[i]['profile']=user.profile || users[i]['profile'];
+        res.send('Usuário editado com sucesso!');
+      }else if(i == users.length-1){
+        res.status(404).send('Usuário não encontrado')
+      }
+    }
+    if (users.length == 0){
+      res.status(404).send('Nenhum usuário cadastrado')      
+    }
+  })
+
   router.delete('/', function (req, res) { //DELETE ALL
     users = [];
     res.send('Todos os usuários foram removidos com sucesso!');
