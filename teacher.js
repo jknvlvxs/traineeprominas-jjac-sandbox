@@ -3,10 +3,7 @@ const router = express.Router();
 
 var id = 0;
 
-var teachers = [
-    {"id": id++, "name": "Marcos","lastname": "da Silva", "phd": "true"},
-    {"id": id++, "name": "Pedro","lastname": "Souza", "phd": "true"},
-    {"id": id++, "name": "Lucas","lastname": "Pereira", "phd": "false"}]
+var teachers = []
 
 router.post('/', function (req, res) { //CREATE
     var teacher = req.body;
