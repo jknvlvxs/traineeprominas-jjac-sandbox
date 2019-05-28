@@ -4,9 +4,9 @@ const router = express.Router();
 var id = 0;
 
 var teachers = [
-    {"id": id++, "name": "Marcos","lastName": "da Silva", "phd": "true"},
-    {"id": id++, "name": "Pedro","lastName": "Souza", "phd": "true"},
-    {"id": id++, "name": "Lucas","lastName": "Pereira", "phd": "false"}]
+    {"id": id++, "name": "Marcos","lastname": "da Silva", "phd": "true"},
+    {"id": id++, "name": "Pedro","lastname": "Souza", "phd": "true"},
+    {"id": id++, "name": "Lucas","lastname": "Pereira", "phd": "false"}]
 
 router.post('/', function (req, res) { //CREATE
     var teacher = req.body;
@@ -29,6 +29,24 @@ router.post('/', function (req, res) { //CREATE
     }
   })
   
+  router.put('/:id', function (req, res) { //CREATE
+    var id = req.params.id;
+    for (var i = 0; i<teachers.length; i++){
+      if (id == teachers[i]['id']){
+        var teacher = req.body;
+        teachers[i]['name']=teacher.name || teachers[i]['name'];
+        teachers[i]['lastname']=teacher.lastname || teachers[i]['lastname'];
+        teachers[i]['phd']=teacher.phd || teachers[i]['phd'];
+        res.send('Professor editado com sucesso!');
+      }else if(i == teachers.length-1){
+        res.status(404).send('Professor não encontrado')
+      }
+    }
+    if (teachers.length == 0){
+      res.status(404).send('Nenhum professor cadastrado')      
+    }
+  })
+
   router.delete('/', function (req, res) { //DELETE ALL
     teachers = [];
     res.send('Todos os professors foram removidos com sucesso!');
