@@ -11,7 +11,7 @@ app.use(baseAPI+'/course', require('./course').router);
 app.use(baseAPI+'/teacher', require('./teacher').router);
 
 app.get(baseAPI+'/', function (req, res) {
-  res.send('Endpoints: \n /user \n /student \n /course \n /teacher');
+  res.send('Endpoints: \n '+baseAPI+'/user \n '+baseAPI+'/student \n '+baseAPI+'/course \n '+baseAPI+'/teacher');
 })
 
 app.get('/'+baseAPI, function (req, res) {
