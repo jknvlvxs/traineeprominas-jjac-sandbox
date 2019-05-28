@@ -14,5 +14,9 @@ app.get(baseAPI+'/', function (req, res) {
   res.send('Endpoints: \n /user \n /student \n /course \n /teacher');
 })
 
+app.get('/', function (req, res) {
+  res.send('Endpoints: \n /user \n /student \n /course \n /teacher');
+})
+
 app.listen(process.env.PORT);
 // app.listen(3000);
