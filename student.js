@@ -21,6 +21,35 @@ router.post('/', function (req, res) { //CREATE
     }
   })
   
+  router.put('/:id', function (req, res) { //CREATE
+    var id = req.params.id;
+    for (var i=0; i<students.length; i++){
+      if (id == students[i]['id']){
+        var student = req.body;
+        students[i]['name']= student.name || students[i]['name'];
+        students[i]['lastname']= student.lastname || students[i]['lastname'];
+        students[i]['age']= student.age || students[i]['age'];
+        students[i]['course'] = student.course || students[i]['course']['id'];
+        if(student.course){
+          for(var j = 0; j<students[i].course.length; j++){
+            var idCourse = students[i].course[j];
+            if(arqCourse.findbyId(idCourse)){
+              students[i].course[j] = arqCourse.findbyId(idCourse);
+            }else{
+              students[i].course[j] = '';
+            }
+        }
+        }
+      res.send('Estudante editado com sucesso!');
+      }else if(i == students.length-1){
+        res.status(404).send('Estudante não encontrado');
+      }
+    }
+    if (students.length == 0){
+      res.status(404).send('Nenhum estudante cadastrado')      
+    }
+  })
+
   router.get('/', function (req, res) { //READ ALL
     res.send(students);
   })
