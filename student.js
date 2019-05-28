@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const arqCourse = require('./course');
 
-var id = 0;
+var id = 1;
 var students = [];
 
 // CRUD STUDENT COMPLETE
@@ -82,8 +82,8 @@ router.delete('/:id', function (req, res) { //DELETE FILTERED
   if (deletedStudent.length < 1){
     res.status(404).send('Estudante não encontrado');
   }else{
-    for (var i=0; i<students.length; i++){
-      if (students[i]['id'] == id){
+    for(var i=0; i<students.length; i++){
+      if(students[i]['id'] == id){
         students.splice(i, 1);
         res.send('Estudante removido com sucesso!');
       }

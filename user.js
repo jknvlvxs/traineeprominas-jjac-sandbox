@@ -1,67 +1,74 @@
 const express = require('express');
 const router = express.Router();
 
-var id = 0;
-
+var id = 1;
 var users = [];
 
-router.post('/', function (req, res) { //CREATE
-    var user = req.body;
-    user['id']=id++;
-    users.push(user);
-    res.send('Usuário cadastrado com sucesso!');
-  })
+// CRUD USER COMPLETED
 
-  router.get('/', function (req, res) { //READ ALL
-    res.send(users);
-  })
-  
-  router.get('/:id', function (req, res) { //READ FILTERED
-    var id = req.params.id;
-    var filteredUser = users.filter((s) => {return s.id == id; });
-    if (filteredUser.length >= 1){
-      res.send(filteredUser[0]);
-    } else{
-      res.status(404).send('Usuário não encontrado');
-    }
-  })
-  
-  router.put('/:id', function (req, res) { //CREATE
-    var id = req.params.id;
-    for (var i = 0; i<users.length; i++){
-      if (id == users[i]['id']){
-        var user = req.body;
-        users[i]['name']=user.name || users[i]['name'];
-        users[i]['lastname']=user.lastname || users[i]['lastname'];
-        users[i]['profile']=user.profile || users[i]['profile'];
-        res.send('Usuário editado com sucesso!');
-      }else if(i == users.length-1){
-        res.status(404).send('Usuário não encontrado')
-      }
-    }
-    if (users.length == 0){
-      res.status(404).send('Nenhum usuário cadastrado')      
-    }
-  })
+// CREATE USER
+router.post('/', function (req, res) {
+  var user = req.body;
+  user['id']=id++;
+  users.push(user);
+  res.send('Usuário cadastrado com sucesso!');
+})
 
-  router.delete('/', function (req, res) { //DELETE ALL
-    users = [];
-    res.send('Todos os usuários foram removidos com sucesso!');
-  })
+// READ ALL USERS
+router.get('/', function (req, res) {
+  res.send(users);
+})
 
-  router.delete('/:id', function (req, res) { //DELETE FILTERED
-    var id = req.params.id;
-    var deletedUser = users.filter((s) => {return s.id == id; });
-    if (deletedUser.length < 1){
+// READ USERS FILTERED
+router.get('/:id', function (req, res) {
+  var id = req.params.id;
+  var filteredUser = users.filter((s) => {return s.id == id; });
+  if (filteredUser.length >= 1){
+    res.send(filteredUser[0]);
+  }else{
+  res.status(404).send('Usuário não encontrado');
+  }
+})
+
+// UPDATE USER
+router.put('/:id', function (req, res) {
+  var id = req.params.id;
+  for (var i = 0; i<users.length; i++){
+    if (id == users[i]['id']){
+      var user = req.body;
+      users[i]['name']=user.name || users[i]['name'];
+      users[i]['lastname']=user.lastname || users[i]['lastname'];
+      users[i]['profile']=user.profile || users[i]['profile'];
+      res.send('Usuário editado com sucesso!');
+    }else if(i == users.length-1){
+      res.status(404).send('Usuário não encontrado')
+    }
+  }
+  if (users.length == 0){
+    res.status(404).send('Nenhum usuário cadastrado')      
+  }
+})
+
+// DELETE ALL USERS
+router.delete('/', function (req, res) {
+  users = [];
+  res.send('Todos os usuários foram removidos com sucesso!');
+})
+
+// DELETE USERS FILTERED
+router.delete('/:id', function (req, res) {
+  var id = req.params.id;
+  var deletedUser = users.filter((s) => {return s.id == id; });
+  if (deletedUser.length < 1){
     res.status(404).send('Usuário não encontrado');
-    } else{
-      for (var i=0; i<users.length; i++){
-          if (users[i]['id'] == id){
-              users.splice(i, 1);
-              res.send('Usuário removido com sucesso!');
-          }
+  }else{
+    for (var i=0; i<users.length; i++){
+      if (users[i]['id'] == id){
+        users.splice(i, 1);
+        res.send('Usuário removido com sucesso!');
       }
     }
-  })
+  }
+})
 
-  module.exports = router;
+module.exports = router;
