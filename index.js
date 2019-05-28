@@ -14,7 +14,7 @@ app.get(baseAPI+'/', function (req, res) {
   res.send('Endpoints: \n /user \n /student \n /course \n /teacher');
 })
 
-app.get('/', function (req, res) {
+app.get('/'+baseAPI, function (req, res) {
   res.send('Endpoints: \n /user \n /student \n /course \n /teacher');
 })
 
