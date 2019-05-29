@@ -11,142 +11,130 @@ var id = 1;
 
 // CONEXÃO AO MONGODB
 mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
-  if (err){
+  if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
     send.status(500); //INTERNAL SERVER ERROR
   }else{
-  db = database.db('trainee-prominas');
-  collection = db.collection('course');
-  collectionTeacher = db.collection('teacher');
+    db = database.db('trainee-prominas');
+    collection = db.collection('course');
+    collectionTeacher = db.collection('teacher');
   }
 });
 
 // CRUD COURSE COMPLETED
 
 // CREATE COURSE
-router.post('/', function(req, res) {
-  var course = req.body;
+router.post('/', function(req, res){
+  let course = req.body;
   course.id = id++;
-
   (async () => {
-
-    for (let i = 0; i < course.teacher.length; i++) {
-      let teacher = await _getOneTeacher(course.teacher[i]);
-      course.teacher[i] = teacher;
+    for(let i = 0; i < course.teacher.length; i++){
+      course.teacher[i] = await _getOneTeacher(course.teacher[i]);
     }
-
-    collection.insertOne(course, (err, result) => {
-
-      if (err) {
+    collection.insertOne(course, (err, res) => {
+      if(err){
         console.error("Ocorreu um erro ao conectar a collection teacher");
         res.status(500).send("Erro ao cadastrar curso");
-      } else {
+      }else{
         res.status(201).send("Curso cadastrado com sucesso!");
       }
     });
   })();
 });
-
   
 // READ ALL COURSES
-router.get('/', function (req, res) {
+router.get('/', function (req, res){
   collection.find({}).toArray((err, courses) =>{
-    if (err){
+    if(err){
       console.error('Ocorreu um erro ao conectar a collection course');
       send.status(500);
     }else{
       res.send(courses);
     }
   });
-})
+});
 
 // READ COURSES FILTERED
-router.get('/:id', function (req, res) {
+router.get('/:id', function (req, res){
   var id = parseInt(req.params.id);
   collection.find({"id": id}).toArray((err, course) =>{
-    if (err){
+    if(err){
       console.error('Ocorreu um erro ao conectar a collection course');
       send.status(500);
     }else{
-      if(course == []){
+      if(course === []){
         res.status(404).send('Curso não encontrado');
       }else{
         res.send(course);        
       }
     }
   });
-})
+});
   
 // UPDATE COURSE  
-router.put('/:id', function (req, res) {
+router.put('/:id', function (req, res){
   var id = req.params.id;
   var course = req.body;
   course.id = parseInt(id);
-  if(course == {}){
+  if(course === {}){
     res.status(400).send('Solicitação não autorizada');
   }else{
-    // collection.update({"id": id}, user);
-    // res.send('Usuário editado com sucesso!');
     (async () => {
-
-      for (let i = 0; i < course.teacher.length; i++) {
-        let teacher = await _getOneTeacher(course.teacher[i]);
-        course.teacher[i] = teacher;
+      for(let i = 0; i < course.teacher.length; i++){
+        course.teacher[i] = await _getOneTeacher(course.teacher[i]);
       }
-  
-      collection.updateOne({"id": parseInt(id)}, course, (err, result) => {
-  
-        if (err) {
+      collection.updateOne({"id": parseInt(id)}, course, (err, res) => {
+        if(err){
           console.error("Ocorreu um erro ao conectar a collection teacher");
           res.status(500).send("Erro ao editar curso");
-        } else {
+        }else{
           res.status(201).send("Curso editado com sucesso!");
         }
       });
     })();
   }
-})
+});
 
 // DELETE ALL COURSES
-router.delete('/', function (req, res) {
-  collection.deleteMany({}, function (err, info) {
-    if (err){
+router.delete('/', function (req, res){
+  collection.deleteMany({}, function (err, info){
+    if(err){
       console.error('Ocorreu um erro ao deletar os cursos da coleção');
       res.status(500);
     }else{
       var numRemoved = info.result.n;
-      if (numRemoved > 0){
+      if(numRemoved > 0){
         console.log('Todos os '+numRemoved+' cursos foram removidos');
-        // res.status(204)
-        res.send('Todos os cursos foram removidos com sucesso'); // no content
+        // res.status(204) // no content
+        res.send('Todos os cursos foram removidos com sucesso');
       }else{
         console.log('Nenhum curso foi removido');
         res.status(404).send('Nenhum curso foi removido');
       }
     }
   });
-})
+});
 
 // DELETE COURSES FILTERED
-router.delete('/:id', function (req, res) { //DELETE FILTERED
+router.delete('/:id', function (req, res){ //DELETE FILTERED
   var id = parseInt(req.params.id);
-  collection.deleteOne({"id": id}, true, function (err, info) {
-    if (err){
+  collection.deleteOne({"id": id}, true, function (err, info){
+    if(err){
       console.error('Ocorreu um erro ao deletar os cursos da coleção');
       res.status(500);
     }else{
       var numRemoved = info.result.n;
-      if (numRemoved > 0){
+      if(numRemoved > 0){
         console.log('O curso foi removido com sucesso');
-        // res.status(204)
-        res.send('O curso foi removido com sucesso'); // no content
+        // res.status(204) // no content
+        res.send('O curso foi removido com sucesso'); 
       }else{
         console.log('Nenhum curso foi removido');
         res.status(404).send('Nenhum cursos foi removido');
       }
     }
   });
-})
+});
 
 const _getOneTeacher = (idTeacher) => {
   return new Promise((resolve, reject) => {

@@ -10,19 +10,19 @@ var id = 1;
 
 // CONEXÃO AO MONGODB
 mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
-  if (err){
+  if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
     send.status(500); //INTERNAL SERVER ERROR
   }else{
-  db = database.db('trainee-prominas');
-  collection = db.collection('user');
+    db = database.db('trainee-prominas');
+    collection = db.collection('user');
   }
 });
 
 // CRUD USER COMPLETED
 
 // CREATE USER
-router.post('/', function (req, res) {
+router.post('/', function (req, res){
   var user = req.body;
   user.id = id++;
   collection.insert(user);
@@ -30,9 +30,9 @@ router.post('/', function (req, res) {
 });
 
 // READ ALL USERS
-router.get('/', function (req, res) {
+router.get('/', function (req, res){
   collection.find({}).toArray((err, users) =>{
-    if (err){
+    if(err){
       console.error('Ocorreu um erro ao conectar a collection user');
       send.status(500);
     }else{
@@ -42,14 +42,14 @@ router.get('/', function (req, res) {
 });
 
 // READ USERS FILTERED
-router.get('/:id', function (req, res) {
+router.get('/:id', function (req, res){
   var id = parseInt(req.params.id);
   collection.find({"id": id}).toArray((err, user) =>{
-    if (err){
+    if(err){
       console.error('Ocorreu um erro ao conectar a collection user');
       send.status(500);
     }else{
-      if(user == []){
+      if(user === []){
         res.status(404).send('Usuário não encontrado');
       }else{
         res.send(user);        
@@ -59,11 +59,11 @@ router.get('/:id', function (req, res) {
 });
 
 // UPDATE USER
-router.put('/:id', function (req, res) {
+router.put('/:id', function (req, res){
   var id = parseInt(req.params.id);
   var user = req.body;
   user.id = id;
-  if(user == {}){
+  if(user === {}){
     res.status(400).send('Solicitação não autorizada');
   }else{
     collection.updateOne({"id": id}, user);
@@ -72,14 +72,14 @@ router.put('/:id', function (req, res) {
 });
 
 // DELETE ALL USERS
-router.delete('/', function (req, res) {
-  collection.remove({}, function (err, info) {
-    if (err){
+router.delete('/', function (req, res){
+  collection.remove({}, function (err, info){
+    if(err){
       console.error('Ocorreu um erro ao deletar os usuários da coleção');
       res.status(500);
     }else{
       var numRemoved = info.result.n;
-      if (numRemoved > 0){
+      if(numRemoved > 0){
         console.log('Todos os '+numRemoved+' usuários foram removidos');
         res.status(204).send('Todos os usuários foram removidos com sucesso'); // no content
       }else{
@@ -88,26 +88,27 @@ router.delete('/', function (req, res) {
       }
     }
   });
-})
+});
 
 // DELETE USERS FILTERED
-router.delete('/:id', function (req, res) {
+router.delete('/:id', function (req, res){
   var id = parseInt(req.params.id);
-  collection.remove({"id": id}, true, function (err, info) {
-    if (err){
+  collection.remove({"id": id}, true, function (err, info){
+    if(err){
       console.error('Ocorreu um erro ao deletar os usuários da coleção');
       res.status(500);
     }else{
       var numRemoved = info.result.n;
-      if (numRemoved > 0){
+      if(numRemoved > 0){
         console.log('Todos os '+numRemoved+' usuários foram removidos');
-        res.status(204).send('Todos os usuários foram removidos com sucesso'); // no content
+        // res.status(204); // no content
+        res.send('Todos os usuários foram removidos com sucesso'); 
       }else{
         console.log('Nenhum usuário foi removido');
         res.status(404).send('Nenhum usuário foi removido');
       }
     }
   });
-})
+});
 
 module.exports = router;

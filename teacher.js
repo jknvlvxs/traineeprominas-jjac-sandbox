@@ -10,97 +10,97 @@ var id = 1;
 
 // CONEXÃO AO MONGODB
 mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
-  if (err){
+  if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
     send.status(500); //INTERNAL SERVER ERROR
   }else{
-  db = database.db('trainee-prominas');
-  collection = db.collection('teacher');
+    db = database.db('trainee-prominas');
+    collection = db.collection('teacher');
   }
 });
 
 // CRUD TEACHER COMPLETED
 
 // CREATE TEACHER
-router.post('/', function (req, res) {
+router.post('/', function (req, res){
   var teacher = req.body;
   teacher.id = id++;
   collection.insert(teacher);
   res.send('Professor cadastrado com sucesso!');
-})
+});
   
 // READ ALL TEACHERS
-router.get('/', function (req, res) {
+router.get('/', function (req, res){
   collection.find({}).toArray((err, teachers) =>{
-    if (err){
+    if(err){
       console.error('Ocorreu um erro ao conectar a collection teacher');
       send.status(500);
     }else{
       res.send(teachers);
     }
   });
-})
+});
 
 // READ TEACHERS FILTERED
-router.get('/:id', function (req, res) {
+router.get('/:id', function (req, res){
   var id = parseInt(req.params.id);
   collection.find({"id": id}).toArray((err, teacher) =>{
-    if (err){
+    if(err){
       console.error('Ocorreu um erro ao conectar a collection teacher');
       send.status(500);
     }else{
-      if(teacher == []){
+      if(teacher === []){
         res.status(404).send('Professor não encontrado');
       }else{
         res.send(teacher);        
       }
     }
   });
-})
+});
 
 // UPDATE TEACHER
-router.put('/:id', function (req, res) {
+router.put('/:id', function (req, res){
   var id = parseInt(req.params.id);
   var teacher = req.body;
   teacher.id = id;
-  if(teacher == {}){
+  if(teacher === {}){
     res.status(400).send('Solicitação não autorizada');
   }else{
     collection.update({"id": id}, teacher);
     res.send('Professor editado com sucesso!');
   }
-})
+});
 
 // DELETE ALL TEACHERS
-router.delete('/', function (req, res) {
-  collection.remove({}, function (err, info) {
-    if (err){
+router.delete('/', function (req, res){
+  collection.remove({}, function (err, info){
+    if(err){
       console.error('Ocorreu um erro ao deletar os professores da coleção');
       res.status(500);
     }else{
       var numRemoved = info.result.n;
-      if (numRemoved > 0){
+      if(numRemoved > 0){
         console.log('Todos os '+numRemoved+' professores foram removidos');
-        // res.status(204);
-        res.send('Todos os professores foram removidos com sucesso'); // no content
+        // res.status(204); // no content
+        res.send('Todos os professores foram removidos com sucesso'); 
       }else{
         console.log('Nenhum professores foi removido');
         res.status(404).send('Nenhum professores foi removido');
       }
     }
-  });;
-})
+  });
+});
 
 // DELETE TEACHERS FILTERED
-router.delete('/:id', function (req, res) {
+router.delete('/:id', function (req, res){
   var id = parseInt(req.params.id);
-  collection.remove({"id": id}, true, function (err, info) {
-    if (err){
+  collection.remove({"id": id}, true, function (err, info){
+    if(err){
       console.error('Ocorreu um erro ao deletar os professores da coleção');
       res.status(500);
     }else{
       var numRemoved = info.result.n;
-      if (numRemoved > 0){
+      if(numRemoved > 0){
         console.log('Todos os '+numRemoved+' professores foram removidos');
         res.status(204).send('Todos os professores foram removidos com sucesso'); // no content
       }else{
@@ -109,6 +109,6 @@ router.delete('/:id', function (req, res) {
       }
     }
   });
-})
+});
 
 module.exports = router;

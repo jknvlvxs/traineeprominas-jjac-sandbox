@@ -13,63 +13,58 @@ var students = [];
 
 // CONEXÃO AO MONGODB
 mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
-  if (err){
+  if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
     send.status(500); //INTERNAL SERVER ERROR
   }else{
-  db = database.db('trainee-prominas');
-  collection = db.collection('student');
-  collectionCourse = db.collection('course');
+    db = database.db('trainee-prominas');
+    collection = db.collection('student');
+    collectionCourse = db.collection('course');
   }
 });
 
 // CRUD STUDENT COMPLETE
 
 // CREATE STUDENT
-router.post('/', function (req, res) { 
+router.post('/', function (req, res){ 
   var student = req.body;
   student.id = id++;
-
   (async () => {
-
-    for (var i = 0; i < student.course.length; i++) {
-      var course = await _getOneCourse(student.course[i]);
-      student.course[i] = course;
+    for(var i = 0; i < student.course.length; i++){
+      student.course[i] = await _getOneCourse(student.course[i]);
     }
-
-    collection.insertOne(student, (err, result) => {
-
-      if (err) {
+    collection.insertOne(student, (err, res) => {
+      if(err){
         console.error("Ocorreu um erro ao conectar a collection course");
         res.status(500).send("Erro ao cadastrar estudante");
-      } else {
+      }else{
         res.status(201).send("Estudante cadastrado com sucesso!");
       }
     });
   })();
-})
+});
 
 // READ ALL STUDENTS
-router.get('/', function (req, res) {
+router.get('/', function (req, res){
   collection.find({}).toArray((err, students) =>{
-    if (err){
+    if(err){
       console.error('Ocorreu um erro ao conectar a collection student');
       send.status(500);
     }else{
       res.send(students);
     }
   });
-})
+});
 
 // READ STUDENTS FILTERED
-router.get('/:id', function (req, res) { 
+router.get('/:id', function (req, res){ 
   var id = parseInt(req.params.id);
   collection.find({"id": id}).toArray((err, student) =>{
-    if (err){
+    if(err){
       console.error('Ocorreu um erro ao conectar a collection student');
       send.status(500);
     }else{
-      if(student == []){
+      if(student === []){
         res.status(404).send('Estudante não encontrado');
       }else{
         res.send(student);        
@@ -79,42 +74,38 @@ router.get('/:id', function (req, res) {
 });
 
 // UPDATE STUDENT
-router.put('/:id', function (req, res) {
+router.put('/:id', function (req, res){
   var id = req.params.id;
   var student = req.body;
   student.id = parseInt(id);
-  if(student == {}){
+  if(student === {}){
     res.status(400).send('Solicitação não autorizada');
   }else{
     (async () => {
-
-      for (let i = 0; i < student.course.length; i++) {
-        let course = await _getOneTeacher(student.course[i]);
-        student.course[i] = course;
+      for(let i = 0; i < student.course.length; i++){
+        student.course[i] = await _getOneTeacher(student.course[i]);
       }
-  
-      collection.updateOne({"id": parseInt(id)}, student, (err, result) => {
-  
-        if (err) {
+      collection.updateOne({"id": parseInt(id)}, student, (err, res) => {
+        if(err){
           console.error("Ocorreu um erro ao conectar a collection course");
           res.status(500).send("Erro ao editar estudante");
-        } else {
+        }else{
           res.status(201).send("Estudante editado com sucesso!");
         }
       });
     })();
   }
-})
+});
 
 // DELETE ALL STUDENTS
-router.delete('/', function (req, res) {
-  collection.deleteMany({}, function (err, info) {
-    if (err){
+router.delete('/', function (req, res){
+  collection.deleteMany({}, function (err, info){
+    if(err){
       console.error('Ocorreu um erro ao deletar os estudantes da coleção');
       res.status(500);
     }else{
       var numRemoved = info.result.n;
-      if (numRemoved > 0){
+      if(numRemoved > 0){
         console.log('Todos os '+numRemoved+' estudantes foram removidos');
         // res.status(204)
         res.send('Todos os estudantes foram removidos com sucesso'); // no content
@@ -124,18 +115,18 @@ router.delete('/', function (req, res) {
       }
     }
   });
-})
+});
 
 // DELETE STUDENTS FILTERED
-router.delete('/:id', function (req, res) { //DELETE FILTERED
+router.delete('/:id', function (req, res){ //DELETE FILTERED
   var id = parseInt(req.params.id);
-  collection.deleteOne({"id": id}, true, function (err, info) {
-    if (err){
+  collection.deleteOne({"id": id}, true, function (err, info){
+    if(err){
       console.error('Ocorreu um erro ao deletar os estudantes da coleção');
       res.status(500);
     }else{
       var numRemoved = info.result.n;
-      if (numRemoved > 0){
+      if(numRemoved > 0){
         console.log('O estudante foi removido com sucesso');
         // res.status(204)
         res.send('O estudante foi removido com sucesso'); // no content
@@ -145,7 +136,7 @@ router.delete('/:id', function (req, res) { //DELETE FILTERED
       }
     }
   });
-})
+});
 
 const _getOneCourse = (idCourse) => {
   return new Promise((resolve, reject) => {

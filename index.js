@@ -7,16 +7,16 @@ app.use(bodyParser.json());
 
 app.use(baseAPI+'/student', require('./student'));
 app.use(baseAPI+'/user', require('./user'));
-app.use(baseAPI+'/course', require('./course').router);
-app.use(baseAPI+'/teacher', require('./teacher').router);
+app.use(baseAPI+'/course', require('./course'));
+app.use(baseAPI+'/teacher', require('./teacher'));
 
-app.get(baseAPI+'/', function (req, res) {
+app.get(baseAPI+'/', function (req, res){
   res.send('Endpoints: \n '+baseAPI+'/user \n '+baseAPI+'/student \n '+baseAPI+'/course \n '+baseAPI+'/teacher');
-})
+});
 
-app.get('/'+baseAPI, function (req, res) {
+app.get('/'+baseAPI, function (req, res){
   res.send('Endpoints: \n /user \n /student \n /course \n /teacher');
-})
+});
 
 app.listen(process.env.PORT || 3000);
 // app.listen(3000);
