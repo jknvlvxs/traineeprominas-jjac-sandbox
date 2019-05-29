@@ -48,7 +48,7 @@ router.put('/:id', function (req, res) {
       students[i]['name']= student.name || students[i]['name'];
       students[i]['lastname']= student.lastname || students[i]['lastname'];
       students[i]['age']= student.age || students[i]['age'];
-      students[i]['course'] = student.course || students[i]['course']['id'];
+      students[i]['course'] = student.course || students[i]['course'];
       if(student.course){
         for(var j = 0; j<students[i].course.length; j++){
           var idCourse = students[i].course[j];
