@@ -24,7 +24,7 @@ mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
 // CREATE TEACHER
 router.post('/', function (req, res) {
   var teacher = req.body;
-  teacher['id']=id++;
+  teacher.id = id++;
   collection.insert(teacher);
   res.send('Professor cadastrado com sucesso!');
 })
@@ -49,7 +49,7 @@ router.get('/:id', function (req, res) {
       console.error('Ocorreu um erro ao conectar a collection teacher');
       send.status(500);
     }else{
-      if(user == []){
+      if(teacher == []){
         res.status(404).send('Professor não encontrado');
       }else{
         res.send(teacher);        
@@ -62,7 +62,7 @@ router.get('/:id', function (req, res) {
 router.put('/:id', function (req, res) {
   var id = parseInt(req.params.id);
   var teacher = req.body;
-
+  teacher.id = id;
   if(teacher == {}){
     res.status(400).send('Solicitação não autorizada');
   }else{
@@ -111,13 +111,4 @@ router.delete('/:id', function (req, res) {
   });
 })
 
-function findbyId(idTeacher){
-  idTeacher = parseInt(idTeacher);
-  for (var i = 0; i<teachers.length; i++){
-    if (idTeacher == teachers[i]['id']){
-      return teachers[i];
-    }
-  }
-} 
-
-module.exports = {router, findbyId}
+module.exports = router;
