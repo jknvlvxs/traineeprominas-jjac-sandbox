@@ -1,8 +1,24 @@
 const express = require('express');
 const router = express.Router();
 
+const mongoClient = require('mongodb').MongoClient;
+const mdbURL = "mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/test?retryWrites=true";
+var db;
+
 var id = 1;
 var users = [];
+
+// CONEXÃO AO MONGODB
+mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
+  if (err){
+    console.error('Ocorreu um erro ao conectar ao mongoDB');
+    send.status(500); //INTERNAL SERVER ERROR
+  }else{
+  db = database.db('trainee-prominas');
+  }
+});
+
+// var collection = db.collection('user');
 
 // CRUD USER COMPLETED
 
@@ -10,12 +26,15 @@ var users = [];
 router.post('/', function (req, res) {
   var user = req.body;
   user['id']=id++;
-  users.push(user);
+  // users.push(user);
+  db.collection('user').insert(user);
+
   res.send('Usuário cadastrado com sucesso!');
 })
 
 // READ ALL USERS
 router.get('/', function (req, res) {
+  // db.collection('user')
   res.send(users);
 })
 
