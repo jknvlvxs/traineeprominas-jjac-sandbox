@@ -1,74 +1,114 @@
 const express = require('express');
 const router = express.Router();
 
+const mongoClient = require('mongodb').MongoClient;
+const mdbURL = 'mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/test?retryWrites=true';
+var db;
+var collection;
+
 var id = 1;
-var teachers = []
+
+// CONEXÃO AO MONGODB
+mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
+  if (err){
+    console.error('Ocorreu um erro ao conectar ao mongoDB');
+    send.status(500); //INTERNAL SERVER ERROR
+  }else{
+  db = database.db('trainee-prominas');
+  collection = db.collection('teacher');
+  }
+});
 
 // CRUD TEACHER COMPLETED
 
 // CREATE TEACHER
 router.post('/', function (req, res) {
   var teacher = req.body;
-  teacher['id']= id++;
-  teachers.push(teacher);
+  teacher['id']=id++;
+  collection.insert(teacher);
   res.send('Professor cadastrado com sucesso!');
 })
   
 // READ ALL TEACHERS
 router.get('/', function (req, res) {
-  res.send(teachers);
+  collection.find({}).toArray((err, teachers) =>{
+    if (err){
+      console.error('Ocorreu um erro ao conectar a collection teacher');
+      send.status(500);
+    }else{
+      res.send(teachers);
+    }
+  });
 })
 
 // READ TEACHERS FILTERED
 router.get('/:id', function (req, res) {
-  var id = req.params.id;
-  var filteredteacher = teachers.filter((s) => {return s.id == id; });
-  if (filteredteacher.length >= 1){
-    res.send(filteredteacher[0]);
-  }else{
-    res.status(404).send('Professor não encontrado');
-  }
+  var id = parseInt(req.params.id);
+  collection.find({"id": id}).toArray((err, teacher) =>{
+    if (err){
+      console.error('Ocorreu um erro ao conectar a collection teacher');
+      send.status(500);
+    }else{
+      if(user == []){
+        res.status(404).send('Professor não encontrado');
+      }else{
+        res.send(teacher);        
+      }
+    }
+  });
 })
 
 // UPDATE TEACHER
 router.put('/:id', function (req, res) {
-  var id = req.params.id;
-  for (var i = 0; i<teachers.length; i++){
-    if (id == teachers[i]['id']){
-      var teacher = req.body;
-      teachers[i]['name']=teacher.name || teachers[i]['name'];
-      teachers[i]['lastname']=teacher.lastname || teachers[i]['lastname'];
-      teachers[i]['phd']=teacher.phd || teachers[i]['phd'];
-      res.send('Professor editado com sucesso!');
-    }else if(i == teachers.length-1){
-      res.status(404).send('Professor não encontrado')
-    }
-  }
-  if (teachers.length == 0){
-    res.status(404).send('Nenhum professor cadastrado')      
+  var id = parseInt(req.params.id);
+  var teacher = req.body;
+
+  if(teacher == {}){
+    res.status(400).send('Solicitação não autorizada');
+  }else{
+    collection.update({"id": id}, teacher);
+    res.send('Professor editado com sucesso!');
   }
 })
 
 // DELETE ALL TEACHERS
 router.delete('/', function (req, res) {
-  teachers = [];
-  res.send('Todos os professors foram removidos com sucesso!');
+  collection.remove({}, function (err, info) {
+    if (err){
+      console.error('Ocorreu um erro ao deletar os professores da coleção');
+      res.status(500);
+    }else{
+      var numRemoved = info.result.n;
+      if (numRemoved > 0){
+        console.log('Todos os '+numRemoved+' professores foram removidos');
+        // res.status(204);
+        res.send('Todos os professores foram removidos com sucesso'); // no content
+      }else{
+        console.log('Nenhum professores foi removido');
+        res.status(404).send('Nenhum professores foi removido');
+      }
+    }
+  });;
 })
 
 // DELETE TEACHERS FILTERED
 router.delete('/:id', function (req, res) {
-  var id = req.params.id;
-  var deletedteacher = teachers.filter((s) => {return s.id == id; });
-  if (deletedteacher.length < 1){
-    res.status(404).send('Professor não encontrado');
-  }else{
-    for (var i=0; i<teachers.length; i++){
-      if (teachers[i]['id'] == id){
-        teachers.splice(i, 1);
-        res.send('Professor removido com sucesso!');
+  var id = parseInt(req.params.id);
+  collection.remove({"id": id}, true, function (err, info) {
+    if (err){
+      console.error('Ocorreu um erro ao deletar os professores da coleção');
+      res.status(500);
+    }else{
+      var numRemoved = info.result.n;
+      if (numRemoved > 0){
+        console.log('Todos os '+numRemoved+' professores foram removidos');
+        res.status(204).send('Todos os professores foram removidos com sucesso'); // no content
+      }else{
+        console.log('Nenhum professor foi removido');
+        res.status(404).send('Nenhum professor foi removido');
       }
     }
-  }
+  });
 })
 
 function findbyId(idTeacher){
