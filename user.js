@@ -7,7 +7,6 @@ var db;
 var collection;
 
 var id = 1;
-var users = [];
 
 // CONEXÃO AO MONGODB
 mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
@@ -20,23 +19,19 @@ mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
   }
 });
 
-// var collection = db.collection('user');
-
 // CRUD USER COMPLETED
 
 // CREATE USER
 router.post('/', function (req, res) {
   var user = req.body;
   user['id']=id++;
-  // users.push(user);
   collection.insert(user);
-
   res.send('Usuário cadastrado com sucesso!');
 });
 
 // READ ALL USERS
 router.get('/', function (req, res) {
-  db.collection('user').find({}).toArray((err, users) =>{
+  collection.find({}).toArray((err, users) =>{
     if (err){
       console.error('Ocorreu um erro ao conectar a collection user');
       send.status(500);
