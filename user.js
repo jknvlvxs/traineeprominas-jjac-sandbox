@@ -24,7 +24,7 @@ mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
 // CREATE USER
 router.post('/', function (req, res) {
   var user = req.body;
-  user['id']=id++;
+  user.id = id++;
   collection.insert(user);
   res.send('Usuário cadastrado com sucesso!');
 });
@@ -44,7 +44,7 @@ router.get('/', function (req, res) {
 // READ USERS FILTERED
 router.get('/:id', function (req, res) {
   var id = parseInt(req.params.id);
-  collection.find({'id': id}).toArray((err, user) =>{
+  collection.find({"id": id}).toArray((err, user) =>{
     if (err){
       console.error('Ocorreu um erro ao conectar a collection user');
       send.status(500);
@@ -62,11 +62,11 @@ router.get('/:id', function (req, res) {
 router.put('/:id', function (req, res) {
   var id = parseInt(req.params.id);
   var user = req.body;
-
+  user.id = id;
   if(user == {}){
     res.status(400).send('Solicitação não autorizada');
   }else{
-    collection.update({'id': id}, user);
+    collection.updateOne({"id": id}, user);
     res.send('Usuário editado com sucesso!');
   }
 });
