@@ -10,7 +10,7 @@ var collectionTeacher;
 var id = 1;
 
 // CONEXÃO AO MONGODB
-mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
+mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
     send.status(500); //INTERNAL SERVER ERROR
@@ -31,7 +31,7 @@ router.post('/', function(req, res){
     for(let i = 0; i < course.teacher.length; i++){
       course.teacher[i] = await _getOneTeacher(course.teacher[i]);
     }
-    collection.insertOne(course, (err, res) => {
+    collection.insertOne(course, (err, result) => {
       if(err){
         console.error("Ocorreu um erro ao conectar a collection teacher");
         res.status(500).send("Erro ao cadastrar curso");
@@ -83,7 +83,7 @@ router.put('/:id', function (req, res){
       for(let i = 0; i < course.teacher.length; i++){
         course.teacher[i] = await _getOneTeacher(course.teacher[i]);
       }
-      collection.updateOne({"id": parseInt(id)}, course, (err, res) => {
+      collection.updateOne({"id": parseInt(id)}, course, (err, result) => {
         if(err){
           console.error("Ocorreu um erro ao conectar a collection teacher");
           res.status(500).send("Erro ao editar curso");

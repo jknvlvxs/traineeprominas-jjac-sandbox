@@ -9,7 +9,7 @@ var collection;
 var id = 1;
 
 // CONEXÃO AO MONGODB
-mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
+mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
     send.status(500); //INTERNAL SERVER ERROR

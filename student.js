@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const arqCourse = require('./course');
 
 const mongoClient = require('mongodb').MongoClient;
 const mdbURL = 'mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/test?retryWrites=true';
@@ -9,10 +8,9 @@ var collection;
 var collectionCourse;
 
 var id = 1;
-var students = [];
 
 // CONEXÃO AO MONGODB
-mongoClient.connect(mdbURL, {native_parser:true}, (err, database) => {
+mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
     send.status(500); //INTERNAL SERVER ERROR
@@ -33,7 +31,7 @@ router.post('/', function (req, res){
     for(var i = 0; i < student.course.length; i++){
       student.course[i] = await _getOneCourse(student.course[i]);
     }
-    collection.insertOne(student, (err, res) => {
+    collection.insertOne(student, (err, result) => {
       if(err){
         console.error("Ocorreu um erro ao conectar a collection course");
         res.status(500).send("Erro ao cadastrar estudante");
@@ -85,7 +83,7 @@ router.put('/:id', function (req, res){
       for(let i = 0; i < student.course.length; i++){
         student.course[i] = await _getOneTeacher(student.course[i]);
       }
-      collection.updateOne({"id": parseInt(id)}, student, (err, res) => {
+      collection.updateOne({"id": parseInt(id)}, student, (err, result) => {
         if(err){
           console.error("Ocorreu um erro ao conectar a collection course");
           res.status(500).send("Erro ao editar estudante");
