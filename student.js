@@ -29,16 +29,25 @@ router.post('/', function (req, res){
   student.id = id++;
   (async () => {
     for(var i = 0; i < student.course.length; i++){
-      student.course[i] = await _getOneCourse(student.course[i]);
+      let course = await _getOneCourse(student.course[i]);
+        if(course == null){
+          student.course.splice(i, 1);
+          }else{
+            student.course[i] = course; 
+          }
     }
-    collection.insertOne(student, (err, result) => {
-      if(err){
-        console.error("Ocorreu um erro ao conectar a collection course");
-        res.status(500).send("Erro ao cadastrar estudante");
+    if(student.course.length > 0){
+      collection.insertOne(student, (err, result) => {
+        if(err){
+          console.error("Ocorreu um erro ao conectar a collection course");
+          res.status(500).send("Erro ao cadastrar estudante");
+        }else{
+          res.status(201).send("Estudante cadastrado com sucesso!");
+        }
+      });
       }else{
-        res.status(201).send("Estudante cadastrado com sucesso!");
+      res.status(404).send('O curso inserido não foi encontrado');        
       }
-    });
   })();
 });
 
@@ -81,16 +90,25 @@ router.put('/:id', function (req, res){
   }else{
     (async () => {
       for(let i = 0; i < student.course.length; i++){
-        student.course[i] = await _getOneTeacher(student.course[i]);
+        let course = await _getOneCourse(student.course[i]);
+        if(course == null){
+          student.course.splice(i, 1);
+          }else{
+            student.course[i] = course; 
+          }
       }
-      collection.update({"id": parseInt(id)}, student, (err, result) => {
-        if(err){
-          console.error("Ocorreu um erro ao conectar a collection course");
-          res.status(500).send("Erro ao editar estudante");
-        }else{
-          res.status(201).send("Estudante editado com sucesso!");
-        }
-      });
+      if(student.course.length > 0){
+        collection.update({"id": parseInt(id)}, student, (err, result) => {
+          if(err){
+            console.error("Ocorreu um erro ao conectar a collection course");
+            res.status(500).send("Erro ao editar estudante");
+          }else{
+            res.status(201).send("Estudante editado com sucesso!");
+          }
+        });
+      }else{
+        res.status(404).send('O curso inserido não foi encontrado');
+      }
     })();
   }
 });

@@ -29,7 +29,12 @@ router.post('/', function(req, res){
   course.id = id++;
   (async () => {
     for(let i = 0; i < course.teacher.length; i++){
-      course.teacher[i] = await _getOneTeacher(course.teacher[i]);
+      let teacher = await _getOneTeacher(course.teacher[i]);
+      if(teacher == null){
+       course.teacher.splice(i, 1);
+       }else{
+        course.teacher[i] = teacher; 
+       }
     }
     collection.insertOne(course, (err, result) => {
       if(err){
@@ -81,14 +86,19 @@ router.put('/:id', function (req, res){
   }else{
     (async () => {
       for(let i = 0; i < course.teacher.length; i++){
-        course.teacher[i] = await _getOneTeacher(course.teacher[i]);
+        let teacher = await _getOneTeacher(course.teacher[i]);
+        if(teacher == null){
+         course.teacher.splice(i, 1);
+         }else{
+          course.teacher[i] = teacher; 
+         }
       }
       collection.update({"id": parseInt(id)}, course, (err, result) => {
         if(err){
           console.error("Ocorreu um erro ao conectar a collection teacher");
           res.status(500).send("Erro ao editar curso");
         }else{
-          res.status(201).send("Curso editado com sucesso!");
+          res.status(201).send("Curso editado com sucesso!");            
         }
       });
     })();
