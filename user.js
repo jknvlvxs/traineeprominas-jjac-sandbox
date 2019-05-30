@@ -103,7 +103,7 @@ router.delete('/:id', function (req, res){
       if(numRemoved > 0){
         console.log('Todos os '+numRemoved+' usuários foram removidos');
         // res.status(204); // no content
-        res.send('Todos os usuários foram removidos com sucesso'); 
+        res.send('O usuário foi removido com sucesso'); 
       }else{
         console.log('Nenhum usuário foi removido');
         res.status(404).send('Nenhum usuário foi removido');

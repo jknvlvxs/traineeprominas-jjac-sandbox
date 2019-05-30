@@ -103,7 +103,7 @@ router.delete('/:id', function (req, res){
       if(numRemoved > 0){
         console.log('Todos os '+numRemoved+' professores foram removidos');
         // res.status(204) //no content
-        res.send('Todos os professores foram removidos com sucesso');
+        res.send('O professor foi removido com sucesso');
       }else{
         console.log('Nenhum professor foi removido');
         res.status(404).send('Nenhum professor foi removido');
