@@ -83,7 +83,7 @@ router.put('/:id', function (req, res){
       for(let i = 0; i < student.course.length; i++){
         student.course[i] = await _getOneTeacher(student.course[i]);
       }
-      collection.updateOne({"id": parseInt(id)}, student, (err, result) => {
+      collection.update({"id": parseInt(id)}, student, (err, result) => {
         if(err){
           console.error("Ocorreu um erro ao conectar a collection course");
           res.status(500).send("Erro ao editar estudante");
