@@ -66,7 +66,7 @@ router.put('/:id', function (req, res){
   if(user === {}){
     res.status(400).send('Solicitação não autorizada');
   }else{
-    collection.updateOne({"id": id}, user);
+    collection.update({"id": id}, user);
     res.send('Usuário editado com sucesso!');
   }
 });
