@@ -8,6 +8,8 @@ var collection;
 var collectionCourse;
 
 var id = 1;
+var status = 1;
+
 
 // CONEXÃO AO MONGODB
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {

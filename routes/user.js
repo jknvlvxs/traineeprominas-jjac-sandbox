@@ -7,11 +7,12 @@ var db;
 var collection;
 
 var id = 1;
+var status = 1;
 
 // CONEXÃO AO MONGODB
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   if(err){
-    console.error('Ocorreu um erro ao conectar ao mongoDB');
+    console.error('Ocorreu um erro ao conectar ao mongoDB' + err);
     send.status(500); //INTERNAL SERVER ERROR
   }else{
     db = database.db('trainee-prominas');
@@ -23,15 +24,24 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
 
 // CREATE USER
 router.post('/', function (req, res){
-  var user = req.body;
-  user.id = id++;
-  collection.insert(user);
-  res.send('Usuário cadastrado com sucesso!');
+  if(req.body.name && req.body.lastName && req.body.profile){
+    var user = {};
+    user.id = id++; 
+    user.name = req.body.name;
+    user.lastName = req.body.lastName;
+    user.profile = req.body.profile;
+    user.status = status;
+
+    collection.insert(user);
+    res.status(201).send('Usuário cadastrado com sucesso!');
+  }else{
+    res.status(401).send('Não foi possível cadastrar o usuário');
+  }
 });
 
 // READ ALL USERS
 router.get('/', function (req, res){
-  collection.find({}).toArray((err, users) =>{
+  collection.find({"status":1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}}).toArray((err, users) =>{
     if(err){
       console.error('Ocorreu um erro ao conectar a collection user');
       send.status(500);
@@ -44,7 +54,7 @@ router.get('/', function (req, res){
 // READ USERS FILTERED
 router.get('/:id', function (req, res){
   var id = parseInt(req.params.id);
-  collection.find({"id": id}).toArray((err, user) =>{
+  collection.find({"id": id, "status":1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}}).toArray((err, user) =>{
     if(err){
       console.error('Ocorreu um erro ao conectar a collection user');
       send.status(500);
@@ -60,15 +70,26 @@ router.get('/:id', function (req, res){
 
 // UPDATE USER
 router.put('/:id', function (req, res){
-  var id = parseInt(req.params.id);
-  var user = req.body;
-  user.id = id;
-  if(user === {}){
-    res.status(400).send('Solicitação não autorizada');
+  if(req.body.name && req.body.lastName && req.body.profile){
+    var user = {};
+    user.id = req.params.id; 
+    user.name = req.body.name;
+    user.lastName = req.body.lastName;
+    user.profile = req.body.profile;
+    user.status = status;
+
+    collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set:{name: user.name, lastName: user.lastName, profile: user.profile}}, function (err, info){
+        console.log(info.value == null);
+        if (err){
+        res.status(401).send('Não é possível editar usuário inexistente');
+      }else{
+    res.status(200).send('Usuário editado com sucesso!');
+      }
+    });
   }else{
-    collection.update({"id": id}, user);
-    res.send('Usuário editado com sucesso!');
+    res.status(401).send('Não foi possível editar o usuário');
   }
+
 });
 
 // DELETE ALL USERS
