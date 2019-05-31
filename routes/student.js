@@ -7,6 +7,8 @@ var db;
 var collection;
 var collectionCourse;
 
+// const index = require('../index');
+// var id = index.getIdStudent();
 var id = 1;
 var status = 1;
 
@@ -113,26 +115,6 @@ router.put('/:id', function (req, res){
       }
     })();
   }
-});
-
-// DELETE ALL STUDENTS
-router.delete('/', function (req, res){
-  collection.deleteMany({}, function (err, info){
-    if(err){
-      console.error('Ocorreu um erro ao deletar os estudantes da coleção');
-      res.status(500);
-    }else{
-      var numRemoved = info.result.n;
-      if(numRemoved > 0){
-        console.log('Todos os '+numRemoved+' estudantes foram removidos');
-        // res.status(204)
-        res.send('Todos os estudantes foram removidos com sucesso'); // no content
-      }else{
-        console.log('Nenhum estudante foi removido');
-        res.status(404).send('Nenhum estudante foi removido');
-      }
-    }
-  });
 });
 
 // DELETE STUDENTS FILTERED

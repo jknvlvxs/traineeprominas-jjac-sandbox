@@ -20,7 +20,6 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   }
 });
 
-
 // CRUD USER COMPLETED
 
 // CREATE USER
@@ -46,7 +45,11 @@ router.get('/', function (req, res){
       console.error('Ocorreu um erro ao conectar a collection user');
       send.status(500);
     }else{
-      res.send(users);
+      if(users.length == 0){
+        res.status(404).send('Nenhum usuário cadastrado');
+      }else{
+        res.send(users);        
+      }
     }
   });
 });
@@ -59,7 +62,7 @@ router.get('/:id', function (req, res){
       console.error('Ocorreu um erro ao conectar a collection user');
       send.status(500);
     }else{
-      if(user === []){
+      if(user.length == 0){
         res.status(404).send('Usuário não encontrado');
       }else{
         res.send(user);        
@@ -71,11 +74,7 @@ router.get('/:id', function (req, res){
 // UPDATE USER
 router.put('/:id', function (req, res){
   if(req.body.name && req.body.lastName && req.body.profile){
-    var user = {};
-    user.name = req.body.name;
-    user.lastName = req.body.lastName;
-    user.profile = req.body.profile;
-    collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set:{name: user.name, lastName: user.lastName, profile: user.profile}}, function (err, info){
+    collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set:{name: req.body.name, lastName: req.body.lastName, profile: req.body.profile}}, function (err, info){
       console.log(info.value == null);
       if(err){
         res.status(401).send('Não é possível editar usuário inexistente');
@@ -89,14 +88,12 @@ router.put('/:id', function (req, res){
 
 // DELETE USERS FILTERED
 router.delete('/:id', function (req, res){
-  var id = req.params.id;
-  collection.findOneAndUpdate({"id": parseInt(id), "status":1}, {$set: {status:0}}, function (err, info){
+  collection.findOneAndUpdate({"id": parseInt(req.params.id), "status":1}, {$set: {status:0}}, function (err, info){
     if(err){
       console.error('Ocorreu um erro ao deletar os usuários da coleção');
       res.status(500);
     }else{
-      var numRemoved = info.value;
-      if(numRemoved != null){
+      if(info.value != null){
         console.log('O usuário foi removido');
         res.status(200).send('O usuário foi removido com sucesso');
       }else{

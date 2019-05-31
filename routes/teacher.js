@@ -47,7 +47,11 @@ router.get('/', function (req, res){
       console.error('Ocorreu um erro ao conectar a collection teacher');
       send.status(500);
     }else{
-      res.send(teachers);
+      if(teachers.length == 0){
+        res.status(404).send('Nenhum professor cadastrado');
+      }else{
+        res.send(teachers);        
+      }
     }
   });
 });
@@ -60,7 +64,7 @@ router.get('/:id', function (req, res){
       console.error('Ocorreu um erro ao conectar a collection teacher');
       send.status(500);
     }else{
-      if(teacher === []){
+      if(teacher.length == 0){
         res.status(404).send('Professor não encontrado');
       }else{
         res.send(teacher);        
@@ -71,33 +75,38 @@ router.get('/:id', function (req, res){
 
 // UPDATE TEACHER
 router.put('/:id', function (req, res){
-  var id = parseInt(req.params.id);
-  var teacher = req.body;
-  teacher.id = id;
-  if(teacher === {}){
-    res.status(400).send('Solicitação não autorizada');
+  if(req.body.name && req.body.lastName){
+    var teacher = {};
+    teacher.name = req.body.name;
+    teacher.lastName = req.body.lastName;
+    if(req.body.phd && typeof req.body.phd == "boolean"){
+      teacher.phd = req.body.phd;
+    }
+    collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set:{ ...teacher }}, function (err, info){
+      console.log(info.value == null);
+      if(err){
+        res.status(401).send('Não é possível editar professor inexistente');
+      }else{
+    res.status(200).send('Professor editado com sucesso!');
+      }});
   }else{
-    collection.update({"id": id}, teacher);
-    res.send('Professor editado com sucesso!');
+    res.status(401).send('Não foi possível editar o professor');
   }
 });
 
 // DELETE TEACHERS FILTERED
 router.delete('/:id', function (req, res){
-  var id = parseInt(req.params.id);
-  collection.remove({"id": id}, true, function (err, info){
+  collection.findOneAndUpdate({"id": parseInt(req.params.id), "status":1}, {$set: {status:0}}, function (err, info){
     if(err){
       console.error('Ocorreu um erro ao deletar os professores da coleção');
       res.status(500);
     }else{
-      var numRemoved = info.result.n;
-      if(numRemoved > 0){
-        console.log('Todos os '+numRemoved+' professores foram removidos');
-        // res.status(204) //no content
-        res.send('O professor foi removido com sucesso');
+      if(info.value != null){
+        console.log('O professor foi removido');
+        res.status(200).send('O professor foi removido com sucesso');
       }else{
         console.log('Nenhum professor foi removido');
-        res.status(404).send('Nenhum professor foi removido');
+        res.status(204).send('Nenhum professor foi removido');
       }
     }
   });
