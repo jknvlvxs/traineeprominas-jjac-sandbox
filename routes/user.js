@@ -6,8 +6,7 @@ const mdbURL = 'mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/test?retryW
 var db;
 var collection;
 
-var id = 1;
-var status = 1;
+var id;
 
 // CONEXÃO AO MONGODB
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
@@ -17,8 +16,10 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   }else{
     db = database.db('trainee-prominas');
     collection = db.collection('user');
+    collection.find({}).toArray((err, user) =>{id = user.length + 1});
   }
 });
+
 
 // CRUD USER COMPLETED
 
@@ -30,8 +31,7 @@ router.post('/', function (req, res){
     user.name = req.body.name;
     user.lastName = req.body.lastName;
     user.profile = req.body.profile;
-    user.status = status;
-
+    user.status = 1;
     collection.insert(user);
     res.status(201).send('Usuário cadastrado com sucesso!');
   }else{
@@ -72,62 +72,36 @@ router.get('/:id', function (req, res){
 router.put('/:id', function (req, res){
   if(req.body.name && req.body.lastName && req.body.profile){
     var user = {};
-    user.id = req.params.id; 
     user.name = req.body.name;
     user.lastName = req.body.lastName;
     user.profile = req.body.profile;
-    user.status = status;
-
     collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set:{name: user.name, lastName: user.lastName, profile: user.profile}}, function (err, info){
-        console.log(info.value == null);
-        if (err){
+      console.log(info.value == null);
+      if(err){
         res.status(401).send('Não é possível editar usuário inexistente');
       }else{
     res.status(200).send('Usuário editado com sucesso!');
-      }
-    });
+      }});
   }else{
     res.status(401).send('Não foi possível editar o usuário');
   }
-
-});
-
-// DELETE ALL USERS
-router.delete('/', function (req, res){
-  collection.remove({}, function (err, info){
-    if(err){
-      console.error('Ocorreu um erro ao deletar os usuários da coleção');
-      res.status(500);
-    }else{
-      var numRemoved = info.result.n;
-      if(numRemoved > 0){
-        console.log('Todos os '+numRemoved+' usuários foram removidos');
-        // res.status(204);
-        res.send('Todos os usuários foram removidos com sucesso'); // no content
-      }else{
-        console.log('Nenhum usuário foi removido');
-        res.status(404).send('Nenhum usuário foi removido');
-      }
-    }
-  });
 });
 
 // DELETE USERS FILTERED
 router.delete('/:id', function (req, res){
-  var id = parseInt(req.params.id);
-  collection.remove({"id": id}, true, function (err, info){
+  var id = req.params.id;
+  collection.findOneAndUpdate({"id": parseInt(id), "status":1}, {$set: {status:0}}, function (err, info){
     if(err){
       console.error('Ocorreu um erro ao deletar os usuários da coleção');
       res.status(500);
     }else{
-      var numRemoved = info.result.n;
-      if(numRemoved > 0){
-        console.log('Todos os '+numRemoved+' usuários foram removidos');
-        // res.status(204); // no content
-        res.send('O usuário foi removido com sucesso'); 
+      var numRemoved = info.value;
+      if(numRemoved != null){
+        console.log('O usuário foi removido');
+        res.status(200).send('O usuário foi removido com sucesso');
       }else{
         console.log('Nenhum usuário foi removido');
-        res.status(404).send('Nenhum usuário foi removido');
+        res.status(204).send('Nenhum usuário foi removido');
       }
     }
   });
