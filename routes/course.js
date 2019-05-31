@@ -26,28 +26,44 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
 
 // CREATE COURSE
 router.post('/', function(req, res){
+  var wrongInsert = [];
+  let teacher;
   if (req.body.name && req.body.city){
     var course = {};
     course.id = id++;
     course.name = req.body.name;
     course.period = req.body.period || 8;
     course.city = req.body.city;
+    course.teacher = req.body.teacher;
     course.status = 1;
     (async () => {
-      for(let i = 0; i < course.teacher.length; i++){
-        let teacher = await _getOneTeacher(course.teacher[i]);
+      for(let i = course.teacher.length-1; i > -1 ; i--){
+        teacher = await _getOneTeacher(course.teacher[i]);
         if(teacher == null){
-         course.teacher.splice(i, 1);
+          wrongInsert.unshift(course.teacher[i]);
+          course.teacher.splice(i, 1);
          }else{
           course.teacher[i] = teacher; 
          }
       }
+      if(course.teacher.length == 0){
+        delete course.teacher;
+      }
+      
       collection.insertOne(course, (err, result) => {
         if(err){
-          console.error("Ocorreu um erro ao conectar a collection teacher");
-          res.status(500).send("Erro ao cadastrar curso");
+          console.error('Ocorreu um erro ao conectar a collection teacher');
+          res.status(500).send('Erro ao cadastrar curso');
         }else{
-          res.status(201).send("Curso cadastrado com sucesso!");
+          if(course.teacher.length > 0){
+              res.status(201).send('Curso cadastrado com sucesso!');            
+          }else{
+            if(wrongInsert.length == 0){
+              res.status(201).send('O curso foi cadastrado com o sucesso, porém não lhe foi atribuído nenhum professor');
+            }else{
+                  res.status(201).send('O curso foi cadastrado com o sucesso, porém o(s) professor(s) ' + wrongInsert+ ' não existe(m)');
+            }
+          }
         }
       });
     })();
@@ -56,7 +72,7 @@ router.post('/', function(req, res){
   
 // READ ALL COURSES
 router.get('/', function (req, res){
-  collection.find({}).toArray((err, courses) =>{
+  collection.find({"status":1}, {projection: {_id:0, id: 1, name: 1, period: 1, city:1, teacher:1}}).toArray((err, courses) =>{
     if(err){
       console.error('Ocorreu um erro ao conectar a collection course');
       send.status(500);
@@ -66,13 +82,16 @@ router.get('/', function (req, res){
   });
 });
 
+router.delete('/', function (req, res){
+  collection.remove();
+});
+
 // READ COURSES FILTERED
 router.get('/:id', function (req, res){
-  var id = parseInt(req.params.id);
-  collection.find({"id": id}).toArray((err, course) =>{
+  collection.find({"id": parseInt(req.params.id), "status":1}, {projection: {_id:0, id: 1, name: 1, period: 1, city:1, "teacher.name":0}}).toArray((err, course) =>{
     if(err){
       console.error('Ocorreu um erro ao conectar a collection course');
-      send.status(500);
+      res.status(500);
     }else{
       if(course === []){
         res.status(404).send('Curso não encontrado');
@@ -135,7 +154,7 @@ router.delete('/:id', function (req, res){ //DELETE FILTERED
 
 const _getOneTeacher = (idTeacher) => {
   return new Promise((resolve, reject) => {
-    collectionTeacher.findOne({"id": parseInt(idTeacher)}, (err, teacher) =>{
+    collectionTeacher.findOne({"id": parseInt(idTeacher), "status": 1}, (err, teacher) =>{
       if(err){
         reject(err);
       }else{
