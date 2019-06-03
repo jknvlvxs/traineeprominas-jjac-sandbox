@@ -17,6 +17,7 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
     db = database.db('trainee-prominas');
     collection = db.collection('teacher');
     collectionCourse = db.collection('course');
+    collectionStudent = db.collection('student');
     collection.find({}).toArray((err, teacher) =>{id = teacher.length + 1});
   }
 });
@@ -81,14 +82,55 @@ router.put('/:id', function (req, res){
     teacher.id = parseInt(req.params.id);
     teacher.name = req.body.name;
     teacher.lastName = req.body.lastName;
-    if(req.body.phd){
+    if(req.body.phd != undefined){
       teacher.phd = req.body.phd;
     }else{
       delete teacher.phd;
     }
     teacher.status = 1;
-    collection.findOneAndReplace({"id": parseInt(req.params.id), "status": 1}, { ...teacher }, function (err, info){
+    collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set: { ...teacher }}, { returnOriginal: false }, function (err, info){
+      (async () => {
+      //   await collectionStudent.updateMany({"status":1, "course.teacher.id":parseInt(req.params.id)}, {$set: {"course.teacher.$": {...teacher}}}, (err, info) =>{
+      //     if(err){
+      //       console.log(err);
+      //     }else{
+      //       console.log("O professor foi atualizado em estudante");
+      //     }
+      //   });
+      
+      //   await collectionCourse.updateMany({"status":1, "teacher.id":parseInt(req.params.id)}, {$set: {"teacher.$": {...teacher}}}, (err, info) =>{
+      //   if(err){
+      //     console.log(err);
+      //   }else{
+      //     console.log("O professor foi atualizado em curso");
+      //   }
+      // });
+      var updateTeacher = info.value;
+      
+      try {
+        await collectionCourse.updateMany(
+          {"status":1, "teacher.id":parseInt(req.params.id)},
+          {$set: {"teacher.$": updateTeacher}});
+
+        var courses = await collectionCourse.find({"status":1, "teacher.id":parseInt(req.params.id)}).toArray();
+        
+        for (var i = 0; i<courses.length; i++){
+          await collectionStudent.findOneAndReplace(
+              {"status":1, "course.id":courses[i].id},
+              {$set: {"course":courses[i]}});
+        }
+
+
+
+          // {$set: {"course":courses}});
+
+        } catch(err){
+          console.log(err);
+        }
+
+    })();
       if(err){
+        console.log(err);
         res.status(401).send('Não é possível editar professor inexistente');
       }else{
     res.status(200).send('Professor editado com sucesso!');
@@ -105,6 +147,20 @@ router.delete('/:id', function (req, res){
       console.error('Ocorreu um erro ao deletar os professores da coleção');
       res.status(500);
     }else{
+      collectionCourse.findOneAndUpdate({"status":1}, {$pull: {"teacher": {id: parseInt(req.params.id)}}}, (err, info) =>{
+        if(err){
+          console.log(err);
+        }else{
+          console.log("O professor foi deletado em curso");
+        }
+      });
+        collectionStudent.findOneAndUpdate({"status":1}, {$pull: {"course.teacher": {id: parseInt(req.params.id)}}}, (err, info) =>{
+          if(err){
+            console.log(err);
+          }else{
+            console.log("O professor foi deletado em estudante");
+          }
+      });
       if(info.value != null){
         console.log('O professor foi removido');
         res.status(200).send('O professor foi removido com sucesso');

@@ -75,7 +75,6 @@ router.get('/:id', function (req, res){
 router.put('/:id', function (req, res){
   if(req.body.name && req.body.lastName && req.body.profile){
     collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set:{name: req.body.name, lastName: req.body.lastName, profile: req.body.profile}}, function (err, info){
-      console.log(info.value == null);
       if(err){
         res.status(401).send('Não é possível editar usuário inexistente');
       }else{
