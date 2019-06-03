@@ -143,24 +143,36 @@ router.put('/:id', function (req, res){
 // DELETE TEACHERS FILTERED
 router.delete('/:id', function (req, res){
   collection.findOneAndUpdate({"id": parseInt(req.params.id), "status":1}, {$set: {status:0}}, function (err, info){
+    // (async () => {
+    //   var courses = await collectionCourse.find({"status":1, "teacher.id":parseInt(req.params.id)}).toArray();
+        
+    //   for (var i = 0; i<courses.length; i++){
+    //     await collectionStudent.findOneAndReplace(
+    //         {"status":1, "course.id":courses[i].id},
+    //         {$set: {"course":courses[i]}});
+    //   }
+    // })();
     if(err){
       console.error('Ocorreu um erro ao deletar os professores da coleção');
       res.status(500);
     }else{
-      collectionCourse.findOneAndUpdate({"status":1}, {$pull: {"teacher": {id: parseInt(req.params.id)}}}, (err, info) =>{
-        if(err){
-          console.log(err);
-        }else{
-          console.log("O professor foi deletado em curso");
-        }
-      });
-        collectionStudent.findOneAndUpdate({"status":1}, {$pull: {"course.teacher": {id: parseInt(req.params.id)}}}, (err, info) =>{
+      (async () => {
+        await collectionCourse.findOneAndUpdate({"status":1}, {$pull: {"teacher": {id: parseInt(req.params.id)}}}, (err, info) =>{
           if(err){
             console.log(err);
           }else{
-            console.log("O professor foi deletado em estudante");
+            console.log("O professor foi deletado em curso");
           }
-      });
+        });
+
+        var courses = await collectionCourse.find({"status":1}).toArray();
+        for (var i = 0; i<courses.length; i++){
+          await collectionStudent.findOneAndReplace(
+              {"status":1, "course.id":courses[i].id},
+              {$set: {"course":courses[i]}});
+        }
+      })();
+      
       if(info.value != null){
         console.log('O professor foi removido');
         res.status(200).send('O professor foi removido com sucesso');
