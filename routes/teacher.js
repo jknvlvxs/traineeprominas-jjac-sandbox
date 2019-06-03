@@ -16,6 +16,7 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   }else{
     db = database.db('trainee-prominas');
     collection = db.collection('teacher');
+    collectionCourse = db.collection('course');
     collection.find({}).toArray((err, teacher) =>{id = teacher.length + 1});
   }
 });
@@ -77,13 +78,16 @@ router.get('/:id', function (req, res){
 router.put('/:id', function (req, res){
   if(req.body.name && req.body.lastName){
     var teacher = {};
+    teacher.id = parseInt(req.params.id);
     teacher.name = req.body.name;
     teacher.lastName = req.body.lastName;
-    if(req.body.phd && typeof req.body.phd == "boolean"){
+    if(req.body.phd){
       teacher.phd = req.body.phd;
+    }else{
+      delete teacher.phd;
     }
-    collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set:{ ...teacher }}, function (err, info){
-      console.log(info.value == null);
+    teacher.status = 1;
+    collection.findOneAndReplace({"id": parseInt(req.params.id), "status": 1}, { ...teacher }, function (err, info){
       if(err){
         res.status(401).send('Não é possível editar professor inexistente');
       }else{
