@@ -22,7 +22,7 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
 
 // full user crud
 
-// create USER
+// create user
 router.post('/', function (req, res){
   if(req.body.name && req.body.lastName && req.body.profile){
     var user = {};
@@ -38,7 +38,7 @@ router.post('/', function (req, res){
   }
 });
 
-// read ALL USERS
+// read all users
 router.get('/', function (req, res){
   collection.find({"status":1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}}).toArray((err, users) =>{
     if(err){
@@ -54,7 +54,7 @@ router.get('/', function (req, res){
   });
 });
 
-// read USERS FILTERED
+// read filtered user
 router.get('/:id', function (req, res){
   var id = parseInt(req.params.id);
   collection.find({"id": id, "status":1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}}).toArray((err, user) =>{
@@ -71,7 +71,7 @@ router.get('/:id', function (req, res){
   });
 });
 
-// UPDATE USER
+// update user
 router.put('/:id', function (req, res){
   if(req.body.name && req.body.lastName && req.body.profile){
     collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set:{name: req.body.name, lastName: req.body.lastName, profile: req.body.profile}}, function (err, info){
@@ -85,7 +85,7 @@ router.put('/:id', function (req, res){
   }
 });
 
-// DELETE USERS FILTERED
+// delete filtered user
 router.delete('/:id', function (req, res){
   collection.findOneAndUpdate({"id": parseInt(req.params.id), "status":1}, {$set: {status:0}}, function (err, info){
     if(err){
@@ -97,7 +97,7 @@ router.delete('/:id', function (req, res){
         res.status(200).send('O usuário foi removido com sucesso');
       }else{
         console.log('Nenhum usuário foi removido');
-        res.status(204).send('Nenhum usuário foi removido');
+        res.status(204);
       }
     }
   });

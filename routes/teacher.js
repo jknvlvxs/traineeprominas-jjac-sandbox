@@ -8,7 +8,7 @@ var collection;
 
 var id;
 
-// CONEXÃO AO MONGODB
+// connection to mongodb
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
@@ -22,9 +22,9 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   }
 });
 
-// CRUD TEACHER COMPLETED
+// full teacher crud
 
-// create TEACHER
+// create teacher
 router.post('/', function (req, res){
   if(req.body.name && req.body.lastName){
     var teacher = {};
@@ -42,7 +42,7 @@ router.post('/', function (req, res){
   }
 });
   
-// read ALL TEACHERS
+// read all teachers
 router.get('/', function (req, res){
   collection.find({'status':1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}}).toArray((err, teachers) =>{
     if(err){
@@ -58,7 +58,7 @@ router.get('/', function (req, res){
   });
 });
 
-// read TEACHERS FILTERED
+// read filtered teacher
 router.get('/:id', function (req, res){
   var id = parseInt(req.params.id);
   collection.find({"id": id, status:1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}}).toArray((err, teacher) =>{
@@ -75,7 +75,7 @@ router.get('/:id', function (req, res){
   });
 });
 
-// UPDATE TEACHER
+// update teacher
 router.put('/:id', function (req, res){
   if(req.body.name && req.body.lastName){
     var teacher = {};
@@ -90,21 +90,7 @@ router.put('/:id', function (req, res){
     teacher.status = 1;
     collection.findOneAndUpdate({"id": parseInt(req.params.id), "status": 1}, {$set: { ...teacher }}, { returnOriginal: false }, function (err, info){
       (async () => {
-      //   await collectionStudent.updateMany({"status":1, "course.teacher.id":parseInt(req.params.id)}, {$set: {"course.teacher.$": {...teacher}}}, (err, info) =>{
-      //     if(err){
-      //       console.log(err);
-      //     }else{
-      //       console.log("O professor foi atualizado em estudante");
-      //     }
-      //   });
-      
-      //   await collectionCourse.updateMany({"status":1, "teacher.id":parseInt(req.params.id)}, {$set: {"teacher.$": {...teacher}}}, (err, info) =>{
-      //   if(err){
-      //     console.log(err);
-      //   }else{
-      //     console.log("O professor foi atualizado em curso");
-      //   }
-      // });
+ 
       var updateTeacher = info.value;
       
       try {
@@ -119,10 +105,6 @@ router.put('/:id', function (req, res){
               {"status":1, "course.id":courses[i].id},
               {$set: {"course":courses[i]}});
         }
-
-
-
-          // {$set: {"course":courses}});
 
         } catch(err){
           console.log(err);
@@ -140,18 +122,9 @@ router.put('/:id', function (req, res){
   }
 });
 
-// DELETE TEACHERS FILTERED
+// delete filtered teacher
 router.delete('/:id', function (req, res){
   collection.findOneAndUpdate({"id": parseInt(req.params.id), "status":1}, {$set: {status:0}}, function (err, info){
-    // (async () => {
-    //   var courses = await collectionCourse.find({"status":1, "teacher.id":parseInt(req.params.id)}).toArray();
-        
-    //   for (var i = 0; i<courses.length; i++){
-    //     await collectionStudent.findOneAndReplace(
-    //         {"status":1, "course.id":courses[i].id},
-    //         {$set: {"course":courses[i]}});
-    //   }
-    // })();
     if(err){
       console.error('Ocorreu um erro ao deletar os professores da coleção');
       res.status(500);
@@ -178,7 +151,7 @@ router.delete('/:id', function (req, res){
         res.status(200).send('O professor foi removido com sucesso');
       }else{
         console.log('Nenhum professor foi removido');
-        res.status(204).send('Nenhum professor foi removido');
+        res.status(204);
       }
     }
   });

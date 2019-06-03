@@ -9,7 +9,7 @@ var collectionTeacher;
 
 var id;
 
-// CONEXÃO AO MONGODB
+// connection to mongodb
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
@@ -23,9 +23,9 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   }
 });
 
-// CRUD COURSE COMPLETED
+// full course crud
 
-// create COURSE
+// create course
 router.post('/', function(req, res){
   var wrongInsert = [];
   let teacher;
@@ -80,7 +80,7 @@ router.post('/', function(req, res){
   } 
 });
   
-// read ALL COURSES
+// read all courses
 router.get('/', function (req, res){
   collection.find({"status":1}, {projection: {_id:0, id: 1, name: 1, period: 1, city:1, "teacher.id":1, "teacher.name":1, "teacher.lastName":1, "teacher.phd":1}}).toArray((err, courses) =>{
     if(err){
@@ -92,7 +92,7 @@ router.get('/', function (req, res){
   });
 });
 
-// read COURSES FILTERED
+// read filtered course
 router.get('/:id', function (req, res){
   collection.find({"id": parseInt(req.params.id), "status":1}, {projection: {_id:0, id: 1, name: 1, period: 1, city:1, "teacher.id":1, "teacher.name":1, "teacher.lastName":1, "teacher.phd":1}}).toArray((err, course) =>{
     if(err){
@@ -108,7 +108,7 @@ router.get('/:id', function (req, res){
   });
 });
   
-// UPDATE COURSE  
+// update course
 router.put('/:id', function (req, res){
   var wrongInsert = [];
   if(req.body.name && req.body.city){
@@ -166,8 +166,8 @@ router.put('/:id', function (req, res){
     
 });
 
-// DELETE COURSES FILTERED
-router.delete('/:id', function (req, res){ //DELETE FILTERED
+// delete filtered course
+router.delete('/:id', function (req, res){
   collection.findOneAndUpdate({"id":parseInt(req.params.id), "status":1}, {$set: {status:0}}, function (err, info){
     collectionStudent.findOneAndUpdate({"status":1, "course.id":parseInt(req.params.id)}, {$set: {status:0}}, (err, info) =>{
       if(err){
@@ -185,7 +185,7 @@ router.delete('/:id', function (req, res){ //DELETE FILTERED
         res.status(200).send('O curso foi removido com sucesso'); 
       }else{
         console.log('Nenhum curso foi removido');
-        res.status(204).send('Nenhum cursos foi removido');
+        res.status(204);
       }
     }
   });

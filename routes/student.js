@@ -7,7 +7,7 @@ var db;
 var collection;
 var collectionCourse;
 
-// CONEXÃO AO MONGODB
+// connection to mongodb
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
@@ -20,9 +20,9 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   }
 });
 
-// CRUD STUDENT COMPLETE
+// full student crud
 
-// create STUDENT
+// create student
 router.post('/', function (req, res){ 
   if (req.body.name && req.body.lastName && req.body.age && req.body.course){
     var student = {};
@@ -59,7 +59,7 @@ router.post('/', function (req, res){
   }
 });
 
-// read ALL STUDENTS
+// read all students
 router.get('/', function (req, res){
   collection.find({"status":1},{projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}}).toArray((err, students) =>{
     if(err){
@@ -71,7 +71,7 @@ router.get('/', function (req, res){
   });
 });
 
-// read STUDENTS FILTERED
+// read students filtered
 router.get('/:id', function (req, res){ 
   collection.find({"id": parseInt(req.params.id), "status":1},{projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}}).toArray((err, student) =>{
     if(err){
@@ -87,7 +87,7 @@ router.get('/:id', function (req, res){
   });
 });
 
-// UPDATE STUDENT
+// update student
 router.put('/:id', function (req, res){
     if (req.body.name && req.body.lastName && req.body.age && req.body.course){
       var student = {};
@@ -121,8 +121,8 @@ router.put('/:id', function (req, res){
     
 });
 
-// DELETE STUDENTS FILTERED
-router.delete('/:id', function (req, res){ //DELETE FILTERED
+// delete filtered student
+router.delete('/:id', function (req, res){
   collection.findOneAndUpdate({"id":parseInt(req.params.id), "status":1}, {$set: {status:0}}, function (err, info){
     if(err){
       console.error('Ocorreu um erro ao deletar os estudantes da coleção');
@@ -130,10 +130,10 @@ router.delete('/:id', function (req, res){ //DELETE FILTERED
     }else{
       if(info.value != null){
         console.log('O estudante foi removido com sucesso');
-        res.status(200).send('O estudante foi removido com sucesso'); // no content
+        res.status(200).send('O estudante foi removido com sucesso');
       }else{
         console.log('Nenhum estudante foi removido');
-        res.status(204).send('Nenhum estudante foi removido');
+        res.status(204);
       }
     }
   });
