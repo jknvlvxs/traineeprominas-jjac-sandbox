@@ -25,7 +25,7 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
 
 // CRUD COURSE COMPLETED
 
-// CREATE COURSE
+// create COURSE
 router.post('/', function(req, res){
   var wrongInsert = [];
   let teacher;
@@ -80,7 +80,7 @@ router.post('/', function(req, res){
   } 
 });
   
-// READ ALL COURSES
+// read ALL COURSES
 router.get('/', function (req, res){
   collection.find({"status":1}, {projection: {_id:0, id: 1, name: 1, period: 1, city:1, "teacher.id":1, "teacher.name":1, "teacher.lastName":1, "teacher.phd":1}}).toArray((err, courses) =>{
     if(err){
@@ -92,7 +92,7 @@ router.get('/', function (req, res){
   });
 });
 
-// READ COURSES FILTERED
+// read COURSES FILTERED
 router.get('/:id', function (req, res){
   collection.find({"id": parseInt(req.params.id), "status":1}, {projection: {_id:0, id: 1, name: 1, period: 1, city:1, "teacher.id":1, "teacher.name":1, "teacher.lastName":1, "teacher.phd":1}}).toArray((err, course) =>{
     if(err){

@@ -22,7 +22,7 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
 
 // CRUD STUDENT COMPLETE
 
-// CREATE STUDENT
+// create STUDENT
 router.post('/', function (req, res){ 
   if (req.body.name && req.body.lastName && req.body.age && req.body.course){
     var student = {};
@@ -59,7 +59,7 @@ router.post('/', function (req, res){
   }
 });
 
-// READ ALL STUDENTS
+// read ALL STUDENTS
 router.get('/', function (req, res){
   collection.find({"status":1},{projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}}).toArray((err, students) =>{
     if(err){
@@ -71,7 +71,7 @@ router.get('/', function (req, res){
   });
 });
 
-// READ STUDENTS FILTERED
+// read STUDENTS FILTERED
 router.get('/:id', function (req, res){ 
   collection.find({"id": parseInt(req.params.id), "status":1},{projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}}).toArray((err, student) =>{
     if(err){

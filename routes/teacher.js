@@ -24,7 +24,7 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
 
 // CRUD TEACHER COMPLETED
 
-// CREATE TEACHER
+// create TEACHER
 router.post('/', function (req, res){
   if(req.body.name && req.body.lastName){
     var teacher = {};
@@ -42,7 +42,7 @@ router.post('/', function (req, res){
   }
 });
   
-// READ ALL TEACHERS
+// read ALL TEACHERS
 router.get('/', function (req, res){
   collection.find({'status':1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}}).toArray((err, teachers) =>{
     if(err){
@@ -58,7 +58,7 @@ router.get('/', function (req, res){
   });
 });
 
-// READ TEACHERS FILTERED
+// read TEACHERS FILTERED
 router.get('/:id', function (req, res){
   var id = parseInt(req.params.id);
   collection.find({"id": id, status:1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}}).toArray((err, teacher) =>{

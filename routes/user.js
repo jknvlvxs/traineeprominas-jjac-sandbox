@@ -8,7 +8,7 @@ var collection;
 
 var id;
 
-// CONEXÃO AO MONGODB
+// connection to mongodb
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB' + err);
@@ -20,9 +20,9 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   }
 });
 
-// CRUD USER COMPLETED
+// full user crud
 
-// CREATE USER
+// create USER
 router.post('/', function (req, res){
   if(req.body.name && req.body.lastName && req.body.profile){
     var user = {};
@@ -38,7 +38,7 @@ router.post('/', function (req, res){
   }
 });
 
-// READ ALL USERS
+// read ALL USERS
 router.get('/', function (req, res){
   collection.find({"status":1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}}).toArray((err, users) =>{
     if(err){
@@ -54,7 +54,7 @@ router.get('/', function (req, res){
   });
 });
 
-// READ USERS FILTERED
+// read USERS FILTERED
 router.get('/:id', function (req, res){
   var id = parseInt(req.params.id);
   collection.find({"id": id, "status":1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}}).toArray((err, user) =>{
