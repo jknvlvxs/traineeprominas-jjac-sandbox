@@ -1,4 +1,6 @@
 const teacherModel = require('../model/teacher');
+const courseModel = require('../model/course');
+const studentModel = require('../model/student');
 
 exports.getAllTeachers = (req, res) => {
     let query = {'status':1};
@@ -61,49 +63,56 @@ exports.postTeacher = (req, res) => {
     }
 }
 
-// exports.putTeacher = (req, res) => {
-//     if(req.body.name && req.body.lastName){
-//         let query = {'id': parseInt(req.params.id), 'status': 1};
-//         let set;
-//         if(req.body.phd != undefined){
-//         set = {$set:{id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, phd:req.body.phd, status:1}};
-//         }else{
-//         set = {$set:{id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, status:1}};
-//         }
+exports.putTeacher = (req, res) => {
+    if(req.body.name && req.body.lastName){
+        let query = {'id': parseInt(req.params.id), 'status': 1};
+        let set;
+        if(req.body.phd != undefined){
+        set = {id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, phd:req.body.phd, status:1};
+        }else{
+        set = {id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, status:1};
+        }
         
-//         teacherModel.put(query, set)
-//         .then(result => {
-//             if(result.value){
-//                 res.status(201).send('Professor editado com sucesso!');
-//             }else{
-//                 res.status(401).send('Não é possível editar professor inexistente');
-//             }
-//         })
-//         .catch(err => {
-//             console.error("Erro ao conectar a collection teacher: ", err);
-//             res.status(500);
-//         });
-//     }else{
-//         res.status(401).send('Não foi possível editar o professor');
-//     }
-// }
+        teacherModel.put(query, set)
+        .then(async (result) => {
+            if(result.value){
+                res.status(201).send('Professor editado com sucesso!');
+                await courseModel.updateTeacher(parseInt(req.params.id), set);
+                courseModel.getCoursebyTeacher(parseInt(req.params.id)).then(courses => {
+                    for (var i = 0; i<courses.length; i++){
+                        studentModel.updateTeacher(courses[i]);
+                      }
+            });
+            }else{
+                res.status(401).send('Não é possível editar professor inexistente');
+            }
+        })
+        .catch(err => {
+            console.error("Erro ao conectar a collection teacher: ", err);
+            res.status(500);
+        });
+    }else{
+        res.status(401).send('Não foi possível editar o professor');
+    }
+}
 
-// exports.deleteTeacher = (req, res) => {
-//     let query = {'id': parseInt(req.params.id), 'status':1};
-//     let set = {$set: {status:0}};
+exports.deleteTeacher = (req, res) => {
+    let query = {'id': parseInt(req.params.id), 'status':1};
+    let set = {status:0};
 
-//     TeacherModel.delete(query, set)
-//     .then(result => {
-//         if(result.value){
-//             console.log('O usuário foi removido');
-//             res.status(200).send('O usuário foi removido com sucesso');
-//           }else{
-//             console.log('Nenhum usuário foi removido');
-//             res.status(204).send();
-//           }
-//     })
-//     .catch(err => {
-//         console.error("Erro ao conectar a collection Teacher: ", err);
-//         res.status(500);
-//     });
-// }
+    teacherModel.delete(query, set)
+    .then(result => {
+        courseModel.deleteTeacher(parseInt(req.params.id));
+        if(result.value){
+            console.log('O professor foi removido');
+            res.status(200).send('O professor foi removido com sucesso');
+          }else{
+            console.log('Nenhum professor foi removido');
+            res.status(204).send();
+          }
+    })
+    .catch(err => {
+        console.error("Erro ao conectar a collection teacher: ", err);
+        res.status(500);
+    });
+}

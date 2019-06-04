@@ -32,34 +32,11 @@ exports.post = (teacher) => {
 };
 
 exports.put = (query, set) => {
-    return collection.findOneAndUpdate(query, set, {returnOriginal: false}, (err, info) => {
-        (async () => {
- 
-            var updateTeacher = info.value;
-            
-            try {
-              await collectionCourse.updateMany(
-                {"status":1, "teacher.id":parseInt(req.params.id)},
-                {$set: {"teacher.$": updateTeacher}});
-      
-              var courses = await collectionCourse.find({"status":1, "teacher.id":parseInt(req.params.id)}).toArray();
-              
-              for (var i = 0; i<courses.length; i++){
-                await collectionStudent.findOneAndReplace(
-                    {"status":1, "course.id":courses[i].id},
-                    {$set: {"course":courses[i]}});
-              }
-      
-              } catch(err){
-                console.log(err);
-              }
-      
-          })();
-    });
+    return collection.findOneAndUpdate(query, {$set: set});
 }
 
 exports.delete = (query, set) => {
-  return collection.findOneAndUpdate(query, set);
+  return collection.findOneAndUpdate(query, {$set: set});
 }
 
 exports.getTeacher = (id) => {
