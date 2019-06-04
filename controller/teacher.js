@@ -46,7 +46,7 @@ exports.postTeacher = (req, res) => {
     // check required attributes    
     if(req.body.name && req.body.lastName){
 
-        //creates teacher array to be inserted        
+        // creates teacher array to be inserted        
         let teacher = {
             id:0,
             name:req.body.name,
@@ -99,7 +99,7 @@ exports.putTeacher = (req, res) => {
 
                 // receives the updated teacher and updates the student that contains this teacher
                 courseModel.getCoursebyTeacher().then(courses => {
-                    for (var i = 0; i<courses.length; i++){
+                    for(var i = 0; i<courses.length; i++){
                         studentModel.updateTeacher(courses[i]);
                       }
             });
@@ -129,7 +129,7 @@ exports.deleteTeacher = (req, res) => {
         
         // receives the updated teacher and updates the student that contains this teacher
         courseModel.getCoursebyTeacher().then(courses => {
-            for (var i = 0; i<courses.length; i++){
+            for(var i = 0; i<courses.length; i++){
                 studentModel.updateTeacher(courses[i]);
             }
         });

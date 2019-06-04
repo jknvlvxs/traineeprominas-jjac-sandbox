@@ -3,9 +3,11 @@ const teacherModel = require('../model/teacher');
 const studentModel = require('../model/student');
 
 exports.getAllCourses = (req, res) => {
+    //  define query and projection for search
     let query = {status:1};
     let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
 
+    // send to model
     courseModel.getAll(query, projection)
     .then(courses => {
         if(courses.length == 0){
@@ -21,9 +23,11 @@ exports.getAllCourses = (req, res) => {
 }
 
 exports.getFilteredCourse = (req,res) => {
+    //  define query and projection for search
     let query = {'id':parseInt(req.params.id), 'status':1};
     let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
 
+    // send to model
     courseModel.getFiltered(query, projection)
     .then(course => {
         if(course.length == 0){
@@ -39,8 +43,13 @@ exports.getFilteredCourse = (req,res) => {
 }
 
 exports.postCourse = (req, res) => {
+    // wrongInsert contains the invalid ids entered
     var wrongInsert = [];
+
+    // check required attributes 
     if(req.body.name && req.body.city){
+
+        // creates user array to be inserted
         var course = {
             id:0,
             name:req.body.name,
@@ -49,20 +58,25 @@ exports.postCourse = (req, res) => {
             teacher:req.body.teacher,
             status:1,
         };
-    (async () => {
-      if(course.teacher == undefined || course.teacher.length == 0){
-        delete course.teacher;
-      }else{
-        for(let i = course.teacher.length-1; i > -1 ; i--){
-          teacher = await teacherModel.getTeacher(course.teacher[i]);
-          if(teacher == null){
-            wrongInsert.unshift(course.teacher[i]);
-            course.teacher.splice(i, 1);
-          }else{
-            course.teacher[i] = teacher[0]; 
+
+      (async () => { 
+        // check if any teacher id has been entered
+        if(course.teacher == undefined || course.teacher.length == 0){
+          delete course.teacher;
+        }else{
+          // 
+          for(let i = course.teacher.length-1; i > -1 ; i--){
+            teacher = await teacherModel.getTeacher(course.teacher[i]);
+            if(teacher == null){
+              wrongInsert.unshift(course.teacher[i]);
+              course.teacher.splice(i, 1);
+            }else{
+              course.teacher[i] = teacher[0]; 
+            }
           }
         }
-      }
+        
+        // send to model
         courseModel.post(course)
         .then(result => {
             if(course.teacher != undefined){

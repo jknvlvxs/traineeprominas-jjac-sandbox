@@ -44,7 +44,7 @@ exports.postUser = (req, res) => {
     // check required attributes
     if(req.body.name && req.body.lastName && req.body.profile){
         
-        //creates user array to be inserted
+        // creates user array to be inserted
         let user = {
             id:0,
             name:req.body.name,
@@ -53,7 +53,7 @@ exports.postUser = (req, res) => {
             status:1
         };
 
-        //send to model
+        // send to model
         userModel.post(user)
         .then(result => {
             res.status(201).send('Usuário cadastrado com sucesso!');
