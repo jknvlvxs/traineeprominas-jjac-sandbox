@@ -27,3 +27,7 @@ exports.post = (user) => {
     user.id = id++;
     return collection.insert(user);
 }
+
+exports.put = (query, set) => {
+    return collection.findOneAndUpdate(query, set);
+}
