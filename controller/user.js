@@ -80,3 +80,23 @@ exports.putUser = (req, res) => {
         res.status(401).send('Não foi possível editar o usuário');
     }
 }
+
+exports.deleteUser = (req, res) => {
+    let query = {'id': parseInt(req.params.id), 'status':1};
+    let set = {$set: {status:0}};
+
+    userModel.delete(query, set)
+    .then(result => {
+        if(result.value){
+            console.log('O usuário foi removido');
+            res.status(200).send('O usuário foi removido com sucesso');
+          }else{
+            console.log('Nenhum usuário foi removido');
+            res.status(204).send();
+          }
+    })
+    .catch(err => {
+        console.error("Erro ao conectar a collection user: ", err);
+        res.status(500);
+    });
+}

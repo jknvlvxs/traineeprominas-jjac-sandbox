@@ -31,3 +31,7 @@ exports.post = (user) => {
 exports.put = (query, set) => {
     return collection.findOneAndUpdate(query, set);
 }
+
+exports.delete = (query, set) => {
+    return collection.findOneAndUpdate(query, set);
+}
