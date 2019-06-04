@@ -1,18 +1,66 @@
-module.exports.getAll = function(app, req, res){
-    var userModel = new app.src.model.user();
+const userModel = require('../model/user');
 
-    userModel.getAllUsers(function (err, result) {
-        console.log('entrou control');
 
-        if(!err){
-            if(result.length == 0){
-                res.status(404).send('Usuário não encontrado');
-            }else{
-                res.send(user);
-            }
+
+exports.getAllUsers = (req, res) => {
+    let query = {status:1};
+    let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
+
+    userModel.getAll(query, projection)
+    .then(users => {
+        if(users.length == 0){
+            res.status(404).send('Nenhum usuário cadastrado');
         }else{
-            console.error('Ocorreu um erro ao conectar a collection user');
-            send.status(500);
+            res.send(users);        
         }
     })
-};
+    .catch(err => {
+        console.error("Erro ao conectar a collection user: ", err);
+        res.status(500);
+    });
+}
+
+exports.getFilteredUser = (req,res) => {
+    let query = {'id':parseInt(req.params.id), 'status':1};
+    let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
+
+    userModel.getFiltered(query, projection)
+    .then(users => {
+        if(users.length == 0){
+            res.status(404).send('O usuário não foi encontrado');
+        }else{
+            res.send(users);        
+        }
+    })
+    .catch(err => {
+        console.error("Erro ao conectar a collection user: ", err);
+        res.status(500);
+    });
+}
+
+exports.postUser = (req, res) => {
+    if(req.body.name && req.body.lastName && req.body.profile){
+        let user = {
+            id:0,
+            name:req.body.name,
+            lastName:req.body.lastName,
+            profile:req.body.profile,
+            status:1
+        };
+
+        userModel.post(user)
+        .then(users => {
+            res.status(201).send('Usuário cadastrado com sucesso!');
+        })
+        .catch(err => {
+            console.error("Erro ao conectar a collection user: ", err);
+            res.status(500);
+        });
+    }else{
+        res.status(401).send('Não foi possível cadastrar o usuário');
+    }
+}
+
+exports.putUser = (req, res) => {
+    let query = {'id': parseInt(req.params.id), 'status': 1};
+}
