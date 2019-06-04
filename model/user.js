@@ -1,12 +1,13 @@
 const mongoClient = require('mongodb').MongoClient;
 const mdbURL = 'mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/test?retryWrites=true';
+
 var db;
 var collection;
 
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
     if(err){
         console.error('Ocorreu um erro ao conectar ao mongoDB' + err);
-        send.status(500); //INTERNAL SERVER ERROR
+        send.status(500);
     }else{
         db = database.db('trainee-prominas');
         collection = db.collection('user');
@@ -14,16 +15,15 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
     }
 });
 
-function user() {};
-
-user.prototype.getAllUsers = function (callback) {
-    console.log('entrou model');
-
-    collection.find({"status":1}, {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}}).toArray((err, users) =>{
-       callback(err, users);
-    });
+exports.getAll = (query, projection) => {
+    return collection.find(query, projection).toArray();
 };
 
-module.exports = function () {
-    return user;
-};
+exports.getFiltered = (query, projection) => {
+    return collection.find(query, projection).toArray();
+}
+
+exports.post = (user) => {
+    user.id = id++;
+    return collection.insert(user);
+}
