@@ -76,7 +76,6 @@ exports.putStudent = (req, res) => {
     let query = {'id': parseInt(req.params.id), 'status': 1};
 
     if (req.body.name && req.body.lastName && req.body.age && req.body.course){
-
         var student = {};
         student.course = req.body.course;
     let set = {$set:{name: req.body.name, lastName: req.body.lastName, age: req.body.age, course: student.course}};
@@ -84,21 +83,25 @@ exports.putStudent = (req, res) => {
         (async () => {
           for(let i = 0; i < student.course.length; i++){
             let course = await courseModel.getCourse(student.course[i]);
-            if(course == null){
-              student.course.splice(i, 1);
-              }else{
+            
+            if(course.length > 0){
                 student.course[i] = course[0]; 
+              }else{
+              student.course.splice(i, 1);
+
               }
           }
           if(student.course.length > 0){
             studentModel.put(query, set)
             .then(result => {
-                res.status(201).send('Estudante cadastrado com sucesso!');
+                res.status(201).send('Estudante editado com sucesso!');
             })
             .catch(err => {
                 console.error("Erro ao conectar a collection student: ", err);
                 res.status(500);
             });
+        }else{
+            res.status(401).send('Não foi possível editar o estudante');
         }
         })();
       }else{

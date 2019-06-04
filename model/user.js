@@ -3,7 +3,7 @@ const mdbURL = 'mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/test?retryW
 
 var db;
 var collection;
-
+var id;
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
     if(err){
         console.error('Ocorreu um erro ao conectar ao mongoDB' + err);
@@ -11,7 +11,7 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
     }else{
         db = database.db('trainee-prominas');
         collection = db.collection('user');
-        collection.find({}).toArray((err, user) =>{id = user.length + 1});
+        collection.find({}).toArray((err, user) =>{id = user.length});
     }
 });
 
@@ -24,8 +24,8 @@ exports.getFiltered = (query, projection) => {
 }
 
 exports.post = (user) => {
-    user.id = id++;
-    return collection.insert(user);
+    user.id = ++id;
+    return collection.insertOne(user);
 }
 
 exports.put = (query, set) => {
@@ -33,5 +33,5 @@ exports.put = (query, set) => {
 }
 
 exports.delete = (query, set) => {
-    return collection.insert(teacher);
+    return collection.findOneAndUpdate(query, set);
 }

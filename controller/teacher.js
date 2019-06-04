@@ -62,24 +62,29 @@ exports.postTeacher = (req, res) => {
 }
 
 // exports.putTeacher = (req, res) => {
-//     if(req.body.name && req.body.lastName && req.body.profile){
+//     if(req.body.name && req.body.lastName){
 //         let query = {'id': parseInt(req.params.id), 'status': 1};
-//         let set = {$set:{name: req.body.name, lastName: req.body.lastName, profile: req.body.profile}};
+//         let set;
+//         if(req.body.phd != undefined){
+//         set = {$set:{id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, phd:req.body.phd, status:1}};
+//         }else{
+//         set = {$set:{id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, status:1}};
+//         }
         
-//         TeacherModel.put(query, set)
+//         teacherModel.put(query, set)
 //         .then(result => {
 //             if(result.value){
-//                 res.status(201).send('Usuário editado com sucesso!');
+//                 res.status(201).send('Professor editado com sucesso!');
 //             }else{
-//                 res.status(401).send('Não é possível editar usuário inexistente');
+//                 res.status(401).send('Não é possível editar professor inexistente');
 //             }
 //         })
 //         .catch(err => {
-//             console.error("Erro ao conectar a collection Teacher: ", err);
+//             console.error("Erro ao conectar a collection teacher: ", err);
 //             res.status(500);
 //         });
 //     }else{
-//         res.status(401).send('Não foi possível editar o usuário');
+//         res.status(401).send('Não foi possível editar o professor');
 //     }
 // }
 

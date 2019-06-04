@@ -47,7 +47,7 @@ exports.postUser = (req, res) => {
         };
 
         userModel.post(user)
-        .then(users => {
+        .then(result => {
             res.status(201).send('Usuário cadastrado com sucesso!');
         })
         .catch(err => {

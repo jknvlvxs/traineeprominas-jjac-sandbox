@@ -36,3 +36,11 @@ exports.put = (query, set) => {
 exports.delete = (query, set) => {
   return collection.findOneAndUpdate(query, set);
 }
+
+exports.updateCourse = (id, set) => {
+  return collection.findOneAndUpdate({'course.id':id, 'status':1}, {$set: {"course.$": set}});
+}
+
+exports.deleteCourse = (id, set) => {
+  return collection.findOneAndUpdate({'course.id':id, 'status':1}, {$set: {status:0}});
+}

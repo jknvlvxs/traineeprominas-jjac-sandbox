@@ -5,6 +5,8 @@ var collection;
 var collectionTeacher;
 var collectionStudent;
 
+var id;
+
 mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
   if(err){
     console.error('Ocorreu um erro ao conectar ao mongoDB');
@@ -15,20 +17,29 @@ mongoClient.connect(mdbURL, {useNewUrlParser:true}, (err, database) => {
     collectionTeacher = db.collection('teacher');
     collectionStudent = db.collection('student');
     collection.find({}).toArray((err, course) =>{id = course.length});
+    
   }
 });
 
 exports.getAll = (query, projection) => {
-    return collection.find(query, projection).toArray();
+  return collection.find(query, projection).toArray();
 };
 
 exports.getFiltered = (query, projection) => {
-    return collection.find(query, projection).toArray();
+  return collection.find(query, projection).toArray();
 }
 
 exports.post = (course) => {
-    course.id = ++id;
-    return collection.insertOne(course);
+  course.id = ++id;
+  return collection.insertOne(course);
+}
+
+exports.put = (query, set) => {
+  return collection.findOneAndUpdate(query, {$set: set});
+}
+
+exports.delete = (query, set) => {
+  return collection.findOneAndUpdate(query, {$set:set});
 }
 
 exports.getCourse = (id) => {
