@@ -3,15 +3,17 @@ const courseModel = require('../model/course');
 const studentModel = require('../model/student');
 
 exports.getAllTeachers = (req, res) => {
+    //  define query and projection for search
     let query = {'status':1};
     let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
 
+    // send to model
     teacherModel.getAll(query, projection)
     .then(teachers => {
-        if(teachers.length == 0){
-            res.status(404).send('Nenhum professor cadastrado');
-        }else{
+        if(teachers.length > 0){
             res.send(teachers);        
+        }else{
+            res.status(404).send('Nenhum professor cadastrado');
         }
     })
     .catch(err => {
@@ -21,15 +23,17 @@ exports.getAllTeachers = (req, res) => {
 }
 
 exports.getFilteredTeacher = (req,res) => {
+    //  define query and projection for search    
     let query = {'id':parseInt(req.params.id), 'status':1};
     let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
 
+    // send to model
     teacherModel.getFiltered(query, projection)
     .then(teacher => {
-        if(teacher.length == 0){
-            res.status(404).send('O professor não foi encontrado');
-        }else{
+        if(teacher.length > 0){
             res.send(teacher);        
+        }else{
+            res.status(404).send('O professor não foi encontrado');
         }
     })
     .catch(err => {
@@ -39,17 +43,23 @@ exports.getFilteredTeacher = (req,res) => {
 }
 
 exports.postTeacher = (req, res) => {
+    // check required attributes    
     if(req.body.name && req.body.lastName){
+
+        //creates teacher array to be inserted        
         let teacher = {
             id:0,
             name:req.body.name,
             lastName:req.body.lastName,
         };
+
+        // verifies whether the inserted phd type is boolean
         if(typeof req.body.phd == "boolean"){
             teacher.phd = req.body.phd;
         }
         teacher.status = 1;
-
+        
+        // send to model
         teacherModel.post(teacher)
         .then(result => {
             res.status(201).send('Professor cadastrado com sucesso!');
@@ -64,21 +74,31 @@ exports.postTeacher = (req, res) => {
 }
 
 exports.putTeacher = (req, res) => {
+    // check required attributes
     if(req.body.name && req.body.lastName){
+
+        //  define query and set for search and update    
         let query = {'id': parseInt(req.params.id), 'status': 1};
         let set;
+
+        // check if phd has been inserted in update and fills set
         if(req.body.phd != undefined){
         set = {id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, phd:req.body.phd, status:1};
         }else{
         set = {id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, status:1};
         }
         
+        // send to model
         teacherModel.put(query, set)
         .then(async (result) => {
-            if(result.value){
+            if(result.value){ // if professor exists
                 res.status(201).send('Professor editado com sucesso!');
+
+                //  updates the course that contains this teacher
                 await courseModel.updateTeacher(parseInt(req.params.id), set);
-                courseModel.getCoursebyTeacher(parseInt(req.params.id)).then(courses => {
+
+                // receives the updated teacher and updates the student that contains this teacher
+                courseModel.getCoursebyTeacher().then(courses => {
                     for (var i = 0; i<courses.length; i++){
                         studentModel.updateTeacher(courses[i]);
                       }
@@ -97,13 +117,23 @@ exports.putTeacher = (req, res) => {
 }
 
 exports.deleteTeacher = (req, res) => {
+    //  define query and set for search and delete  
     let query = {'id': parseInt(req.params.id), 'status':1};
     let set = {status:0};
 
+    // send to model
     teacherModel.delete(query, set)
-    .then(result => {
-        courseModel.deleteTeacher(parseInt(req.params.id));
-        if(result.value){
+    .then(async (result) => {
+        //  updates the course that contains that teacher
+        await courseModel.deleteTeacher(parseInt(req.params.id));
+        
+        // receives the updated teacher and updates the student that contains this teacher
+        courseModel.getCoursebyTeacher().then(courses => {
+            for (var i = 0; i<courses.length; i++){
+                studentModel.updateTeacher(courses[i]);
+              }
+
+        if(result.value){ // if professor exists
             console.log('O professor foi removido');
             res.status(200).send('O professor foi removido com sucesso');
           }else{
