@@ -131,8 +131,9 @@ exports.deleteTeacher = (req, res) => {
         courseModel.getCoursebyTeacher().then(courses => {
             for (var i = 0; i<courses.length; i++){
                 studentModel.updateTeacher(courses[i]);
-              }
-
+            }
+        });
+        
         if(result.value){ // if professor exists
             console.log('O professor foi removido');
             res.status(200).send('O professor foi removido com sucesso');
