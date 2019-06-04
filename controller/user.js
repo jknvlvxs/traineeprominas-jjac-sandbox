@@ -23,11 +23,11 @@ exports.getFilteredUser = (req,res) => {
     let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
 
     userModel.getFiltered(query, projection)
-    .then(users => {
-        if(users.length == 0){
+    .then(user => {
+        if(user.length == 0){
             res.status(404).send('O usuário não foi encontrado');
         }else{
-            res.send(users);        
+            res.send(user);        
         }
     })
     .catch(err => {

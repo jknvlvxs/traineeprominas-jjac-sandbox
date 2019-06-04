@@ -33,5 +33,5 @@ exports.put = (query, set) => {
 }
 
 exports.delete = (query, set) => {
-    return collection.findOneAndUpdate(query, set);
+    return collection.insert(teacher);
 }
