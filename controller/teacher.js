@@ -91,7 +91,7 @@ exports.putTeacher = (req, res) => {
                 res.status(201).send('Professor editado com sucesso!');
 
                 //  updates the course that contains this teacher
-                await courseModel.updateTeacher(parseInt(req.params.id), set);
+                await courseModel.updateTeacher(parseInt(req.params.id), result.value);
 
                 // receives the updated teacher and updates the student that contains this teacher
                 courseModel.getCoursebyTeacher().then(courses => {

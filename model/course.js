@@ -35,7 +35,7 @@ exports.post = (course) => {
 };
 
 exports.put = (query, set) => {
-  return collection.findOneAndUpdate(query, {$set: set});
+  return collection.findOneAndUpdate(query, {$set: set}, {returnOriginal:false} );
 };
 
 exports.delete = (query, set) => {

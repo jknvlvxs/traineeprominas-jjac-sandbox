@@ -132,8 +132,7 @@ exports.putCourse = (req, res) => {
               courseModel.put(query, set)
               .then(result => {
               // update course in student
-              console.log(result.value);
-              studentModel.updateCourse(parseInt(req.params.id), set);
+              studentModel.updateCourse(parseInt(req.params.id), result.value);
                   if(course.teacher != undefined){
                       if(course.teacher.length > 0){ // if teacher exists
                         res.status(201).send('Curso cadastrado com sucesso!');            
