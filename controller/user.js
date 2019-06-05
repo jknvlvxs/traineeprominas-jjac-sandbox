@@ -8,7 +8,6 @@ exports.getAllUsers = (req, res) => {
     // send to model
     userModel.getAll(query, projection)
     .then(users => {
-    console.log('<<<<<<>>>>>>')
 
         if(users.length > 0){ 
             res.status(200).send(users);        
@@ -57,20 +56,19 @@ exports.postUser = (req, res) => {
         };
 
         // verifies whether user fits as model business rules
-        // if(userModel.post(user) != false){
+        if(userModel.post(user) != false){
             // send to model
             userModel.post(user)
             .then(result => {
-                console.log('>>>>>>');
-                    res.status(201).send('Usuário cadastrado com sucesso!');
+                res.status(201).send('Usuário cadastrado com sucesso!');
             })
             .catch(err => {
-                console.error("Erro ao conectar a collection user: ", err);
+                console.error("Erro ao conectar a collection ^^: ", err);
                 res.status(500);
             });
-        // }else{
-                // res.status(401).send('Não foi possível cadastrar o usuário (profile inválido)');
-        // }
+        }else{
+            res.status(401).send('Não foi possível cadastrar o usuário (profile inválido)');
+        }
     }else{
         res.status(401).send('Não foi possível cadastrar o usuário');
     }

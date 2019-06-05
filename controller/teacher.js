@@ -75,15 +75,8 @@ exports.putTeacher = (req, res) => {
 
         //  define query and set for search and update    
         let query = {'id': parseInt(req.params.id), 'status': 1};
-        let set;
+        let set = {id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, phd:req.body.phd, status:1};
 
-        // check if phd has been inserted in update and fills set
-        if(req.body.phd != undefined){
-        set = {id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, phd:req.body.phd, status:1};
-        }else{
-        set = {id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, status:1};
-        }
-        
         // send to model
         teacherModel.put(query, set)
         .then(async (result) => {
