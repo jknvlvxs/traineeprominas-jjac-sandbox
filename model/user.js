@@ -1,5 +1,11 @@
 const database = require('../database');
-const courseCollection = database.getCollection('user');
+const collection = database.getCollection('user');
+
+var id;
+
+(async () => {
+     id = await collection.countDocuments({});
+})();
 
 exports.getAll = (query, projection) => {
     return collection.find(query, projection).toArray();
@@ -14,7 +20,10 @@ exports.post = (user) => {
         user.id = ++id;
         return collection.insertOne(user);
     }else{
-        return false;
+        // return false;
+        return new Promise((resolve, reject) => {
+            resolve(false);
+        });
     }
 };
 

@@ -1,17 +1,13 @@
-const assert = require('assert');
-const expect = require('chai').expect
+const chai = require('chai');
+const assert = chai.assert;
 const request = require('supertest');
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-let app = require('../app');
-let should = chai.should();
 
+const app = require('../app');
 
-chai.use(chaiHttp);
 
 describe('--- TIMEOUT ---', function() {
 
-  this.timeout(12000);
+  this.timeout(20000);
 
   before(done => {
     setTimeout(() => {
@@ -19,22 +15,20 @@ describe('--- TIMEOUT ---', function() {
     }, 10000);
   });
 
-  it('it should POST a user with ok profile', (done) => {
-      let user = {
-          name: 'Jose',
-          lastName: 'Júlio',
-          profile: 'admin'
-      };
-    chai.request(app)
-        .post('/api/v1/user')
-        .send(user)
-        .end((err, res) => {
-              // res.should.have.status(200);
-              // res.body.should.be.a('object');
-              // res.body.should.have.property('errors');
-              // res.body.errors.should.have.property('pages');
-              // res.body.errors.should.have.property('kind').eql('required');
-          done();
-        });
+  it('it should POST a user with ok profile', () => {
+    return request(app)
+    .post('/api/v1/user')
+    .send({ name: "New Test User", lastName: "01", profile: "admin" })
+    .then(function(res) { 
+      assert.equal(res.status, 201);
+    });
   });
-});
+
+  it('it should NOT POST a user with error on profile', () => {
+    return request(app)
+    .post('/api/v1/user')
+    .send({ name: "New Test User", lastName: "01", profile: "asdsadas" })
+    .then(function(res) { 
+      assert.equal(res.status, 401);
+    });
+})});

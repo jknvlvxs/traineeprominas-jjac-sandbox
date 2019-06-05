@@ -56,22 +56,22 @@ exports.postUser = (req, res) => {
         };
 
         // verifies whether user fits as model business rules
-        if(userModel.post(user) != false){
             // send to model
             userModel.post(user)
             .then(result => {
-                res.status(201).send('Usuário cadastrado com sucesso!');
+                if(result != false){
+                    res.status(201).send('Usuário cadastrado com sucesso!');
+                }else{
+                    res.status(401).send('Não foi possível cadastrar o usuário (profile inválido)');
+                }
             })
             .catch(err => {
-                console.error("Erro ao conectar a collection ^^: ", err);
+                console.error("Erro ao conectar a collection user: ", err);
                 res.status(500);
             });
         }else{
             res.status(401).send('Não foi possível cadastrar o usuário (profile inválido)');
         }
-    }else{
-        res.status(401).send('Não foi possível cadastrar o usuário');
-    }
 };
 
 exports.putUser = (req, res) => {

@@ -1,5 +1,4 @@
 const database = require('../database');
-const courseCollection = database.getCollection('course');
 
 exports.getAll = (query, projection) => {
   return collection.find(query, projection).toArray();

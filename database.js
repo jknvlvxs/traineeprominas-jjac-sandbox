@@ -26,5 +26,5 @@ exports.connect = function() {
 };
 
 exports.getCollection = function(name) {
-  return db.collection(name);
+  return (db.collection(name));
 };
