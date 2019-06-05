@@ -1,5 +1,4 @@
 const express = require('express');
-// const consign = require('consign');
 const bodyParser = require('body-parser');
 const app = express();
 const baseAPI = "/api/v1";
@@ -20,4 +19,3 @@ app.get('/'+baseAPI, function (req, res){
 });
 
 app.listen(process.env.PORT || 3000);
-// app.listen(3000);

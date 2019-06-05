@@ -18,7 +18,7 @@ exports.getAllUsers = (req, res) => {
         console.error("Erro ao conectar a collection user: ", err);
         res.status(500);
     });
-}
+};
 
 exports.getFilteredUser = (req,res) => {
     //  define query and projection for search
@@ -38,7 +38,7 @@ exports.getFilteredUser = (req,res) => {
         console.error("Erro ao conectar a collection user: ", err);
         res.status(500);
     });
-}
+};
 
 exports.postUser = (req, res) => {
     // check required attributes
@@ -53,19 +53,25 @@ exports.postUser = (req, res) => {
             status:1
         };
 
-        // send to model
-        userModel.post(user)
-        .then(result => {
-            res.status(201).send('Usuário cadastrado com sucesso!');
-        })
-        .catch(err => {
-            console.error("Erro ao conectar a collection user: ", err);
-            res.status(500);
-        });
+        // verifies whether user fits as model business rules
+        if(userModel.post(user) != false){
+            // send to model
+            userModel.post(user)
+            .then(result => {
+                // console.log('>>>>>>',result);
+                    res.status(201).send('Usuário cadastrado com sucesso!');
+            })
+            .catch(err => {
+                console.error("Erro ao conectar a collection user: ", err);
+                res.status(500);
+            });
+        }else{
+                res.status(401).send('Não foi possível cadastrar o usuário (profile inválido)');
+        }
     }else{
         res.status(401).send('Não foi possível cadastrar o usuário');
     }
-}
+};
 
 exports.putUser = (req, res) => {
     // check required attributes
@@ -73,33 +79,35 @@ exports.putUser = (req, res) => {
 
         //  define query and set for search and update    
         let query = {'id': parseInt(req.params.id), 'status': 1};
-        let set = {$set:{name: req.body.name, lastName: req.body.lastName, profile: req.body.profile}};
+        let set = {name: req.body.name, lastName: req.body.lastName, profile: req.body.profile};
         
-        // send to model
-        userModel.put(query, set)
-        .then(result => {
-            if(result.value){ // if user exists
-                res.status(201).send('Usuário editado com sucesso!');
-            }else{
-                res.status(401).send('Não é possível editar usuário inexistente');
-            }
-        })
-        .catch(err => {
-            console.error("Erro ao conectar a collection user: ", err);
-            res.status(500);
-        });
+        // verifies whether user fits as model business rules
+        if(userModel.put(query, set)){
+            // send to model
+            userModel.put(query, set)
+            .then(result => {
+                if(result.value){ // if user exists
+                    res.status(201).send('Usuário editado com sucesso!');
+                }else{
+                    res.status(401).send('Não é possível editar usuário inexistente');
+                }
+            })
+            .catch(err => {
+                console.error("Erro ao conectar a collection user: ", err);
+                res.status(500);
+            });
+        }
     }else{
         res.status(401).send('Não foi possível editar o usuário');
     }
-}
+};
 
 exports.deleteUser = (req, res) => {
     //  define query and set for search and delete    
     let query = {'id': parseInt(req.params.id), 'status':1};
-    let set = {$set: {status:0}};
 
     // send to model
-    userModel.delete(query, set)
+    userModel.delete(query)
     .then(result => {
         if(result.value){ // if user exists
             console.log('O usuário foi removido');
@@ -113,4 +121,4 @@ exports.deleteUser = (req, res) => {
         console.error("Erro ao conectar a collection user: ", err);
         res.status(500);
     });
-}
+};

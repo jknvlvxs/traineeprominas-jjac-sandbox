@@ -19,7 +19,7 @@ exports.getAllStudents = (req, res) => {
         console.error("Erro ao conectar a collection student: ", err);
         res.status(500);
     });
-}
+};
 
 exports.getFilteredStudent = (req,res) => {
     //  define query and projection for search
@@ -39,7 +39,7 @@ exports.getFilteredStudent = (req,res) => {
         console.error("Erro ao conectar a collection student: ", err);
         res.status(500);
     });
-}
+};
 
 exports.postStudent = (req, res) => {
     // check required attributes
@@ -57,7 +57,7 @@ exports.postStudent = (req, res) => {
 
         (async () => {
             // receive the course related to the inserted id
-            for(var i = 0; i < student.course.length; i++){
+            for(let i = 0; i < student.course.length; i++){
                 let course = await courseModel.getCourse(student.course[i]);
                 if(course.length > 0){ // if course exists
                     student.course[i] = course[0]; 
@@ -81,7 +81,7 @@ exports.postStudent = (req, res) => {
     }else{
         res.status(401).send('Não foi possível cadastrar o estudante');
     }
-}
+};
 
 exports.putStudent = (req, res) => {
     //  define query for search    
@@ -128,7 +128,7 @@ exports.putStudent = (req, res) => {
       res.status(401).send('Não foi possível editar o estudante');
   
       }
-}
+};
 
 exports.deleteStudent = (req, res) => {
     //  define query and set for search and delete    
@@ -150,4 +150,4 @@ exports.deleteStudent = (req, res) => {
         console.error("Erro ao conectar a collection student: ", err);
         res.status(500);
     });
-}
+};

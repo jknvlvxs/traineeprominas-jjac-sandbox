@@ -33,12 +33,12 @@ exports.post = (teacher) => {
 
 exports.put = (query, set) => {
     return collection.findOneAndUpdate(query, {$set: set});
-}
+};
 
 exports.delete = (query, set) => {
   return collection.findOneAndUpdate(query, {$set: set});
-}
+};
 
 exports.getTeacher = (id) => {
   return collection.find({'id':id, 'status':1}).toArray();
-}
+};

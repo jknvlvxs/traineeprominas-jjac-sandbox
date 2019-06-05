@@ -20,7 +20,7 @@ exports.getAllTeachers = (req, res) => {
         console.error("Erro ao conectar a collection teacher: ", err);
         res.status(500);
     });
-}
+};
 
 exports.getFilteredTeacher = (req,res) => {
     //  define query and projection for search    
@@ -40,7 +40,7 @@ exports.getFilteredTeacher = (req,res) => {
         console.error("Erro ao conectar a collection teacher: ", err);
         res.status(500);
     });
-}
+};
 
 exports.postTeacher = (req, res) => {
     // check required attributes    
@@ -51,13 +51,9 @@ exports.postTeacher = (req, res) => {
             id:0,
             name:req.body.name,
             lastName:req.body.lastName,
+            phd:req.body.phd,
+            status:1
         };
-
-        // verifies whether the inserted phd type is boolean
-        if(typeof req.body.phd == "boolean"){
-            teacher.phd = req.body.phd;
-        }
-        teacher.status = 1;
         
         // send to model
         teacherModel.post(teacher)
@@ -71,7 +67,7 @@ exports.postTeacher = (req, res) => {
     }else{
         res.status(401).send('Não foi possível cadastrar o professor');
     }
-}
+};
 
 exports.putTeacher = (req, res) => {
     // check required attributes
@@ -114,7 +110,7 @@ exports.putTeacher = (req, res) => {
     }else{
         res.status(401).send('Não foi possível editar o professor');
     }
-}
+};
 
 exports.deleteTeacher = (req, res) => {
     //  define query and set for search and delete  
@@ -146,4 +142,4 @@ exports.deleteTeacher = (req, res) => {
         console.error("Erro ao conectar a collection teacher: ", err);
         res.status(500);
     });
-}
+};

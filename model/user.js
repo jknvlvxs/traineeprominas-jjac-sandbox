@@ -21,17 +21,26 @@ exports.getAll = (query, projection) => {
 
 exports.getFiltered = (query, projection) => {
     return collection.find(query, projection).toArray();
-}
+};
 
 exports.post = (user) => {
-    user.id = ++id;
-    return collection.insertOne(user);
-}
+    if(user.profile == 'guess' || user.profile == 'admin'){
+        user.id = ++id;
+        return collection.insertOne(user);
+    }
+    else{
+        return false;
+    }
+};
 
 exports.put = (query, set) => {
-    return collection.findOneAndUpdate(query, set);
-}
+    if(user.profile == 'guess' || user.profile == 'admin'){
+    return collection.findOneAndUpdate(query, {$set: set});
+    }else{
+        return false;
+    }
+};
 
-exports.delete = (query, set) => {
-    return collection.findOneAndUpdate(query, set);
-}
+exports.delete = (query) => {
+    return collection.findOneAndUpdate(query, {$set: {status:0}});
+};
