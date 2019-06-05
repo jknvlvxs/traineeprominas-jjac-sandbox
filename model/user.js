@@ -27,15 +27,14 @@ exports.post = (user) => {
     if(user.profile == 'guess' || user.profile == 'admin'){
         user.id = ++id;
         return collection.insertOne(user);
-    }
-    else{
+    }else{
         return false;
     }
 };
 
 exports.put = (query, set) => {
-    if(user.profile == 'guess' || user.profile == 'admin'){
-    return collection.findOneAndUpdate(query, {$set: set});
+    if(set.profile == 'guess' || set.profile == 'admin'){
+        return collection.findOneAndUpdate(query, {$set: set});
     }else{
         return false;
     }

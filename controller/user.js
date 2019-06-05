@@ -96,7 +96,9 @@ exports.putUser = (req, res) => {
                 console.error("Erro ao conectar a collection user: ", err);
                 res.status(500);
             });
-        }
+        }else{
+            res.status(401).send('Não foi possível editar o usuário (profile inválido)');
+        }   
     }else{
         res.status(401).send('Não foi possível editar o usuário');
     }
