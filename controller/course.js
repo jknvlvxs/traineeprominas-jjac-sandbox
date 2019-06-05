@@ -13,7 +13,7 @@ exports.getAllCourses = (req, res) => {
         if(courses.length == 0){
             res.status(404).send('Nenhum curso cadastrado');
         }else{
-            res.send(courses);        
+            res.status(200).send(courses);        
         }
     })
     .catch(err => {
@@ -33,7 +33,7 @@ exports.getFilteredCourse = (req,res) => {
         if(course.length == 0){
             res.status(404).send('O curso não foi encontrado');
         }else{
-            res.send(course);        
+            res.status(200).send(course);        
         }
     })
     .catch(err => {
@@ -132,6 +132,7 @@ exports.putCourse = (req, res) => {
               courseModel.put(query, set)
               .then(result => {
               // update course in student
+              console.log(result.value);
               studentModel.updateCourse(parseInt(req.params.id), set);
                   if(course.teacher != undefined){
                       if(course.teacher.length > 0){ // if teacher exists
