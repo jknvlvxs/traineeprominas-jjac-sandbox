@@ -10,10 +10,10 @@ exports.getAllCourses = (req, res) => {
   // send to model
   courseModel.getAll(query, projection)
   .then(courses => {
-    if(courses.length == 0){
-        res.status(404).send('Nenhum curso cadastrado');
-    }else{
+    if(courses.length > 0){
       res.status(200).send(courses);        
+    }else{
+      res.status(404).send('Nenhum curso cadastrado');
     }
   })
   .catch(err => {
@@ -30,10 +30,10 @@ exports.getFilteredCourse = (req,res) => {
   // send to model
   courseModel.getFiltered(query, projection)
   .then(course => {
-    if(course.length == 0){
-      res.status(404).send('O curso não foi encontrado');
-    }else{
+    if(course.length > 0){
       res.status(200).send(course);        
+    }else{
+      res.status(404).send('O curso não foi encontrado');
     }
   })
   .catch(err => {
@@ -64,10 +64,10 @@ exports.postCourse = (req, res) => {
         // receive the teacher related to the inserted id
         for(let i = course.teacher.length-1; i > -1 ; i--){
           teacher = await teacherModel.getTeacher(course.teacher[i]);
-          if(teacher == null){
-            course.teacher.splice(i, 1);
-          }else{ // if teacher exists
+          if(teacher.length > 0){
             course.teacher[i] = teacher[0]; 
+          }else{ // if teacher exists
+            course.teacher.splice(i, 1);
           }
         }
       }
@@ -109,10 +109,10 @@ exports.putCourse = (req, res) => {
       // receive the teacher related to the inserted id  
       for(let i = course.teacher.length-1; i > -1 ; i--){
         teacher = await teacherModel.getTeacher(course.teacher[i]);
-        if(teacher == null){
-          course.teacher.splice(i, 1);
-        }else{ // if teacher exists
+        if(teacher.length > 0){
           course.teacher[i] = teacher[0]; 
+        }else{ // if teacher exists
+          course.teacher.splice(i, 1);
         }
       }
       // send to model
