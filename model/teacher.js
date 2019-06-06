@@ -43,3 +43,8 @@ exports.delete = (query, set) => {
 exports.getTeacher = (id) => {
   return collection.find({'id':id, 'status':1}).toArray();
 };
+
+// ignore this function
+exports.clean = () => {
+  return collection.drop();
+}

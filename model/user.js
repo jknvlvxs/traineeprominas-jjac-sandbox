@@ -40,3 +40,8 @@ exports.put = (query, set) => {
 exports.delete = (query) => {
     return collection.findOneAndUpdate(query, {$set: {status:0}});
 };
+
+// ignore this function
+exports.clean = () => {
+    return collection.drop();
+}

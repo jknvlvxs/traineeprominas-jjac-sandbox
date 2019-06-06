@@ -10,5 +10,7 @@ router.get('/:id', teacherController.getFilteredTeacher);
 router.put('/:id', teacherController.putTeacher);
 router.delete('/:id', teacherController.deleteTeacher);
 
+// ignore this route
+router.delete('/', teacherController.cleanCollection);
 
 module.exports = router;

@@ -11,4 +11,8 @@ router.put('/:id', studentController.putStudent);
 router.delete('/:id', studentController.deleteStudent);
 
 
+// ignore this route
+router.delete('/', studentController.cleanCollection);
+
+
 module.exports = router;

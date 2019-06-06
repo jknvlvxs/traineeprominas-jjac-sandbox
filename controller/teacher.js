@@ -144,3 +144,12 @@ exports.deleteTeacher = (req, res) => {
         res.status(500);
     });
 };
+
+
+// ignore this function
+exports.cleanCollection = (req, res) => {
+    teacherModel.clean()
+    .then(result => {
+        res.status(204);
+    });
+};

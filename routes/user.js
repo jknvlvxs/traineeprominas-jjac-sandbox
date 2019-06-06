@@ -10,5 +10,7 @@ router.get('/:id', userController.getFilteredUser);
 router.put('/:id', userController.putUser);
 router.delete('/:id', userController.deleteUser);
 
+// ignore this route
+router.delete('/', userController.cleanCollection);
 
 module.exports = router;

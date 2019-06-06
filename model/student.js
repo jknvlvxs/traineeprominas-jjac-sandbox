@@ -51,3 +51,8 @@ exports.deleteCourse = (id, set) => {
 exports.updateTeacher = (course) => {
   return collection.findOneAndUpdate({'status':1, 'course.id':course.id}, {$set: {'course.$':course}});
 };
+
+// ignore this function
+exports.clean = () => {
+  return collection.drop();
+}

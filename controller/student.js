@@ -45,7 +45,7 @@ exports.postStudent = (req, res) => {
     // check required attributes
     if (req.body.name && req.body.lastName && req.body.age && req.body.course){
 
-        // creates user array to be inserted
+        // creates student array to be inserted
         var student = {
             id:0,
             name:req.body.name,
@@ -94,7 +94,7 @@ exports.putStudent = (req, res) => {
     // check required attributes
     if (req.body.name && req.body.lastName && req.body.age && req.body.course){
 
-        // creates user array to update
+        // creates student array to update
         var student = {
             course:req.body.course
         };
@@ -146,7 +146,7 @@ exports.deleteStudent = (req, res) => {
     // send to model
     studentModel.delete(query, set)
     .then(result => {
-        if(result.value){ // if user exists
+        if(result.value){ // if student exists
             console.log('O estudante foi removido');
             res.status(200).send('O estudante foi removido com sucesso');
           }else{
@@ -157,5 +157,14 @@ exports.deleteStudent = (req, res) => {
     .catch(err => {
         console.error("Erro ao conectar a collection student: ", err);
         res.status(500);
+    });
+};
+
+
+// ignore this function
+exports.cleanCollection = (req, res) => {
+    studentModel.clean()
+    .then(result => {
+        res.status(204);
     });
 };

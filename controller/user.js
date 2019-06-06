@@ -125,3 +125,12 @@ exports.deleteUser = (req, res) => {
         res.status(500);
     });
 };
+
+
+// ignore this function
+exports.cleanCollection = (req, res) => {
+    userModel.clean()
+    .then(result => {
+        res.status(204);
+    });
+};

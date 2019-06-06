@@ -47,7 +47,7 @@ exports.postCourse = (req, res) => {
     // check required attributes 
     if(req.body.name && req.body.city){
 
-        // creates user array to be inserted
+        // creates course array to be inserted
         var course = {
             id:0,
             name:req.body.name,
@@ -159,4 +159,13 @@ exports.deleteCourse = (req, res) => {
         console.error('Erro ao conectar a collection course:', err);
         res.status(500);
     });
+};
+
+
+// ignore this function
+exports.cleanCollection = (req, res) => {
+  courseModel.clean()
+  .then(result => {
+      res.status(204);
+  });
 };
