@@ -30,7 +30,16 @@ describe('PUT /api/v1/user', function() {
     .then(function(res) { 
       assert.equal(res.status, 401);
     }); 
-  })
+  });
+
+  it('it should NOT PUT user 3 (not exists)', () => {
+    return request(app)
+    .put('/api/v1/user/3')
+    .send({ name: "UserNotExists", lastName: "UserNotExists", profile: "admin" })
+    .then(function(res) { 
+      assert.equal(res.status, 401);
+    });
+  });
 });
 
 describe('PUT /api/v1/teacher', function() {
@@ -59,7 +68,16 @@ describe('PUT /api/v1/teacher', function() {
     .then(function(res) { 
       assert.equal(res.status, 401);
     }); 
-  })
+  });
+
+  it('it should NOT PUT teacher 3 (not exists)', () => {
+    return request(app)
+    .put('/api/v1/teacher/3')
+    .send({ name: "TeacherNotExists", lastName: "TeacherNotExists", phd:true })
+    .then(function(res) { 
+      assert.equal(res.status, 401);
+    });
+  });
 });
 
 describe('PUT /api/v1/course', function() {
@@ -79,7 +97,16 @@ describe('PUT /api/v1/course', function() {
     .then(function(res) { 
       assert.equal(res.status, 401);
     }); 
-  })
+  });
+
+  it('it should NOT PUT course 2 (not exists)', () => {
+    return request(app)
+    .put('/api/v1/course/2')
+    .send({ name:"CourseNotExists", period:"CourseNotExists", city:"CourseNotExists", teacher:[1,2]})
+    .then(function(res) { 
+      assert.equal(res.status, 401);
+    });
+  });
 });
 
 describe('PUT /api/v1/student', function() {
@@ -118,4 +145,13 @@ describe('PUT /api/v1/student', function() {
       assert.equal(res.status, 401);
     }); 
   })
+
+  it('it should NOT PUT student 2 (not exists)', () => {
+    return request(app)
+    .put('/api/v1/student/2')
+    .send({ name: "StudentNotExists", lastName: "StudentNotExists", age: 18, course:[1] })
+    .then(function(res) { 
+      assert.equal(res.status, 401);
+    });
+  });
 });

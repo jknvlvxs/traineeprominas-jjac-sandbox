@@ -52,7 +52,7 @@ describe('POST /api/v1/teacher', function() {
     });
   });
 
-  it('it should NOT POST a teacher without "phd=true"', () => {
+  it('it should NOT POST a teacher with "phd=false"', () => {
     return request(app)
     .post('/api/v1/teacher')
     .send({ name: "Name3", lastName: "LastName3", phd:false })
@@ -72,7 +72,7 @@ describe('POST /api/v1/course', function() {
     });
   });
 
-  it('it should NOT POST a course without more than 2 teachers', () => {
+  it('it should NOT POST a course with less than 2 teachers', () => {
     return request(app)
     .post('/api/v1/course')
     .send({ name:"Name2", period:"Period2", city:"City2", teacher:[1]})

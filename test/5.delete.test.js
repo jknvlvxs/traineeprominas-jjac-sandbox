@@ -31,7 +31,7 @@ describe('DELETE /api/v1/user', function() {
 });
 
 describe('DELETE /api/v1/teacher', function() {
-  it('it should DELETE teacher 1"', () => {
+  it('it should DELETE teacher 1', () => {
     return request(app)
     .delete('/api/v1/teacher/1')
     .then(function(res) { 
