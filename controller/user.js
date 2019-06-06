@@ -55,7 +55,6 @@ exports.postUser = (req, res) => {
             status:1
         };
 
-        // verifies whether user fits as model business rules
             // send to model
             userModel.post(user)
             .then(result => {
@@ -82,24 +81,25 @@ exports.putUser = (req, res) => {
         let query = {'id': parseInt(req.params.id), 'status': 1};
         let set = {name: req.body.name, lastName: req.body.lastName, profile: req.body.profile};
         
-        // verifies whether user fits as model business rules
-        if(userModel.put(query, set)){
             // send to model
             userModel.put(query, set)
             .then(result => {
-                if(result.value){ // if user exists
-                    res.status(201).send('Usuário editado com sucesso!');
+                if(result != false){
+                    if(result.value){ // if user exists
+                        res.status(201).send('Usuário editado com sucesso!');
+                    }else{
+                        res.status(401).send('Não é possível editar usuário inexistente');
+                    }
                 }else{
-                    res.status(401).send('Não é possível editar usuário inexistente');
+                    res.status(401).send('Não é possível editar usuário (profile inválido)');                    
                 }
             })
+            
             .catch(err => {
                 console.error("Erro ao conectar a collection user: ", err);
                 res.status(500);
             });
-        }else{
-            res.status(401).send('Não foi possível editar o usuário (profile inválido)');
-        }   
+        
     }else{
         res.status(401).send('Não foi possível editar o usuário');
     }
