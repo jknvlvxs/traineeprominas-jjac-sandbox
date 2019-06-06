@@ -70,7 +70,11 @@ exports.postStudent = (req, res) => {
             // send to model
             studentModel.post(student)
             .then(result => {
-                res.status(201).send('Estudante cadastrado com sucesso!');
+                if(result != false){
+                    res.status(201).send('Estudante cadastrado com sucesso!');
+                }else{
+                    res.status(401).send('Não foi possível cadastrar o estudante (idade ou curso inválido(s))');
+                }
             })
             .catch(err => {
                 console.error("Erro ao conectar a collection student: ", err);
@@ -114,7 +118,11 @@ exports.putStudent = (req, res) => {
             // send to model
             studentModel.put(query, set)
             .then(result => {
-                res.status(201).send('Estudante editado com sucesso!');
+                if(result != false){
+                    res.status(201).send('Estudante editado com sucesso!');
+                }else{
+                    res.status(401).send('Não foi possível editar o estudante (idade ou curso inválido)');
+                }
             })
             .catch(err => {
                 console.error("Erro ao conectar a collection student: ", err);

@@ -1,6 +1,8 @@
 const database = require('../database');
 const collection = database.getCollection('student');
 
+var id;
+
 
 exports.getAll = (query, projection) => {
     return collection.find(query, projection).toArray();
@@ -10,13 +12,25 @@ exports.getFiltered = (query, projection) => {
     return collection.find(query, projection).toArray();
 };
 
-exports.post = (user) => {
-    user.id = ++id;
-    return collection.insertOne(user);
+exports.post = (student) => {
+  if (student.age >= 17 && student.course.teacher.length >= 2){
+    student.id = ++id;    
+    return collection.insertOne(student);
+  }else{
+    return new Promise((resolve, reject) => {
+      resolve(false);
+    });
+  }
 };
 
 exports.put = (query, set) => {
-  return collection.findOneAndUpdate(query, set);
+  if (query.age >= 17 && query.course.teacher.length >= 2){
+    return collection.findOneAndUpdate(query, set);
+  }else{
+    return new Promise((resolve, reject) => {
+      resolve(false);
+    });
+  }
 };
 
 exports.delete = (query, set) => {
