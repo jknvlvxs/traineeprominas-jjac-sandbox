@@ -43,8 +43,6 @@ exports.getFilteredCourse = (req,res) => {
 };
 
 exports.postCourse = (req, res) => {
-    // wrongInsert contains the invalid ids entered
-    var wrongInsert = [];
 
     // check required attributes 
     if(req.body.name && req.body.city){
@@ -68,7 +66,6 @@ exports.postCourse = (req, res) => {
           for(let i = course.teacher.length-1; i > -1 ; i--){
             teacher = await teacherModel.getTeacher(course.teacher[i]);
             if(teacher == null){
-              wrongInsert.unshift(course.teacher[i]);
               course.teacher.splice(i, 1);
             }else{ // if teacher exists
               course.teacher[i] = teacher[0]; 
@@ -79,19 +76,11 @@ exports.postCourse = (req, res) => {
         // send to model
         courseModel.post(course)
         .then(result => {
-            if(course.teacher != undefined){
-                if(course.teacher.length > 0){ // if teacher exists
-                  res.status(201).send('Curso cadastrado com sucesso!');            
-                }else{
-                  if(wrongInsert.length == 0){
-                    res.status(201).send('O curso foi cadastrado com o sucesso, porém não lhe foi atribuído nenhum professor');
-                  }else{
-                    res.status(201).send('O curso foi cadastrado com o sucesso, porém o(s) professor(s) ' + wrongInsert+ ' não existe(m)');
-                  }
-                }
-              }else{
-                res.status(201).send('O curso foi cadastrado com o sucesso, porém não lhe foi atribuído nenhum professor');
-              }
+          if(result != false){
+            res.status(201).send('Curso cadastrado com sucesso!');
+          }else{
+            res.status(401).send('Não foi possível cadastrar o curso (necessário pelo menos 2 professores)');
+          }
         })
         .catch(err => {
             console.error('Erro ao conectar a collection course:', err);
@@ -122,7 +111,6 @@ exports.putCourse = (req, res) => {
         for(let i = course.teacher.length-1; i > -1 ; i--){
           teacher = await teacherModel.getTeacher(course.teacher[i]);
           if(teacher == null){
-            wrongInsert.unshift(course.teacher[i]);
             course.teacher.splice(i, 1);
           }else{ // if teacher exists
             course.teacher[i] = teacher[0]; 
@@ -132,20 +120,12 @@ exports.putCourse = (req, res) => {
               courseModel.put(query, set)
               .then(result => {
               // update course in student
-              studentModel.updateCourse(parseInt(req.params.id), result.value);
-                  if(course.teacher != undefined){
-                      if(course.teacher.length > 0){ // if teacher exists
-                        res.status(201).send('Curso cadastrado com sucesso!');            
-                      }else{
-                        if(wrongInsert.length == 0){
-                          res.status(201).send('O curso foi cadastrado com o sucesso, porém não lhe foi atribuído nenhum professor');
-                        }else{
-                          res.status(201).send('O curso foi cadastrado com o sucesso, porém o(s) professor(s) ' + wrongInsert+ ' não existe(m)');
-                        }
-                      }
-                    }else{
-                      res.status(201).send('O curso foi cadastrado com o sucesso, porém não lhe foi atribuído nenhum professor');
-                    }
+                if(result != false){
+                  res.status(201).send('Curso editado com sucesso!');
+                  studentModel.updateCourse(parseInt(req.params.id), result.value);
+                }else{
+                  res.status(401).send('Não foi possível editar o curso (necessário pelo menos 2 professores)');
+                }
               })
               .catch(err => {
                   console.error('Erro ao conectar a collection course:', err);
