@@ -100,7 +100,7 @@ exports.putStudent = (req, res) => {
         };
 
         //  define set for update    
-        let set = {$set:{name: req.body.name, lastName: req.body.lastName, age: req.body.age, course: student.course}};
+        let set = {name: req.body.name, lastName: req.body.lastName, age: req.body.age, course: student.course};
 
         (async () => {
           // receive the course related to the inserted id  
@@ -119,7 +119,7 @@ exports.putStudent = (req, res) => {
             studentModel.put(query, set)
             .then(result => {
                 if(result != false){
-                    res.status(201).send('Estudante editado com sucesso!');
+                    res.status(200).send('Estudante editado com sucesso!');
                 }else{
                     res.status(401).send('Não foi possível editar o estudante (idade ou curso inválido)');
                 }

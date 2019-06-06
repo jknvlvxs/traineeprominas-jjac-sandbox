@@ -86,7 +86,7 @@ exports.putUser = (req, res) => {
             .then(result => {
                 if(result != false){
                     if(result.value){ // if user exists
-                        res.status(201).send('Usuário editado com sucesso!');
+                        res.status(200).send('Usuário editado com sucesso!');
                     }else{
                         res.status(401).send('Não é possível editar usuário inexistente');
                     }

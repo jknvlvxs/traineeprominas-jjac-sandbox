@@ -86,7 +86,7 @@ exports.putTeacher = (req, res) => {
         .then(async (result) => {
             if(result.value){ // if professor exists
                 if(result != false){
-                    res.status(201).send('Professor editado com sucesso!');
+                    res.status(200).send('Professor editado com sucesso!');
 
                      //  updates the course that contains this teacher
                 await courseModel.updateTeacher(parseInt(req.params.id), result.value);
