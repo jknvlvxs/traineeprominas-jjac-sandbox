@@ -3,6 +3,9 @@ const collection = database.getCollection('student');
 
 var id;
 
+(async () => {
+  id = await collection.countDocuments({});
+})();
 
 exports.getAll = (query, projection) => {
     return collection.find(query, projection).toArray();
@@ -13,7 +16,7 @@ exports.getFiltered = (query, projection) => {
 };
 
 exports.post = (student) => {
-  if (student.age >= 17 && student.course.teacher.length >= 2){
+  if (student.age >= 17 && student.course.length == 1){
     student.id = ++id;    
     return collection.insertOne(student);
   }else{
@@ -24,8 +27,8 @@ exports.post = (student) => {
 };
 
 exports.put = (query, set) => {
-  if (query.age >= 17 && query.course.teacher.length >= 2){
-    return collection.findOneAndUpdate(query, set);
+  if (set.age >= 17 && set.course.length == 1){
+    return collection.findOneAndUpdate(query, {$set:set});
   }else{
     return new Promise((resolve, reject) => {
       resolve(false);

@@ -3,6 +3,10 @@ const collection = database.getCollection('course');
 
 var id;
 
+(async () => {
+  id = await collection.countDocuments({});
+})();
+
 exports.getAll = (query, projection) => {
   return collection.find(query, projection).toArray();
 };
@@ -23,8 +27,8 @@ exports.post = (course) => {
 };
 
 exports.put = (query, set) => {
-  if(course.teacher.length >= 2){
-    course.id = ++id;
+  if(set.teacher.length >= 2){
+    set.id = ++id;
     return collection.findOneAndUpdate(query, {$set: set}, {returnOriginal:false} );
   }else{
     return new Promise((resolve, reject) => {
@@ -50,5 +54,5 @@ exports.deleteTeacher = (id) => {
 };
 
 exports.getCoursebyTeacher = () => {
-  return collectionCourse.find({"status":1}).toArray();
+  return collection.find({"status":1}).toArray();
 };
