@@ -58,7 +58,11 @@ exports.postTeacher = (req, res) => {
         // send to model
         teacherModel.post(teacher)
         .then(result => {
-            res.status(201).send('Professor cadastrado com sucesso!');
+            if(result != false){
+                res.status(201).send('Professor cadastrado com sucesso!');
+            }else{
+                res.status(401).send('Não foi possível cadastrar o professor (phd inválido)');
+            }
         })
         .catch(err => {
             console.error("Erro ao conectar a collection teacher: ", err);
@@ -81,9 +85,10 @@ exports.putTeacher = (req, res) => {
         teacherModel.put(query, set)
         .then(async (result) => {
             if(result.value){ // if professor exists
-                res.status(201).send('Professor editado com sucesso!');
+                if(result != false){
+                    res.status(201).send('Professor editado com sucesso!');
 
-                //  updates the course that contains this teacher
+                     //  updates the course that contains this teacher
                 await courseModel.updateTeacher(parseInt(req.params.id), result.value);
 
                 // receives the updated teacher and updates the student that contains this teacher
@@ -92,6 +97,9 @@ exports.putTeacher = (req, res) => {
                         studentModel.updateTeacher(courses[i]);
                       }
             });
+                }else{
+                    res.status(401).send('Não foi possível editar o professor (phd inválido)');
+                }
             }else{
                 res.status(401).send('Não é possível editar professor inexistente');
             }
