@@ -120,8 +120,12 @@ exports.putCourse = (req, res) => {
       .then(result => {
         // update course in student
         if(result != false){
-          res.status(200).send('Curso editado com sucesso!');
-          studentModel.updateCourse(parseInt(req.params.id), result.value);
+          if(result.value){
+            res.status(200).send('Curso editado com sucesso!');
+            studentModel.updateCourse(parseInt(req.params.id), result.value);
+          }else{
+            res.status(401).send('Não é possível editar curso inexistente');
+          }
         }else{
           res.status(401).send('Não foi possível editar o curso (necessário pelo menos 2 professores)');
         }

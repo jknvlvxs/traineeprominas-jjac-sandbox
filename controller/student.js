@@ -119,7 +119,11 @@ exports.putStudent = (req, res) => {
             studentModel.put(query, set)
             .then(result => {
                 if(result != false){
-                    res.status(200).send('Estudante editado com sucesso!');
+                    if(result.value){
+                        res.status(200).send('Estudante editado com sucesso!'); 
+                    }else{
+                        res.status(401).send('Não é possível editar estudante inexistente');
+                    }
                 }else{
                     res.status(401).send('Não foi possível editar o estudante (idade ou curso inválido)');
                 }
