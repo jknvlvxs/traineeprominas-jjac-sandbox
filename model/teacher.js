@@ -32,7 +32,7 @@ exports.put = (query, set) => {
   }else{
     return new Promise((resolve, reject) => {
       resolve(false);
-  });
+    });
   }
 };
 
@@ -43,8 +43,3 @@ exports.delete = (query, set) => {
 exports.getTeacher = (id) => {
   return collection.find({'id':id, 'status':1}).toArray();
 };
-
-// ignore this function
-exports.clean = () => {
-  return collection.drop();
-}

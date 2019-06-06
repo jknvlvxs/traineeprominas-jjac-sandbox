@@ -55,8 +55,3 @@ exports.deleteTeacher = (id) => {
 exports.getCoursebyTeacher = () => {
   return collection.find({"status":1}).toArray();
 };
-
-// ignore this function
-exports.clean = () => {
-  return collection.drop();
-}

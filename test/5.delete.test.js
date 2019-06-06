@@ -20,6 +20,14 @@ describe('DELETE /api/v1/user', function() {
       assert.equal(res.status, 200);
     });
   });
+
+  it('it should NOT DELETE user 3 (not exists)', () => {
+    return request(app)
+    .delete('/api/v1/user/3')
+    .then(function(res) { 
+      assert.equal(res.status, 204);
+    });
+  });
 });
 
 describe('DELETE /api/v1/teacher', function() {
@@ -38,6 +46,14 @@ describe('DELETE /api/v1/teacher', function() {
       assert.equal(res.status, 200);
     });
   });
+
+  it('it should NOT DELETE teacher 3 (not exists)', () => {
+    return request(app)
+    .delete('/api/v1/teacher/3')
+    .then(function(res) { 
+      assert.equal(res.status, 204);
+    });
+  });
 });
 
 describe('DELETE /api/v1/student', function() {
@@ -48,6 +64,14 @@ describe('DELETE /api/v1/student', function() {
       assert.equal(res.status, 200);
     });
   });
+
+  it('it should NOT DELETE student 2 (not exists)', () => {
+    return request(app)
+    .delete('/api/v1/student/2')
+    .then(function(res) { 
+      assert.equal(res.status, 204);
+    });
+  });
 });
 
 describe('DELETE /api/v1/course', function() {
@@ -56,6 +80,14 @@ describe('DELETE /api/v1/course', function() {
     .delete('/api/v1/course/1')
     .then(function(res) { 
       assert.equal(res.status, 200);
+    });
+  });
+
+  it('it should NOT DELETE course 2 (not exists)', () => {
+    return request(app)
+    .delete('/api/v1/course/2')
+    .then(function(res) { 
+      assert.equal(res.status, 204);
     });
   });
 });
