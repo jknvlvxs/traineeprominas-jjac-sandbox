@@ -11,6 +11,9 @@ database
   .connect()
   .then(() => {
 
+    app.get(baseAPI, function (req, res) {
+      res.status(200).send('Hello World!');
+    });
   
 app.use(baseAPI+'/student', require('./routes/student'));
 app.use(baseAPI+'/user', require('./routes/user'));
