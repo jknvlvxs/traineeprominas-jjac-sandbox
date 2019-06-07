@@ -26,10 +26,9 @@ exports.postUser = (req, res) => {
 exports.putUser = (req, res) => {
 	//  define query and set for search and update    
 	let query = {'id': parseInt(req.params.id), 'status': 1};
-	let set = {name: req.body.name, lastName: req.body.lastName, profile: req.body.profile};
 		
 	// send to model
-	return userModel.put(req, res, query, set)
+	return userModel.put(req, res, query)
 };
 
 exports.deleteUser = (req, res) => {
@@ -37,9 +36,9 @@ exports.deleteUser = (req, res) => {
 	let query = {'id': parseInt(req.params.id), 'status':1};
 
 	// send to model
-	return userModel.delete(req, res, query)
+	return userModel.delete(res, query)
 };
 
-exports.clean = (req, res) => {
-	return userModel.clean(res);
-}
+// exports.clean = (req, res) => {
+// 	return userModel.clean(res);
+// }

@@ -82,7 +82,7 @@ exports.put = (req, res, query) => {
 	})
 };
 
-exports.delete = (req, res, query) => {
+exports.delete = (res, query) => {
 	return collection.findOneAndUpdate(query, {$set: {status:0}})
 	.then(result => {
 		if(result.value){ // if user exists
@@ -99,13 +99,13 @@ exports.delete = (req, res, query) => {
 	});
 };
 
-exports.clean = (res) =>{
-	return collection.deleteMany({})
-	.then(result => {
-		res.status(204).send();
-	})
-	.catch(err => {
-		console.error("Erro ao conectar a collection user: ", err);
-		res.status(500);
-	});
-}
+// exports.clean = (res) =>{
+// 	return collection.deleteMany({})
+// 	.then(result => {
+// 		res.status(204).send();
+// 	})
+// 	.catch(err => {
+// 		console.error("Erro ao conectar a collection user: ", err);
+// 		res.status(500);
+// 	});
+// }
