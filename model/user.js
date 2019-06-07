@@ -1,23 +1,15 @@
 const database = require('../database');
 const collection = database.getCollection('user');
 // 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
 var id;
 (async () => {
     id = await collection.countDocuments({});
 })();
+//
 
-var userSchema = new Schema({
-    id: {type: Number, required: true, unique: true},
-    name: {type: String, required: true},
-    lastName: {type: String, required: true},
-    profile: {type: String, required: true, enum:['guess','admin']},
-    status: {type: Number, required: true}
-});
-
-var User = mongoose.model('User', userSchema);
+const mongoose = require('mongoose');
+const userSchema = require('./schema').userSchema;
+const User = mongoose.model('User', userSchema);
 
 exports.getAll = (res, query, projection) => {
     return collection.find(query, projection).toArray()

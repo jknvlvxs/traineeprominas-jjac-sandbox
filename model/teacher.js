@@ -3,22 +3,13 @@ const collection = database.getCollection('teacher');
 const courseModel = require('./course');
 const studentModel = require('./student');
 // 
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
 var id;
 (async () => {
      id = await collection.countDocuments({});
 })();
-
-var teacherSchema = new Schema({
-  id: {type: Number, required: true, unique: true},
-  name: {type: String, required: true},
-  lastName: {type: String, required: true},
-  phd: {type: Boolean, required: true, validate: [val => {return val == true}, 'É obrigatório o professor possuir phd']},
-  status: {type: Number, required: true}
-});
-
+//
+const mongoose = require('mongoose');
+const teacherSchema = require('./schema').teacherSchema;
 var Teacher = mongoose.model('Teacher', teacherSchema);
 
 exports.getAll = (req, res, query, projection) => {
