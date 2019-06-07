@@ -1,7 +1,7 @@
 const database = require('../database');
 const collection = database.getCollection('teacher');
-const courseModel = require('../model/course');
-const studentModel = require('../model/student');
+const courseModel = require('./course');
+const studentModel = require('./student');
 
 var id;
 

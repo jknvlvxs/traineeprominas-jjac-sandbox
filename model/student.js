@@ -7,37 +7,96 @@ var id;
   id = await collection.countDocuments({});
 })();
 
-exports.getAll = (query, projection) => {
-    return collection.find(query, projection).toArray();
+exports.getAll = (res, query, projection) => {
+    return collection.find(query, projection).toArray()
+    .then(students => {
+      if(students.length > 0){
+          res.status(200).send(students);        
+      }else{
+          res.status(404).send('Nenhum estudante cadastrado');
+      }
+  })
+  .catch(err => {
+      console.error("Erro ao conectar a collection student: ", err);
+      res.status(500);
+  });
 };
 
-exports.getFiltered = (query, projection) => {
-    return collection.find(query, projection).toArray();
+exports.getFiltered = (res, query, projection) => {
+    return collection.find(query, projection).toArray()
+    .then(student => {
+      if(student.length > 0){
+          res.status(200).send(student);
+      }else{
+          res.status(404).send('O estudante não foi encontrado');
+      }
+  })
+  .catch(err => {
+      console.error("Erro ao conectar a collection student: ", err);
+      res.status(500);
+  });
 };
 
-exports.post = (student) => {
-  if (student.age >= 17 && student.course.length == 1){
+exports.post = (res, student) => {
+  // check required attributes
+  if (student.name && student.lastName && student.age >= 17 && student.course.length == 1){
     student.id = ++id;    
-    return collection.insertOne(student);
+    return collection.insertOne(student)
+    .then(result => {
+      if(result != false){
+          res.status(201).send('Estudante cadastrado com sucesso!');
+      }else{
+          res.status(401).send('Não foi possível cadastrar o estudante (idade ou curso inválido(s))');
+      }
+  })
+  .catch(err => {
+      console.error("Erro ao conectar a collection student: ", err);
+      res.status(500);
+  });
   }else{
-    return new Promise((resolve, reject) => {
-      resolve(false);
-    });
+    res.status(401).send('Não foi possível cadastrar o estudante');
   }
 };
 
-exports.put = (query, set) => {
-  if (set.age >= 17 && set.course.length == 1){
-    return collection.findOneAndUpdate(query, {$set:set});
+exports.put = (res, query, student) => {
+  // check required attributes
+  if (student.name && student.lastName && student.age >= 17 && student.course.length == 1){
+    return collection.findOneAndUpdate(query, {$set:student})
+    .then(result => {
+      if(result != false){
+          if(result.value){
+              res.status(200).send('Estudante editado com sucesso!'); 
+          }else{
+              res.status(401).send('Não é possível editar estudante inexistente');
+          }
+      }else{
+          res.status(401).send('Não foi possível editar o estudante (idade ou curso inválido)');
+      }
+  })
+  .catch(err => {
+      console.error("Erro ao conectar a collection student: ", err);
+      res.status(500);
+  });
   }else{
-    return new Promise((resolve, reject) => {
-      resolve(false);
-    });
+    res.status(401).send('Não foi possível editar o estudante');
   }
 };
 
-exports.delete = (query, set) => {
-  return collection.findOneAndUpdate(query, set);
+exports.delete = (res, query, set) => {
+  return collection.findOneAndUpdate(query, set)
+  .then(result => {
+    if(result.value){ // if student exists
+        console.log('O estudante foi removido');
+        res.status(200).send('O estudante foi removido com sucesso');
+      }else{
+        console.log('Nenhum estudante foi removido');
+        res.status(204).send();
+      }
+})
+.catch(err => {
+    console.error("Erro ao conectar a collection student: ", err);
+    res.status(500);
+});
 };
 
 exports.updateCourse = (id, set) => {
