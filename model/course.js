@@ -59,30 +59,30 @@ exports.post = (req, res) => {
 	})
 };
 
-exports.put = (req, res, query, course) => {
-	// check required attributes
-	if(course.name && course.city && course.period && course.teacher.length >= 2){
-		return collection.findOneAndUpdate(query, {$set: course}, {returnOriginal:false} )
-		.then(result => {
-			// update course in student
-			if(result != false){
+exports.put = (req, res, query) => {
+	let course = ({id:parseInt(req.params.id), name: req.body.name, period: req.body.period || 8, city: req.body.city, teacher: req.body.teacher, status: 1});
+	let validate = new Course(course);
+
+	validate.validate(error =>{
+		if(!error){
+			return collection.findOneAndUpdate(query, {$set: course}, {returnOriginal:false} )
+			.then(result => {
+				// update course in student
 				if(result.value){
 					res.status(200).send('Curso editado com sucesso!');
 					studentModel.updateCourse(parseInt(req.params.id), result.value);
 				}else{
 					res.status(401).send('Não é possível editar curso inexistente');
 				}
-			}else{
-				res.status(401).send('Não foi possível editar o curso (necessário pelo menos 2 professores)');
-			}
-		})
-		.catch(err => {
-				console.error('Erro ao conectar a collection course:', err);
-				res.status(500);
-		});
-	}else{
-		res.status(401).send('Não foi possível editar o curso');
-	}
+			})
+			.catch(err => {
+					console.error('Erro ao conectar a collection course:', err);
+					res.status(500);
+			});
+		}else{
+			res.status(401).send('Não foi possível editar o curso');
+		}
+	})	
 };
 
 exports.delete = (req, res, query, set) => {

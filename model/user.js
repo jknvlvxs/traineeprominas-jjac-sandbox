@@ -41,7 +41,7 @@ exports.getFiltered = (res, query, projection) => {
 };
 
 exports.post = (req, res) => {
-	var user = new User({id: ++id, name: req.body.name, lastName: req.body.lastName, profile: req.body.profile, status: 1});
+	let user = new User({id: ++id, name: req.body.name, lastName: req.body.lastName, profile: req.body.profile, status: 1});
 	user.validate(error => {
 		if(!error){
 			return collection.insertOne(user)
@@ -59,28 +59,27 @@ exports.post = (req, res) => {
 };
 
 exports.put = (req, res, query) => {
-	// var user = n
-	if(user.name && user.lastName && user.profile == 'guess' || user.profile == 'admin'){
-		return collection.findOneAndUpdate(query, {$set: user})
-		.then(result => {
-			if(result != false){
-				if(result.value){ // if user exists
+	let user = ({id:parseInt(req.params.id), name: req.body.name, lastName: req.body.lastName, profile: req.body.profile, status: 1});
+	let validate = new User(user);
+	
+	validate.validate(error =>{
+		if(!error){
+			return collection.findOneAndUpdate(query, {$set: user})
+			.then(result => {
+				if(result.value){
 					res.status(200).send('Usuário editado com sucesso!');
 				}else{
-					res.status(401).send('Não é possível editar usuário inexistente');
+					res.status(401).send('Não é possível editar usuário inexistente');                    
 				}
-			}else{
-				res.status(401).send('Não é possível editar usuário (profile inválido)');                    
-			}
-		})
-		
-		.catch(err => {
-			console.error("Erro ao conectar a collection user: ", err);
-			res.status(500);
-		});
-	}else{
-		res.status(401).send('Não é possível editar usuário');                            
-	}
+			})
+			.catch(err => {
+				console.error("Erro ao conectar a collection user: ", err);
+				res.status(500);
+			});
+		}else{
+			res.status(401).send('Não é possível editar usuário');                            
+		}
+	})
 };
 
 exports.delete = (req, res, query) => {
