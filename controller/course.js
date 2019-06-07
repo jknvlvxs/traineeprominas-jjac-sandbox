@@ -1,6 +1,5 @@
 const courseModel = require('../model/course');
 const teacherModel = require('../model/teacher');
-const studentModel = require('../model/student');
 
 exports.getAllCourses = (req, res) => {
   //  define query and projection for search
@@ -8,18 +7,7 @@ exports.getAllCourses = (req, res) => {
   let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
 
   // send to model
-  courseModel.getAll(query, projection)
-  .then(courses => {
-    if(courses.length > 0){
-      res.status(200).send(courses);        
-    }else{
-      res.status(404).send('Nenhum curso cadastrado');
-    }
-  })
-  .catch(err => {
-    console.error('Erro ao conectar a collection course:', err);
-    res.status(500);
-  });
+  return courseModel.getAll(res, query, projection)
 };
 
 exports.getFilteredCourse = (req,res) => {
@@ -28,23 +16,11 @@ exports.getFilteredCourse = (req,res) => {
   let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
 
   // send to model
-  courseModel.getFiltered(query, projection)
-  .then(course => {
-    if(course.length > 0){
-      res.status(200).send(course);        
-    }else{
-      res.status(404).send('O curso não foi encontrado');
-    }
-  })
-  .catch(err => {
-    console.error('Erro ao conectar a collection course:', err);
-    res.status(500);
-  });
+  return courseModel.getFiltered(res, query, projection)
 };
 
 exports.postCourse = (req, res) => {
-  // check required attributes 
-  if(req.body.name && req.body.city){
+
 
     // creates course array to be inserted
     var course = {
@@ -73,30 +49,13 @@ exports.postCourse = (req, res) => {
       }
         
       // send to model
-      courseModel.post(course)
-      .then(result => {
-        if(result != false){
-          res.status(201).send('Curso cadastrado com sucesso!');
-        }else{
-          res.status(401).send('Não foi possível cadastrar o curso (necessário pelo menos 2 professores)');
-        }
-      })
-      .catch(err => {
-        console.error('Erro ao conectar a collection course:', err);
-        res.status(500);
-      });
+      return courseModel.post(res, course)
     })();
-  }else{
-      res.status(401).send('Não foi possível cadastrar o curso');
-  }
 };
 
 exports.putCourse = (req, res) => {
   // define query for search
   let query = {'id': parseInt(req.params.id),'status': 1};
-
-  // check required attributes
-  if(req.body.name && req.body.period && req.body.city){
 
       // creates course array to update
     var course = {
@@ -116,28 +75,8 @@ exports.putCourse = (req, res) => {
         }
       }
       // send to model
-      courseModel.put(query, set)
-      .then(result => {
-        // update course in student
-        if(result != false){
-          if(result.value){
-            res.status(200).send('Curso editado com sucesso!');
-            studentModel.updateCourse(parseInt(req.params.id), result.value);
-          }else{
-            res.status(401).send('Não é possível editar curso inexistente');
-          }
-        }else{
-          res.status(401).send('Não foi possível editar o curso (necessário pelo menos 2 professores)');
-        }
-      })
-      .catch(err => {
-          console.error('Erro ao conectar a collection course:', err);
-          res.status(500);
-      });
+      return courseModel.put(res, query, set)
     })();
-  }else{
-    res.status(401).send('Não foi possível editar o curso');
-  }
 };
 
 exports.deleteCourse = (req, res) => {
@@ -146,20 +85,5 @@ exports.deleteCourse = (req, res) => {
   let set = {status:0};
 
   // send to model
-  courseModel.delete(query, set)
-  .then(result => {
-    // delete course in student
-    studentModel.deleteCourse(parseInt(req.params.id));
-    if(result.value){
-      console.log('O curso foi removido');
-      res.status(200).send('O curso foi removido com sucesso');
-    }else{
-      console.log('Nenhum curso foi removido');
-      res.status(204).send();
-    }
-  })
-  .catch(err => {
-    console.error('Erro ao conectar a collection course:', err);
-    res.status(500);
-  });
+  return courseModel.delete(res, query, set)
 };
