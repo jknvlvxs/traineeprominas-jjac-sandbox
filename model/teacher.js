@@ -12,9 +12,11 @@ var id;
 })();
 
 var teacherSchema = new Schema({
-  name: String,
-  lastName: String,
-  phd: Boolean
+  id: {type: Number, required: true},
+  name: {type: String, required: true},
+  lastName: {type: String, required: true},
+  phd: {type: Boolean, required: true},
+  status: {type: Number, required: true}
 });
 
 var Teacher = mongoose.model('Teacher', teacherSchema);
@@ -49,25 +51,23 @@ exports.getFiltered = (req, res, query, projection) => {
   });
 };
 
-exports.post = (req, res, teacher) => {
-  // check required attributes    
-  if (teacher.name && teacher.lastName && teacher.phd == true){
-    teacher.id = ++id;
-    return collection.insertOne(teacher);  
-  }else{
-    res.status(401).send('Não foi possível cadastrar o professor')
-    .then(result => {
-      if(result != false){
-          res.status(201).send('Professor cadastrado com sucesso!');
-      }else{
-          res.status(401).send('Não foi possível cadastrar o professor (phd inválido)');
-      }
+exports.post = (req, res) => {
+    var teacher = new Teacher({id: ++id, name: req.body.name, lastName: req.body.lastName, phd: req.body.phd, status: 1});
+    teacher.validate(error => {
+        if(!error && teacher.phd == true){
+            return collection.insertOne(teacher) 
+            .then(result => {
+                res.status(201).send('Professor cadastrado com sucesso!');
+            })
+            .catch(err => {
+                console.error("Erro ao conectar a collection teacher: ", err);
+                res.status(500);
+            });
+        }else{
+            res.status(401).send('Não foi possível cadastrar o professor (phd inválido)');
+        }
     })
-    .catch(err => {
-        console.error("Erro ao conectar a collection teacher: ", err);
-        res.status(500);
-    });
-  }
+   
 };
 
 exports.put = (req, res, query, teacher) => {
@@ -134,3 +134,14 @@ exports.delete = (req, res, query, set) => {
 exports.getTeacher = (id) => {
   return collection.find({'id':id, 'status':1}).toArray();
 };
+
+exports.clean = (res) =>{
+  return collection.deleteMany({})
+  .then(result => {
+      res.status(204).send();
+  })
+  .catch(err => {
+      console.error("Erro ao conectar a collection user: ", err);
+      res.status(500);
+  });
+}

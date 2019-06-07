@@ -6,18 +6,20 @@ const Schema = mongoose.Schema;
 
 var id;
 (async () => {
-     id = await collection.countDocuments({});
+    id = await collection.countDocuments({});
 })();
 
 var userSchema = new Schema({
-  name: String,
-  lastName: String,
-  profile: String
+    id: {type: Number, required: true},
+    name: {type: String, required: true},
+    lastName: {type: String, required: true},
+    profile: {type: String, required: true, enum:['guess','admin']},
+    status: {type: Number, required: true}
 });
 
 var User = mongoose.model('User', userSchema);
 
-exports.getAll = (req, res, query, projection) => {
+exports.getAll = (res, query, projection) => {
     return collection.find(query, projection).toArray()
         .then(users => {
         if(users.length > 0){ 
@@ -32,7 +34,7 @@ exports.getAll = (req, res, query, projection) => {
     });
 };
 
-exports.getFiltered = (req, res, query, projection) => {
+exports.getFiltered = (res, query, projection) => {
     return collection.find(query, projection).toArray()
     .then(user => {
         if(user.length > 0){
@@ -47,31 +49,27 @@ exports.getFiltered = (req, res, query, projection) => {
     });
 };
 
-exports.post = (req, res, user) => {
-    // check required attributes
-    // var user = new User()
-    if(user.name && user.lastName && user.profile && user.profile == 'guess' || user.profile == 'admin'){
-        user.id = ++id;
-        return collection.insertOne(user)
-        .then(result => {
-            if(result != false){
+exports.post = (req, res) => {
+    var user = new User({id: ++id, name: req.body.name, lastName: req.body.lastName, profile: req.body.profile, status: 1});
+    user.validate(error => {
+        if(!error){
+            return collection.insertOne(user)
+            .then(result => {
                 res.status(201).send('Usuário cadastrado com sucesso!');
-            }else{
-                res.status(401).send('Não foi possível cadastrar o usuário (profile inválido)');
-            }
-        })
-        .catch(err => {
-            console.error("Erro ao conectar a collection user: ", err);
-            res.status(500);
-        });
-    }else{
-        res.status(401).send('Não foi possível cadastrar o usuário (profile inválido)');
-    }
+            })
+            .catch(err => {
+                console.error("Erro ao conectar a collection user: ", err);
+                res.status(500);
+            });
+        }else{
+            res.status(401).send('Não foi possível cadastrar o usuário (profile inválido)');
+        }
+    });
 };
 
-exports.put = (req, res, query, user) => {
-    // check required attributes
-    if(user.name && user.lastName && user.profile && user.profile == 'guess' || user.profile == 'admin'){
+exports.put = (req, res, query) => {
+    // var user = n
+    if(user.name && user.lastName && user.profile == 'guess' || user.profile == 'admin'){
         return collection.findOneAndUpdate(query, {$set: user})
         .then(result => {
             if(result != false){
@@ -90,7 +88,7 @@ exports.put = (req, res, query, user) => {
             res.status(500);
         });
     }else{
-        
+        res.status(401).send('Não é possível editar usuário');                            
     }
 };
 
@@ -110,3 +108,14 @@ exports.delete = (req, res, query) => {
         res.status(500);
     });
 };
+
+exports.clean = (res) =>{
+    return collection.deleteMany({})
+    .then(result => {
+        res.status(204).send();
+    })
+    .catch(err => {
+        console.error("Erro ao conectar a collection user: ", err);
+        res.status(500);
+    });
+}
