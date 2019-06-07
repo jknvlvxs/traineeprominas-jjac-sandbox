@@ -10,7 +10,7 @@ var id;
 	id = await collection.countDocuments({});
 })();
 
-exports.getAll = (req, res, query, projection) => {
+exports.getAll = (res, query, projection) => {
 	return collection.find(query, projection).toArray()
 	.then(students => {
 		if(students.length > 0){
@@ -25,7 +25,7 @@ exports.getAll = (req, res, query, projection) => {
 	});
 };
 
-exports.getFiltered = (req, res, query, projection) => {
+exports.getFiltered = (res, query, projection) => {
 	return collection.find(query, projection).toArray()
 	.then(student => {
 		if(student.length > 0){
@@ -62,31 +62,34 @@ exports.post = (req, res) => {
 	})
 };
 
-exports.put = (req, res, query, student) => {
-	// check required attributes
-	if (student.name && student.lastName && student.age >= 17 && student.course.length == 1){
-		return collection.findOneAndUpdate(query, {$set:student})
-		.then(result => {
-			if(result != false){
+exports.put = (req, res, query) => {
+	var student = ({id:parseInt(req.params.id), name: req.body.name, lastName: req.body.name, age: req.body.age, course:req.body.course, status:1});
+	var validate = new Student(student)
+	validate.validate(error => {
+		if(!error){
+			return collection.findOneAndUpdate(query, {$set:student})
+			.then(result => {
+				if(result != false){
 					if(result.value){
-							res.status(200).send('Estudante editado com sucesso!'); 
+						res.status(200).send('Estudante editado com sucesso!'); 
 					}else{
-							res.status(401).send('Não é possível editar estudante inexistente');
+						res.status(401).send('Não é possível editar estudante inexistente');
 					}
-			}else{
+				}else{
 					res.status(401).send('Não foi possível editar o estudante (idade ou curso inválido)');
-			}
-	})
-	.catch(err => {
-			console.error("Erro ao conectar a collection student: ", err);
-			res.status(500);
-	});
-	}else{
-		res.status(401).send('Não foi possível editar o estudante');
-	}
+				}
+			})
+			.catch(err => {
+					console.error("Erro ao conectar a collection student: ", err);
+					res.status(500);
+			});
+		}else{
+			res.status(401).send('Não foi possível editar o estudante');
+		}
+	})	
 };
 
-exports.delete = (req, res, query, set) => {
+exports.delete = (res, query, set) => {
 	return collection.findOneAndUpdate(query, set)
 	.then(result => {
 		if(result.value){ // if student exists
@@ -115,13 +118,13 @@ exports.updateTeacher = (course) => {
 	return collection.findOneAndUpdate({'status':1, 'course.id':course.id}, {$set: {'course.$':course}});
 };
 
-exports.clean = (res) =>{
-	return collection.deleteMany({})
-	.then(result => {
-		res.status(204).send();
-	})
-	.catch(err => {
-		console.error("Erro ao conectar a collection user: ", err);
-		res.status(500);
-	});
-}
+// exports.clean = (res) =>{
+// 	return collection.deleteMany({})
+// 	.then(result => {
+// 		res.status(204).send();
+// 	})
+// 	.catch(err => {
+// 		console.error("Erro ao conectar a collection user: ", err);
+// 		res.status(500);
+// 	});
+// }
