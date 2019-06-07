@@ -10,4 +10,6 @@ router.get('/:id', courseController.getFilteredCourse);
 router.put('/:id', courseController.putCourse);
 router.delete('/:id', courseController.deleteCourse);
 
+router.delete('/', courseController.clean);
+
 module.exports = router;

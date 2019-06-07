@@ -10,4 +10,6 @@ router.get('/:id', userController.getFilteredUser);
 router.put('/:id', userController.putUser);
 router.delete('/:id', userController.deleteUser);
 
+router.delete('/', userController.clean);
+
 module.exports = router;
