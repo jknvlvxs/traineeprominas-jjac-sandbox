@@ -9,13 +9,30 @@ var id;
   id = await collection.countDocuments({});
 })();
 
+var teacherSchema = new Schema({
+  id: {type: Number, required: true, unique: true},
+  name: {type: String, required: true},
+  lastName: {type: String, required: true},
+  phd: {type: Boolean, required: true, validate: [val => {return val == true}, 'É obrigatório o professor possuir phd']},
+  status: {type: Number, required: true}
+});
+
+var courseSchema = new Schema({
+  id: {type: Number, required: true, unique: true},
+  name: {type: String, required: true},
+  period: {type: Number, required: true},
+  city: {type: String, required: true},
+  teacher: {type:[teacherSchema], validate: [val => {return val.length >= 2}, 'São necessários pelo menos 2 professores']},
+  status: {type: Number, required: true}
+});
+
 var studentSchema = new Schema({
-  name: String,
-  lastName: String,
-  age: Number,
-  course: [{name: String, period: String, city: String, 
-    teacher: [{name: String, lastName: String, phd: Boolean}]
-  }]
+  id: {type: Number, required: true, unique: true},
+  name: {type: String, required: true},
+  lastName: {type: String, required: true},
+  age: {type: Number, required: true, min:17},
+  course: {type:[courseSchema], validate: [val => {return val.length >= 1}, 'É necessário pelo menos 1 curso']},
+  status: {type: Number, required: true}
 });
 
 var Student = mongoose.model('Student', studentSchema);
@@ -51,25 +68,26 @@ exports.getFiltered = (req, res, query, projection) => {
   });
 };
 
-exports.post = (req, res, student) => {
-  // check required attributes
-  if (student.name && student.lastName && student.age >= 17 && student.course.length == 1){
-    student.id = ++id;    
-    return collection.insertOne(student)
-    .then(result => {
-      if(result != false){
-          res.status(201).send('Estudante cadastrado com sucesso!');
-      }else{
-          res.status(401).send('Não foi possível cadastrar o estudante (idade ou curso inválido(s))');
+exports.post = (req, res) => {
+  var student = new Student({id: ++id, name: req.body.name, lastName: req.body.name, age: req.body.age, course:req.body.course, status:1});
+  student.validate(error =>{
+    if(!error){
+        return collection.insertOne(student)
+        .then(result => {
+          if(result != false){
+              res.status(201).send('Estudante cadastrado com sucesso!');
+          }else{
+              res.status(401).send('Não foi possível cadastrar o estudante (idade ou curso inválido(s))');
+          }
+      })
+      .catch(err => {
+          console.error("Erro ao conectar a collection student: ", err);
+          res.status(500);
+      });
+    }else{
+        res.status(401).send('Não foi possível cadastrar o estudante');
       }
   })
-  .catch(err => {
-      console.error("Erro ao conectar a collection student: ", err);
-      res.status(500);
-  });
-  }else{
-    res.status(401).send('Não foi possível cadastrar o estudante');
-  }
 };
 
 exports.put = (req, res, query, student) => {
@@ -124,3 +142,14 @@ exports.deleteCourse = (id, set) => {
 exports.updateTeacher = (course) => {
   return collection.findOneAndUpdate({'status':1, 'course.id':course.id}, {$set: {'course.$':course}});
 };
+
+exports.clean = (res) =>{
+  return collection.deleteMany({})
+  .then(result => {
+      res.status(204).send();
+  })
+  .catch(err => {
+      console.error("Erro ao conectar a collection user: ", err);
+      res.status(500);
+  });
+}

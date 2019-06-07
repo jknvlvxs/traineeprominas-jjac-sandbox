@@ -10,12 +10,21 @@ var id;
   id = await collection.countDocuments({});
 })();
 
+var teacherSchema = new Schema({
+    id: {type: Number, required: true, unique: true},
+    name: {type: String, required: true},
+    lastName: {type: String, required: true},
+    phd: {type: Boolean, required: true, validate: [val => {return val == true}, 'É obrigatório o professor possuir phd']},
+    status: {type: Number, required: true}
+  });
 
 var courseSchema = new Schema({
-  name: String,
-  period: String,
-  city: String,
-  teacher: [{name: String, lastName: String, phd: Boolean}]
+    id: {type: Number, required: true, unique: true},
+    name: {type: String, required: true},
+    period: {type: Number, required: true},
+    city: {type: String, required: true},
+    teacher: {type:[teacherSchema], validate: [val => {return val.length >= 2}, 'São necessários pelo menos 2 professores']},
+    status: {type: Number, required: true}
 });
 
 var Course = mongoose.model('Course', courseSchema);
@@ -50,25 +59,22 @@ exports.getFiltered = (req, res, query, projection) => {
   });
 };
 
-exports.post = (req, res, course) => {
-  // check required attributes 
-  if(course.name && course.city && course.teacher.length >= 2){
-    course.id = ++id;
-    return collection.insertOne(course)
-    .then(result => {
-      if(result != false){
-        res.status(201).send('Curso cadastrado com sucesso!');
-      }else{
-        res.status(401).send('Não foi possível cadastrar o curso (necessário pelo menos 2 professores)');
-      }
+exports.post = (req, res) => {
+    var course = new Course({id: ++id, name: req.body.name, period: req.body.period || 8, city: req.body.city, teacher: req.body.teacher, status: 1});
+    course.validate(error => {
+        if(!error){
+            return collection.insertOne(course)
+            .then(result => {
+                res.status(201).send('Curso cadastrado com sucesso!');
+            })
+            .catch(err => {
+                console.error('Erro ao conectar a collection course:', err);
+                res.status(500);
+            });
+        }else{
+            res.status(401).send('Não foi possível cadastrar o curso');
+        }
     })
-    .catch(err => {
-      console.error('Erro ao conectar a collection course:', err);
-      res.status(500);
-    });
-  }else{
-    res.status(401).send('Não foi possível cadastrar o curso');
-  }
 };
 
 exports.put = (req, res, query, course) => {
@@ -131,3 +137,14 @@ exports.deleteTeacher = (id) => {
 exports.getCoursebyTeacher = () => {
   return collection.find({"status":1}).toArray();
 };
+
+exports.clean = (res) =>{
+  return collection.deleteMany({})
+  .then(result => {
+      res.status(204).send();
+  })
+  .catch(err => {
+      console.error("Erro ao conectar a collection course: ", err);
+      res.status(500);
+  });
+}

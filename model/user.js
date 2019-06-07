@@ -10,7 +10,7 @@ var id;
 })();
 
 var userSchema = new Schema({
-    id: {type: Number, required: true},
+    id: {type: Number, required: true, unique: true},
     name: {type: String, required: true},
     lastName: {type: String, required: true},
     profile: {type: String, required: true, enum:['guess','admin']},

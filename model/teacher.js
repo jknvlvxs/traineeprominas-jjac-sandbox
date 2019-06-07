@@ -12,10 +12,10 @@ var id;
 })();
 
 var teacherSchema = new Schema({
-  id: {type: Number, required: true},
+  id: {type: Number, required: true, unique: true},
   name: {type: String, required: true},
   lastName: {type: String, required: true},
-  phd: {type: Boolean, required: true},
+  phd: {type: Boolean, required: true, validate: [val => {return val == true}, 'É obrigatório o professor possuir phd']},
   status: {type: Number, required: true}
 });
 
@@ -54,7 +54,7 @@ exports.getFiltered = (req, res, query, projection) => {
 exports.post = (req, res) => {
     var teacher = new Teacher({id: ++id, name: req.body.name, lastName: req.body.lastName, phd: req.body.phd, status: 1});
     teacher.validate(error => {
-        if(!error && teacher.phd == true){
+        if(!error){
             return collection.insertOne(teacher) 
             .then(result => {
                 res.status(201).send('Professor cadastrado com sucesso!');
