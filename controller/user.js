@@ -6,7 +6,7 @@ exports.getAllUsers = (req, res) => {
     let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
 
     // send to model
-    return userModel.getAll(res, query, projection);
+    return userModel.getAll(req, res, query, projection);
 };
 
 exports.getFilteredUser = (req,res) => {
@@ -15,7 +15,7 @@ exports.getFilteredUser = (req,res) => {
     let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
 
     // send to model
-    return userModel.getFiltered(res, query, projection)
+    return userModel.getFiltered(req, res, query, projection)
 };
 
 exports.postUser = (req, res) => {
@@ -29,7 +29,7 @@ exports.postUser = (req, res) => {
     };
 
     // send to model
-    userModel.post(res, user)
+    userModel.post(req, res, user)
 };
 
 exports.putUser = (req, res) => {
@@ -39,7 +39,7 @@ exports.putUser = (req, res) => {
     let set = {name: req.body.name, lastName: req.body.lastName, profile: req.body.profile};
         
     // send to model
-    userModel.put(res, query, set)
+    userModel.put(req, res, query, set)
 };
 
 exports.deleteUser = (req, res) => {
@@ -47,5 +47,5 @@ exports.deleteUser = (req, res) => {
     let query = {'id': parseInt(req.params.id), 'status':1};
 
     // send to model
-    userModel.delete(res, query)
+    userModel.delete(req, res, query)
 };

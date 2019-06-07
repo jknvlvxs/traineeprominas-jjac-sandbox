@@ -7,7 +7,7 @@ exports.getAllCourses = (req, res) => {
   let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
 
   // send to model
-  return courseModel.getAll(res, query, projection)
+  return courseModel.getAll(req, res, query, projection)
 };
 
 exports.getFilteredCourse = (req,res) => {
@@ -16,7 +16,7 @@ exports.getFilteredCourse = (req,res) => {
   let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
 
   // send to model
-  return courseModel.getFiltered(res, query, projection)
+  return courseModel.getFiltered(req, res, query, projection)
 };
 
 exports.postCourse = (req, res) => {
@@ -49,7 +49,7 @@ exports.postCourse = (req, res) => {
       }
         
       // send to model
-      return courseModel.post(res, course)
+      return courseModel.post(req, res, course)
     })();
 };
 
@@ -75,7 +75,7 @@ exports.putCourse = (req, res) => {
         }
       }
       // send to model
-      return courseModel.put(res, query, set)
+      return courseModel.put(req, res, query, set)
     })();
 };
 
@@ -85,5 +85,5 @@ exports.deleteCourse = (req, res) => {
   let set = {status:0};
 
   // send to model
-  return courseModel.delete(res, query, set)
+  return courseModel.delete(req, res, query, set)
 };

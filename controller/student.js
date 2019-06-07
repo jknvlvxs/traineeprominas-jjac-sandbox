@@ -7,7 +7,7 @@ exports.getAllStudents = (req, res) => {
     let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
 
     // send to model
-    return studentModel.getAll(res, query, projection)
+    return studentModel.getAll(req, res, query, projection)
 };
 
 exports.getFilteredStudent = (req,res) => {
@@ -16,7 +16,7 @@ exports.getFilteredStudent = (req,res) => {
     let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
 
     // send to model
-    return studentModel.getFiltered(res, query, projection)
+    return studentModel.getFiltered(req, res, query, projection)
 };
 
 exports.postStudent = (req, res) => {
@@ -43,7 +43,7 @@ exports.postStudent = (req, res) => {
           if(student.course.length > 0){ // verifies if the student is registered in a valid course
             
             // send to model
-            return studentModel.post(res, student)
+            return studentModel.post(req, res, student)
         }
     })();
 };
@@ -75,7 +75,7 @@ exports.putStudent = (req, res) => {
           if(student.course.length > 0){// verifies if the student is registered in a valid course
             
             // send to model
-            return studentModel.put(res, query, set)
+            return studentModel.put(req, res, query, set)
         }else{
             res.status(401).send('Não foi possível editar o estudante');
         }
@@ -89,5 +89,5 @@ exports.deleteStudent = (req, res) => {
     let set = {$set: {status:0}};
 
     // send to model
-    studentModel.delete(res, query, set)
+    studentModel.delete(req, res, query, set)
 };
