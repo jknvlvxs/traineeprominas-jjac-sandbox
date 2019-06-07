@@ -2,14 +2,24 @@ const database = require('../database');
 const collection = database.getCollection('teacher');
 const courseModel = require('./course');
 const studentModel = require('./student');
+// 
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 var id;
-
 (async () => {
      id = await collection.countDocuments({});
 })();
 
-exports.getAll = (res, query, projection) => {
+var teacherSchema = new Schema({
+  name: String,
+  lastName: String,
+  phd: Boolean
+});
+
+var Teacher = mongoose.model('Teacher', teacherSchema);
+
+exports.getAll = (req, res, query, projection) => {
   return collection.find(query, projection).toArray()
   .then(teachers => {
     if(teachers.length > 0){
@@ -24,7 +34,7 @@ exports.getAll = (res, query, projection) => {
   });
 };
 
-exports.getFiltered = (res, query, projection) => {
+exports.getFiltered = (req, res, query, projection) => {
   return collection.find(query, projection).toArray()
   .then(teacher => {
     if(teacher.length > 0){
@@ -39,7 +49,7 @@ exports.getFiltered = (res, query, projection) => {
   });
 };
 
-exports.post = (res, teacher) => {
+exports.post = (req, res, teacher) => {
   // check required attributes    
   if (teacher.name && teacher.lastName && teacher.phd == true){
     teacher.id = ++id;
@@ -60,7 +70,7 @@ exports.post = (res, teacher) => {
   }
 };
 
-exports.put = (res, query, teacher) => {
+exports.put = (req, res, query, teacher) => {
   // check required attributes
   if(teacher.name && teacher.lastName && teacher.phd == true){
     return collection.findOneAndUpdate(query, {$set: teacher}, {returnOriginal:false})
@@ -94,7 +104,7 @@ exports.put = (res, query, teacher) => {
   }
 };
 
-exports.delete = (res, query, set) => {
+exports.delete = (req, res, query, set) => {
   return collection.findOneAndUpdate(query, {$set: set})
   .then(async (result) => {
     //  updates the course that contains that teacher

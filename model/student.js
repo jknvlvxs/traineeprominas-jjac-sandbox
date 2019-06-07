@@ -1,13 +1,27 @@
 const database = require('../database');
 const collection = database.getCollection('student');
+// 
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 var id;
-
 (async () => {
   id = await collection.countDocuments({});
 })();
 
-exports.getAll = (res, query, projection) => {
+var studentSchema = new Schema({
+  name: String,
+  lastName: String,
+  age: Number,
+  course: [{name: String, period: String, city: String, 
+    teacher: [{name: String, lastName: String, phd: Boolean}]
+  }]
+});
+
+var Student = mongoose.model('Student', studentSchema);
+
+
+exports.getAll = (req, res, query, projection) => {
     return collection.find(query, projection).toArray()
     .then(students => {
       if(students.length > 0){
@@ -22,7 +36,7 @@ exports.getAll = (res, query, projection) => {
   });
 };
 
-exports.getFiltered = (res, query, projection) => {
+exports.getFiltered = (req, res, query, projection) => {
     return collection.find(query, projection).toArray()
     .then(student => {
       if(student.length > 0){
@@ -37,7 +51,7 @@ exports.getFiltered = (res, query, projection) => {
   });
 };
 
-exports.post = (res, student) => {
+exports.post = (req, res, student) => {
   // check required attributes
   if (student.name && student.lastName && student.age >= 17 && student.course.length == 1){
     student.id = ++id;    
@@ -58,7 +72,7 @@ exports.post = (res, student) => {
   }
 };
 
-exports.put = (res, query, student) => {
+exports.put = (req, res, query, student) => {
   // check required attributes
   if (student.name && student.lastName && student.age >= 17 && student.course.length == 1){
     return collection.findOneAndUpdate(query, {$set:student})
@@ -82,7 +96,7 @@ exports.put = (res, query, student) => {
   }
 };
 
-exports.delete = (res, query, set) => {
+exports.delete = (req, res, query, set) => {
   return collection.findOneAndUpdate(query, set)
   .then(result => {
     if(result.value){ // if student exists

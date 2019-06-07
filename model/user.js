@@ -1,13 +1,23 @@
 const database = require('../database');
 const collection = database.getCollection('user');
+// 
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 var id;
-
 (async () => {
      id = await collection.countDocuments({});
 })();
 
-exports.getAll = (res, query, projection) => {
+var userSchema = new Schema({
+  name: String,
+  lastName: String,
+  profile: String
+});
+
+var User = mongoose.model('User', userSchema);
+
+exports.getAll = (req, res, query, projection) => {
     return collection.find(query, projection).toArray()
         .then(users => {
         if(users.length > 0){ 
@@ -22,7 +32,7 @@ exports.getAll = (res, query, projection) => {
     });
 };
 
-exports.getFiltered = (res, query, projection) => {
+exports.getFiltered = (req, res, query, projection) => {
     return collection.find(query, projection).toArray()
     .then(user => {
         if(user.length > 0){
@@ -37,8 +47,9 @@ exports.getFiltered = (res, query, projection) => {
     });
 };
 
-exports.post = (res, user) => {
+exports.post = (req, res, user) => {
     // check required attributes
+    // var user = new User()
     if(user.name && user.lastName && user.profile && user.profile == 'guess' || user.profile == 'admin'){
         user.id = ++id;
         return collection.insertOne(user)
@@ -58,7 +69,7 @@ exports.post = (res, user) => {
     }
 };
 
-exports.put = (res, query, user) => {
+exports.put = (req, res, query, user) => {
     // check required attributes
     if(user.name && user.lastName && user.profile && user.profile == 'guess' || user.profile == 'admin'){
         return collection.findOneAndUpdate(query, {$set: user})
@@ -83,7 +94,7 @@ exports.put = (res, query, user) => {
     }
 };
 
-exports.delete = (res, query) => {
+exports.delete = (req, res, query) => {
     return collection.findOneAndUpdate(query, {$set: {status:0}})
     .then(result => {
         if(result.value){ // if user exists
