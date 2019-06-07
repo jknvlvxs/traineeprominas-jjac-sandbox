@@ -10,6 +10,6 @@ router.get('/:id', studentController.getFilteredStudent);
 router.put('/:id', studentController.putStudent);
 router.delete('/:id', studentController.deleteStudent);
 
-router.delete('/', studentController.clean);
+// router.delete('/', studentController.clean);
 
 module.exports = router;
