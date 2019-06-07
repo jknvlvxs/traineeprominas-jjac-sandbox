@@ -6,7 +6,7 @@ exports.getAllTeachers = (req, res) => {
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
 
 	// send to model
-	return teacherModel.getAll(req, res, query, projection)
+	return teacherModel.getAll(res, query, projection)
 };
 
 exports.getFilteredTeacher = (req,res) => {
@@ -26,10 +26,9 @@ exports.postTeacher = (req, res) => {
 exports.putTeacher = (req, res) => {
 	//  define query and set for search and update    
 	let query = {'id': parseInt(req.params.id), 'status': 1};
-	let set = {id:parseInt(req.params.id), name:req.body.name, lastName:req.body.lastName, phd:req.body.phd, status:1};
 
 	// send to model
-	return teacherModel.put(req, res, query, set)
+	return teacherModel.put(req, res, query)
 };
 
 exports.deleteTeacher = (req, res) => {
@@ -41,6 +40,6 @@ exports.deleteTeacher = (req, res) => {
 	return teacherModel.delete(req, res, query, set)
 };
 
-exports.clean = (req, res) => {
-	return teacherModel.clean(res);
-}
+// exports.clean = (req, res) => {
+// 	return teacherModel.clean(res);
+// }

@@ -12,7 +12,7 @@ var id;
 	id = await collection.countDocuments({});
 })();
 
-exports.getAll = (req, res, query, projection) => {
+exports.getAll = (res, query, projection) => {
 	return collection.find(query, projection).toArray()
 	.then(teachers => {
 		if(teachers.length > 0){
@@ -27,7 +27,7 @@ exports.getAll = (req, res, query, projection) => {
 	});
 };
 
-exports.getFiltered = (req, res, query, projection) => {
+exports.getFiltered = (res, query, projection) => {
 	return collection.find(query, projection).toArray()
 	.then(teacher => {
 		if(teacher.length > 0){
@@ -123,13 +123,13 @@ exports.getTeacher = (id) => {
 	return collection.find({'id':id, 'status':1}).toArray();
 };
 
-exports.clean = (res) =>{
-	return collection.deleteMany({})
-	.then(result => {
-		res.status(204).send();
-	})
-	.catch(err => {
-		console.error("Erro ao conectar a collection user: ", err);
-		res.status(500);
-	});
-}
+// exports.clean = (res) =>{
+// 	return collection.deleteMany({})
+// 	.then(result => {
+// 		res.status(204).send();
+// 	})
+// 	.catch(err => {
+// 		console.error("Erro ao conectar a collection user: ", err);
+// 		res.status(500);
+// 	});
+// }
