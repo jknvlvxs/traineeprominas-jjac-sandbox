@@ -120,13 +120,13 @@ exports.getCoursebyTeacher = () => {
 	return collection.find({"status":1}).toArray();
 };
 
-exports.clean = (res) =>{
-	return collection.deleteMany({})
-	.then(result => {
-		res.status(204).send();
-	})
-	.catch(err => {
-		console.error("Erro ao conectar a collection course: ", err);
-		res.status(500);
-	});
-}
+// exports.clean = (res) =>{
+// 	return collection.deleteMany({})
+// 	.then(result => {
+// 		res.status(204).send();
+// 	})
+// 	.catch(err => {
+// 		console.error("Erro ao conectar a collection course: ", err);
+// 		res.status(500);
+// 	});
+// }

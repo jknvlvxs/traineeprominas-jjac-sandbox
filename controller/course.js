@@ -68,6 +68,6 @@ exports.deleteCourse = (req, res) => {
 	return courseModel.delete(req, res, query, set)
 };
 
-exports.clean = (req, res) => {
-	return courseModel.clean(res);
-}
+// exports.clean = (req, res) => {
+// 	return courseModel.clean(res);
+// }
