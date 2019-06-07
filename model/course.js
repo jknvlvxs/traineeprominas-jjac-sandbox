@@ -1,44 +1,44 @@
 const database = require('../database');
 const collection = database.getCollection('course');
 const studentModel = require('./student');
-//
-var id;
-(async () => {
-  id = await collection.countDocuments({});
-})();
-//
+
 const mongoose = require('mongoose');
 const courseSchema = require('./schema').courseSchema;
 const Course = mongoose.model('Course', courseSchema);
 
-exports.getAll = (req, res, query, projection) => {
-  return collection.find(query, projection).toArray()
-  .then(courses => {
-    if(courses.length > 0){
-      res.status(200).send(courses);        
-    }else{
-      res.status(404).send('Nenhum curso cadastrado');
-    }
-  })
-  .catch(err => {
-    console.error('Erro ao conectar a collection course:', err);
-    res.status(500);
-  });
+var id;
+(async () => {
+    id = await collection.countDocuments({});
+})();
+
+exports.getAll = (res, query, projection) => {
+    return collection.find(query, projection).toArray()
+    .then(courses => {
+        if(courses.length > 0){
+            res.status(200).send(courses);        
+        }else{
+            res.status(404).send('Nenhum curso cadastrado');
+        }
+    })
+    .catch(err => {
+        console.error('Erro ao conectar a collection course:', err);
+        res.status(500);
+    });
 };
 
-exports.getFiltered = (req, res, query, projection) => {
-  return collection.find(query, projection).toArray()
-  .then(course => {
-    if(course.length > 0){
-      res.status(200).send(course);        
-    }else{
-      res.status(404).send('O curso não foi encontrado');
-    }
-  })
-  .catch(err => {
-    console.error('Erro ao conectar a collection course:', err);
-    res.status(500);
-  });
+exports.getFiltered = (res, query, projection) => {
+    return collection.find(query, projection).toArray()
+    .then(course => {
+        if(course.length > 0){
+            res.status(200).send(course);        
+        }else{
+            res.status(404).send('O curso não foi encontrado');
+        }
+    })
+    .catch(err => {
+        console.error('Erro ao conectar a collection course:', err);
+        res.status(500);
+    });
 };
 
 exports.post = (req, res) => {
@@ -105,28 +105,28 @@ exports.delete = (req, res, query, set) => {
 };
 
 exports.getCourse = (id) => {
-  return collection.find({'id':id, 'status':1}).toArray();
+    return collection.find({'id':id, 'status':1}).toArray();
 };
 
 exports.updateTeacher = (id, set) => {
-  return collection.updateMany({'teacher.id':id, 'status':1}, {$set: {'teacher.$':set}});
+    return collection.updateMany({'teacher.id':id, 'status':1}, {$set: {'teacher.$':set}});
 };
 
 exports.deleteTeacher = (id) => {
-  return collection.findOneAndUpdate({'status':1, 'teacher.id':id}, {$pull: {"teacher": {'id': id}}});
+    return collection.findOneAndUpdate({'status':1, 'teacher.id':id}, {$pull: {"teacher": {'id': id}}});
 };
 
 exports.getCoursebyTeacher = () => {
-  return collection.find({"status":1}).toArray();
+    return collection.find({"status":1}).toArray();
 };
 
 exports.clean = (res) =>{
-  return collection.deleteMany({})
-  .then(result => {
-      res.status(204).send();
-  })
-  .catch(err => {
-      console.error("Erro ao conectar a collection course: ", err);
-      res.status(500);
-  });
+    return collection.deleteMany({})
+    .then(result => {
+        res.status(204).send();
+    })
+    .catch(err => {
+        console.error("Erro ao conectar a collection course: ", err);
+        res.status(500);
+    });
 }
