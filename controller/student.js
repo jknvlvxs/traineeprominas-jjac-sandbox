@@ -1,5 +1,13 @@
 const studentModel = require('../model/student');
 const courseModel = require('../model/course');
+const Joi = require('joi');
+
+const schemaStudent = Joi.object().keys({
+	name: Joi.string().required(),
+	lastName: Joi.string().required(),
+	age: Joi.number().required(),
+	course: Joi.array().required(),
+});
 
 exports.getAllStudents = (req, res) => {
 	//  define query and projection for search
@@ -30,8 +38,17 @@ exports.postStudent = (req, res) => {
 				req.body.course.splice(i, 1);
 			}
 		} 		
-		// send to model
-		return studentModel.post(req, res)
+		Joi.validate(req.body, schemaCourse, (err, result) =>{
+			if(!err){
+				// send to model
+				return studentModel.post(req, res)
+			}else{
+				res.status(422).json({
+					message: 'Não foi possível inserir o curso', 
+					error: err.details[0].message
+				});
+			}
+		});
 	})();
 };
 
@@ -49,8 +66,18 @@ exports.putStudent = (req, res) => {
 				req.body.course.splice(i, 1);
 			}
 		}	
-		// send to model
-		return studentModel.put(req, res, query)
+		
+		Joi.validate(req.body, schemaCourse, (err, result) =>{
+			if(!err){
+				// send to model
+				return studentModel.put(req, res, query)
+			}else{
+				res.status(422).json({
+					message: 'Não foi possível inserir o curso', 
+					error: err.details[0].message
+				});
+			}
+		});
 	})();	  
 };
 
