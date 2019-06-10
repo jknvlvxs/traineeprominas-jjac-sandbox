@@ -31,7 +31,7 @@ studentSchema = new Schema({
 	name: {type: String},
 	lastName: {type: String},
 	age: {type: Number, min:17},
-	course: {type:[courseSchema], validate: [val => {return val.length = 1}, 'É necessário pelo menos 1 curso']},
+	course: {type:[courseSchema], validate: [val => {return val.length == 1}, 'É necessário pelo menos 1 curso']},
 	status: {type: Number}
 });
 
