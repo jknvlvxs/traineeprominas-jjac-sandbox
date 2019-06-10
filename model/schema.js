@@ -31,8 +31,8 @@ studentSchema = new Schema({
 	name: {type: String, required: true},
 	lastName: {type: String, required: true},
 	age: {type: Number, required: true, min:17},
-	course: {type:[courseSchema], validate: [val => {return val.length >= 1}, 'É necessário pelo menos 1 curso']},
+	course: {type:[courseSchema], validate: [val => {return val.length = 1}, 'É necessário pelo menos 1 curso']},
 	status: {type: Number, required: true}
 });
 
-module.exports = {userSchema, teacherSchema, courseSchema, studentSchema}
+module.exports = {userSchema, teacherSchema, courseSchema, studentSchema};
