@@ -1,4 +1,11 @@
 const teacherModel = require('../model/teacher');
+const Joi = require('joi');
+
+const schemaTeacher = Joi.object().keys({
+	name: Joi.string().required(),
+	lastName: Joi.string().required(),
+	phd: Joi.boolean().required(),
+});
 
 exports.getAllTeachers = (req, res) => {
 	//  define query and projection for search
@@ -19,16 +26,34 @@ exports.getFilteredTeacher = (req,res) => {
 };
 
 exports.postTeacher = (req, res) => {
-	// send to model
-	return teacherModel.post(req, res) 
+	Joi.validate(req.body, schemaTeacher, (err, result) => {
+		if(!err){
+			// send to model
+			return teacherModel.post(req, res);
+		}else{
+			res.status(422).json({
+				message: 'Não foi possível inserir o professor', 
+				error: err.details[0].message
+			});
+		}
+	})
 };
 
 exports.putTeacher = (req, res) => {
 	//  define query and set for search and update    
 	let query = {'id': parseInt(req.params.id), 'status': 1};
 
-	// send to model
-	return teacherModel.put(req, res, query)
+	Joi.validate(req.body, schemaTeacher, (err, result) => {
+		if(!err){
+			// send to model
+			return teacherModel.put(req, res, query)
+		}else{
+			res.status(422).json({
+				message: 'Não foi possível inserir o professor', 
+				error: err.details[0].message
+			});
+		}
+	})
 };
 
 exports.deleteTeacher = (req, res) => {
