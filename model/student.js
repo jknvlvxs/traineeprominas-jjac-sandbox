@@ -46,17 +46,14 @@ exports.post = (req, res) => {
 		if(!error){
 			return collection.insertOne(student)
 			.then(result => {
-				if(result != false){
 					res.status(201).send('Estudante cadastrado com sucesso!');
-				}else{
-					res.status(401).send('Não foi possível cadastrar o estudante (idade ou curso inválido(s))');
-				}
 			})
 			.catch(err => {
 				console.error("Erro ao conectar a collection student: ", err);
 				res.status(500);
 			});
 		}else{
+			id--;
 			res.status(401).send('Não foi possível cadastrar o estudante');
 		}
 	})
@@ -69,15 +66,11 @@ exports.put = (req, res, query) => {
 		if(!error){
 			return collection.findOneAndUpdate(query, {$set:student})
 			.then(result => {
-				if(result != false){
 					if(result.value){
 						res.status(200).send('Estudante editado com sucesso!'); 
 					}else{
 						res.status(401).send('Não é possível editar estudante inexistente');
 					}
-				}else{
-					res.status(401).send('Não foi possível editar o estudante (idade ou curso inválido)');
-				}
 			})
 			.catch(err => {
 					console.error("Erro ao conectar a collection student: ", err);

@@ -54,6 +54,7 @@ exports.post = (req, res) => {
 				res.status(500);
 			});
 		}else{
+			id--;
 			res.status(401).send('Não foi possível cadastrar o curso');
 		}
 	})
