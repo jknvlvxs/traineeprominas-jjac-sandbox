@@ -119,7 +119,7 @@ describe('PUT /api/v1/student', function() {
 		});
 	});
 
-	it('it should NOT PUT a user without "age >= 17" even if he is on a valid course', () => {
+	it('it should NOT PUT a student without "age >= 17" even if he is on a valid course', () => {
 		return request(app)
 		.put('/api/v1/student/1')
 		.send({ name: "UpdatedName2", lastName: "UpdatedLastName2", age: 16, course:[1] })
@@ -128,7 +128,7 @@ describe('PUT /api/v1/student', function() {
 		}); 
 	});
 
-	it('it should NOT PUT a user without a valid course even if he have "age >= 17"', () => {
+	it('it should NOT PUT a student without a valid course even if he have "age >= 17"', () => {
 		return request(app)
 		.put('/api/v1/student/1')
 		.send({ name: "UpdatedName3", lastName: "UpdatedLastName3", age: 18, course:[2] })
@@ -137,7 +137,7 @@ describe('PUT /api/v1/student', function() {
 		}); 
 	});
 
-	it('it should NOT PUT a user without "age >= 17" and a valid course', () => {
+	it('it should NOT PUT a student without "age >= 17" and a valid course', () => {
 		return request(app)
 		.put('/api/v1/student/1')
 		.send({ name: "UpdatedName4", lastName: "UpdatedLastName4", age: 16, course:[2] })

@@ -89,27 +89,27 @@ describe('POST /api/v1/student', function() {
 		});
 	});
  
-	it('it should NOT POST a user without "age >= 17" even if he is on a valid course', () => {
+	it('it should NOT POST a student without "age >= 17" even if he is on a valid course', () => {
 		return request(app)
-		.post('/api/v1/user')
+		.post('/api/v1/student')
 		.send({ name: "Name2", lastName: "LastName2", age: 16, course:[1] })
 		.then(function(res) { 
 			assert.equal(res.status, 401);
 		}); 
   	});
  
-	it('it should NOT POST a user without a valid course even if he have "age >= 17"', () => {
+	it('it should NOT POST a student without a valid course even if he have "age >= 17"', () => {
 		return request(app)
-		.post('/api/v1/user')
+		.post('/api/v1/student')
 		.send({ name: "Name3", lastName: "LastName3", age: 18, course:[2] })
 		.then(function(res) { 
 			assert.equal(res.status, 401);
 		}); 
 	});
  
-	it('it should NOT POST a user without "age >= 17" and a valid course', () => {
+	it('it should NOT POST a student without "age >= 17" and a valid course', () => {
 		return request(app)
-		.post('/api/v1/user')
+		.post('/api/v1/student')
 		.send({ name: "Name4", lastName: "LastName4", age: 16, course:[2] })
 		.then(function(res) { 
 			assert.equal(res.status, 401);
