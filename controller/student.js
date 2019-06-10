@@ -38,7 +38,7 @@ exports.postStudent = (req, res) => {
 				req.body.course.splice(i, 1);
 			}
 		} 		
-		Joi.validate(req.body, schemaCourse, (err, result) =>{
+		Joi.validate(req.body, schemaStudent, (err, result) =>{
 			if(!err){
 				// send to model
 				return studentModel.post(req, res)
@@ -67,7 +67,7 @@ exports.putStudent = (req, res) => {
 			}
 		}	
 		
-		Joi.validate(req.body, schemaCourse, (err, result) =>{
+		Joi.validate(req.body, schemaStudent, (err, result) =>{
 			if(!err){
 				// send to model
 				return studentModel.put(req, res, query)
