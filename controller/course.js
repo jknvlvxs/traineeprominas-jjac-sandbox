@@ -4,6 +4,7 @@ const Joi = require('joi');
 
 const schemaCourse = Joi.object().keys({
 	name: Joi.string().required(),
+	period: Joi.number(),
 	city: Joi.string().required(),
 	teacher: Joi.array().required(),
 });
