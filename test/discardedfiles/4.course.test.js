@@ -1,7 +1,6 @@
 const chai = require('chai');
 const assert = chai.assert;
 const request = require('supertest');
-
 const app = require('../app');
 
 describe('POST /api/v1/course', function() {
