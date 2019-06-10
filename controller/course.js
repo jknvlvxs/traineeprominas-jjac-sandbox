@@ -1,5 +1,12 @@
 const courseModel = require('../model/course');
 const teacherModel = require('../model/teacher');
+const Joi = require('joi');
+
+const schemaCourse = Joi.object().keys({
+	name: Joi.string().required(),
+	city: Joi.string().required(),
+	teacher: Joi.array().required(),
+});
 
 exports.getAllCourses = (req, res) => {
 	//  define query and projection for search
@@ -35,8 +42,17 @@ exports.postCourse = (req, res) => {
 				}
 			}
 		}      
-		// send to model
-		return courseModel.post(req, res)
+		Joi.validate(req.body, schemaCourse, (err, result) =>{
+			if(!err){
+				// send to model
+				return courseModel.post(req, res)
+			}else{
+				res.status(422).json({
+					message: 'Não foi possível inserir o curso', 
+					error: err.details[0].message
+				});
+			}
+		});
 	})();
 };
 
@@ -54,8 +70,18 @@ exports.putCourse = (req, res) => {
 				req.body.teacher.splice(i, 1);
 			}
 		}
-	  // send to model
-	  return courseModel.put(req, res, query)
+	
+		Joi.validate(req.body, schemaCourse, (err, result) =>{
+			if(!err){
+				// send to model
+	  			return courseModel.put(req, res, query)
+			}else{
+				res.status(422).json({
+					message: 'Não foi possível inserir o curso', 
+					error: err.details[0].message
+				});
+			}
+		});
 	})();
 };
 
