@@ -5,7 +5,7 @@ userSchema = new Schema({
 	id: {type: Number, unique: true},
 	name: {type: String},
 	lastName: {type: String},
-	profile: {type: String, enum:['guess','admin']},
+	profile: {type: String, enum:{values:['guess','admin'], message: 'O profile {VALUE} é inválido'}},
 	status: {type: Number}
 });
 
@@ -22,7 +22,7 @@ courseSchema = new Schema({
 	name: {type: String},
 	period: {type: Number},
 	city: {type: String},
-	teacher: {type:[teacherSchema], validate: [val => {return val.length >= 2}, 'São necessários pelo menos 2 professores']},
+	teacher: {type:[teacherSchema], validate: [val => {return val.length >= 2}, 'São necessários pelo menos 2 professores válidos']},
 	status: {type: Number}
 });
 	
@@ -30,8 +30,8 @@ studentSchema = new Schema({
 	id: {type: Number, unique: true},
 	name: {type: String},
 	lastName: {type: String},
-	age: {type: Number, min:17},
-	course: {type:[courseSchema], validate: [val => {return val.length == 1}, 'É necessário pelo menos 1 curso']},
+	age: {type: Number, min:[17, 'A idade inserida é {VALUE} anos de idade, a idade mínima permitida é 17!']},
+	course: {type:[courseSchema], validate: [val => {return val.length == 1}, 'É necessário inserir um curso válido']},
 	status: {type: Number}
 });
 
