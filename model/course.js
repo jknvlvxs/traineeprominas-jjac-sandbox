@@ -131,3 +131,33 @@ exports.getCoursebyTeacher = () => {
 // 		res.status(500);
 // 	});
 // }
+
+exports.jsonAll = (res, query, projection) => {
+	return collection.find(query, projection).toArray()
+	.then(courses => {
+		if(courses.length > 0){ 
+			res.json(courses);        
+		}else{
+			res.status(404).json();
+		}
+	})
+	.catch(err => {
+		console.error("Erro ao conectar a collection course: ", err);
+		res.status(500);
+	});
+};
+
+exports.jsonFiltered = (res, query, projection) => {
+	return collection.find(query, projection).toArray()
+	.then(course => {
+		if(course.length > 0){
+			res.json(course);        
+		}else{
+			res.status(404).json();
+		}
+	})
+	.catch(err => {
+		console.error("Erro ao conectar a collection course: ", err);
+		res.status(500);
+	});
+};
