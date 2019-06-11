@@ -56,7 +56,10 @@ exports.post = (req, res) => {
 			});
 		}else{
 			id--;
-			res.status(401).send('Não foi possível cadastrar o professor (phd inválido)');
+			res.status(401).json({
+				message: 'Não foi possível cadastrar o professor', 
+				error: error.errors.phd.message
+			});
 		}
 	}) 
 };
@@ -88,7 +91,10 @@ exports.put = (req, res, query) => {
 					res.status(500);
 			});
 		}else{
-			res.status(401).send('Não foi possível editar o professor');
+			res.status(401).json({
+				message: 'Não foi possível editar o professor', 
+				error: error.errors.phd.message
+			});
 		}
 	})
 };

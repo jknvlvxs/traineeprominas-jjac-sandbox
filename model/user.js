@@ -54,7 +54,10 @@ exports.post = (req, res) => {
 			});
 		}else{
 			id--;
-			res.status(401).send('Não foi possível cadastrar o usuário (profile inválido)');
+			res.status(401).json({
+				message: 'Não foi possível cadastrar o usuário', 
+				error: error.errors.profile.message
+			});
 		}
 	});
 };
@@ -78,7 +81,10 @@ exports.put = (req, res, query) => {
 				res.status(500);
 			});
 		}else{
-			res.status(401).send('Não é possível editar usuário');                            
+			res.status(401).json({
+				message: 'Não foi possível cadastrar o usuário', 
+				error: error.errors.profile.message
+			});                
 		}
 	})
 };

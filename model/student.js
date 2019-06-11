@@ -54,7 +54,25 @@ exports.post = (req, res) => {
 			});
 		}else{
 			id--;
-			res.status(401).send('Não foi possível cadastrar o estudante');
+			try{
+				res.status(401).json({
+					message: 'Não foi possível cadastrar o estudante', 
+					error:[error.errors.course.message,
+					error.errors.age.message]
+				});
+			}catch(TypeError){
+				try{
+					res.status(401).json({
+						message: 'Não foi possível cadastrar o estudante', 
+						error:error.errors.course.message
+					});
+				}catch(TypeError){
+					res.status(401).json({
+						message: 'Não foi possível cadastrar o estudante', 
+						error:error.errors.age.message
+					});
+				}
+			}
 		}
 	})
 };
@@ -77,7 +95,25 @@ exports.put = (req, res, query) => {
 					res.status(500);
 			});
 		}else{
-			res.status(401).send('Não foi possível editar o estudante');
+			try{
+				res.status(401).json({
+					message: 'Não foi possível cadastrar o estudante', 
+					error:[error.errors.course.message,
+					error.errors.age.message]
+				});
+			}catch(TypeError){
+				try{
+					res.status(401).json({
+						message: 'Não foi possível cadastrar o estudante', 
+						error:error.errors.course.message
+					});
+				}catch(TypeError){
+					res.status(401).json({
+						message: 'Não foi possível cadastrar o estudante', 
+						error:error.errors.age.message
+					});
+				}
+			}
 		}
 	})	
 };

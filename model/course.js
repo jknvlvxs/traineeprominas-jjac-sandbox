@@ -55,7 +55,10 @@ exports.post = (req, res) => {
 			});
 		}else{
 			id--;
-			res.status(401).send('Não foi possível cadastrar o curso');
+			res.status(401).json({
+				message: 'Não foi possível cadastrar o curso', 
+				error: error.errors.teacher.message
+			});    
 		}
 	})
 };
@@ -81,7 +84,10 @@ exports.put = (req, res, query) => {
 					res.status(500);
 			});
 		}else{
-			res.status(401).send('Não foi possível editar o curso');
+			res.status(401).json({
+				message: 'Não foi possível editar o curso', 
+				error: error.errors.teacher.message
+			});   
 		}
 	})	
 };
