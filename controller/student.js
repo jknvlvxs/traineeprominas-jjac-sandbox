@@ -30,14 +30,17 @@ exports.getFilteredStudent = (req,res) => {
 exports.postStudent = (req, res) => {
 	(async () => {
 		// receive the course related to the inserted id
-		for(let i = 0; i < req.body.course.length; i++){
-			let course = await courseModel.getCourse(req.body.course[i]);
-			if(course.length > 0){ // if course exists
-				req.body.course[i] = course[0]; 
-			}else{
-				req.body.course.splice(i, 1);
-			}
-		} 		
+		if(req.body.course){
+			for(let i = 0; i < req.body.course.length; i++){
+				let course = await courseModel.getCourse(req.body.course[i]);
+				if(course.length > 0){ // if course exists
+					req.body.course[i] = course[0]; 
+				}else{
+					req.body.course.splice(i, 1);
+				}
+			} 		
+		}
+		
 		Joi.validate(req.body, schemaStudent, (err, result) =>{
 			if(!err){
 				// send to model
@@ -58,14 +61,16 @@ exports.putStudent = (req, res) => {
 
 	(async () => {
 		// receive the course related to the inserted id  
-		for(let i = 0; i < req.body.course.length; i++){
-			let course = await courseModel.getCourse(req.body.course[i]);
-			if(course.length > 0){ // if course exists
-				req.body.course[i] = course[0]; 
-			}else{
-				req.body.course.splice(i, 1);
-			}
-		}	
+		if(req.body.course){
+			for(let i = 0; i < req.body.course.length; i++){
+				let course = await courseModel.getCourse(req.body.course[i]);
+				if(course.length > 0){ // if course exists
+					req.body.course[i] = course[0]; 
+				}else{
+					req.body.course.splice(i, 1);
+				}
+			} 		
+		}
 		
 		Joi.validate(req.body, schemaStudent, (err, result) =>{
 			if(!err){

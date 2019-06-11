@@ -30,10 +30,7 @@ exports.getFilteredCourse = (req,res) => {
 exports.postCourse = (req, res) => {
 	(async () => { 
 		// check if any teacher id has been entered
-		if(req.body.teacher == undefined || req.body.teacher.length == 0){
-			delete req.body.teacher;
-		}else{
-			// receive the teacher related to the inserted id
+		if(req.body.teacher){
 			for(let i = req.body.teacher.length-1; i > -1 ; i--){
 				teacher = await teacherModel.getTeacher(req.body.teacher[i]);
 				if(teacher.length > 0){
@@ -42,7 +39,8 @@ exports.postCourse = (req, res) => {
 					req.body.teacher.splice(i, 1);
 				}
 			}
-		}      
+		}
+		
 		Joi.validate(req.body, schemaCourse, (err, result) =>{
 			if(!err){
 				// send to model
@@ -63,12 +61,14 @@ exports.putCourse = (req, res) => {
 
 	(async () => {
 		// receive the teacher related to the inserted id  
-		for(let i = req.body.teacher.length-1; i > -1 ; i--){
-			teacher = await teacherModel.getTeacher(req.body.teacher[i]);
-			if(teacher.length > 0){
-				req.body.teacher[i] = teacher[0]; 
-			}else{ // if teacher exists
-				req.body.teacher.splice(i, 1);
+		if(req.body.teacher){
+			for(let i = req.body.teacher.length-1; i > -1 ; i--){
+				teacher = await teacherModel.getTeacher(req.body.teacher[i]);
+				if(teacher.length > 0){
+					req.body.teacher[i] = teacher[0]; 
+				}else{ // if teacher exists
+					req.body.teacher.splice(i, 1);
+				}
 			}
 		}
 	
