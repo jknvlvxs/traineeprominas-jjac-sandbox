@@ -68,3 +68,21 @@ exports.deleteTeacher = (req, res) => {
 // exports.clean = (req, res) => {
 // 	return teacherModel.clean(res);
 // }
+
+exports.jsonAllTeachers = (req, res) => {
+	//  define query and projection for search
+	let query = {'status':1};
+	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
+
+	// send to model
+	return teacherModel.jsonAll(res, query, projection)
+};
+
+exports.jsonFilteredTeacher = (req,res) => {
+	//  define query and projection for search    
+	let query = {'id':parseInt(req.params.id), 'status':1};
+	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
+
+	// send to model
+	return teacherModel.jsonFiltered(res, query, projection)
+};

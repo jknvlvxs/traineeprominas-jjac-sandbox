@@ -98,3 +98,21 @@ exports.deleteCourse = (req, res) => {
 // exports.clean = (req, res) => {
 // 	return courseModel.clean(res);
 // }
+
+exports.jsonAllCourses = (req, res) => {
+	//  define query and projection for search
+	let query = {status:1};
+	let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
+
+	// send to model
+	return courseModel.jsonAll(res, query, projection)
+};
+
+exports.jsonFilteredCourse = (req,res) => {
+	//  define query and projection for search
+	let query = {'id':parseInt(req.params.id), 'status':1};
+	let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
+
+	// send to model
+	return courseModel.jsonFiltered(res, query, projection)
+};

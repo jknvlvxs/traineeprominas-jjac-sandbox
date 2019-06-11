@@ -1,6 +1,6 @@
 const userModel = require('../model/user');
-const Joi = require('joi');
 
+const Joi = require('joi');
 const schemaUser = Joi.object().keys({
 	name: Joi.string().required(),
 	lastName: Joi.string().required(),
@@ -64,6 +64,20 @@ exports.deleteUser = (req, res) => {
 	return userModel.delete(res, query)
 };
 
-// exports.clean = (req, res) => {
-// 	return userModel.clean(res);
-// }
+exports.jsonAllUsers = (req, res) => {
+	//  define query and projection for search
+	let query = {status:1};
+	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
+
+	// send to model
+	return userModel.jsonAll(res, query, projection);
+};
+
+exports.jsonFilteredUser = (req,res) => {
+	//  define query and projection for search
+	let query = {'id':parseInt(req.params.id), 'status':1};
+	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
+
+	// send to model
+	return userModel.jsonFiltered(res, query, projection)
+};
