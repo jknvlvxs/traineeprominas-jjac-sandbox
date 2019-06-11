@@ -3,12 +3,15 @@ const router = express.Router();
 
 const userController = require('../controller/user');
 
-router.get('/', userController.getAllUsers);
-router.post('/', userController.postUser);
+router.get('/user/', userController.getAllUsers);
+router.post('/user/', userController.postUser);
 
-router.get('/:id', userController.getFilteredUser);
-router.put('/:id', userController.putUser);
-router.delete('/:id', userController.deleteUser);
+router.get('/user/:id', userController.getFilteredUser);
+router.put('/user/:id', userController.putUser);
+router.delete('/user/:id', userController.deleteUser);
+
+router.get('/JSON/user/', userController.jsonAllUsers);
+router.get('/JSON/user/:id', userController.jsonFilteredUser);
 
 // router.delete('/', userController.clean);
 
