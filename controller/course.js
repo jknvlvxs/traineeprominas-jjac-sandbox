@@ -2,7 +2,7 @@ const courseModel = require('../model/course');
 const teacherModel = require('../model/teacher');
 const Joi = require('joi');
 
-const schemaCourse = Joi.object().keys({
+const schemaCourse = Joi.object().keys({ // schema for joi validate required fields
 	name: Joi.string().required(),
 	period: Joi.number(),
 	city: Joi.string().required(),
@@ -29,24 +29,22 @@ exports.getFilteredCourse = (req,res) => {
 
 exports.postCourse = (req, res) => {
 	(async () => { 
-		// check if any teacher id has been entered
-		if(req.body.teacher){
+		if(req.body.teacher){ // if teacher is inserted
 			for(let i = req.body.teacher.length-1; i > -1 ; i--){
 				teacher = await teacherModel.getTeacher(req.body.teacher[i]);
-				if(teacher.length > 0){
-					req.body.teacher[i] = teacher[0]; 
-				}else{ // if teacher exists
-					req.body.teacher.splice(i, 1);
+				if(teacher.length > 0){ // if teacher exists
+					req.body.teacher[i] = teacher[0];  // receive the course related to the inserted id
+				}else{ 
+					req.body.teacher.splice(i, 1); // clean if not exists
 				}
 			}
 		}
 		
-		Joi.validate(req.body, schemaCourse, (err, result) =>{
+		Joi.validate(req.body, schemaCourse, (err, result) =>{ // joi check the required fields
 			if(!err){
-				// send to model
-				return courseModel.post(req, res)
+				return courseModel.post(req, res) // return post to model
 			}else{
-				res.status(422).json({
+				res.status(422).json({ // send joi error message
 					message: 'Não foi possível inserir o curso', 
 					error: err.message
 				});
@@ -56,18 +54,15 @@ exports.postCourse = (req, res) => {
 };
 
 exports.putCourse = (req, res) => {
-	// define query for search
-	let query = {'id': parseInt(req.params.id),'status': 1};
-
+	let query = {'id': parseInt(req.params.id),'status': 1}; // define query for search and update
 	(async () => {
-		// receive the teacher related to the inserted id  
-		if(req.body.teacher){
+		if(req.body.teacher){  // if course is inserted
 			for(let i = req.body.teacher.length-1; i > -1 ; i--){
 				teacher = await teacherModel.getTeacher(req.body.teacher[i]);
-				if(teacher.length > 0){
-					req.body.teacher[i] = teacher[0]; 
-				}else{ // if teacher exists
-					req.body.teacher.splice(i, 1);
+				if(teacher.length > 0){ // if course exists
+					req.body.teacher[i] = teacher[0];  // receive the course related to the inserted id
+				}else{
+					req.body.teacher.splice(i, 1); // clean if not exists
 				}
 			}
 		}
@@ -87,32 +82,18 @@ exports.putCourse = (req, res) => {
 };
 
 exports.deleteCourse = (req, res) => {
-	// define query and set to search and delete
-	let query = {'id': parseInt(req.params.id),'status':1};
-	let set = {status:0};
-
-	// send to model
-	return courseModel.delete(req, res, query, set)
+	let query = {'id': parseInt(req.params.id),'status':1}; // define query to search and delete
+	return courseModel.delete(req, res, query) // send delete request to model
 };
 
-// exports.clean = (req, res) => {
-// 	return courseModel.clean(res);
-// }
-
 exports.jsonAllCourses = (req, res) => {
-	//  define query and projection for search
-	let query = {status:1};
+	let query = {status:1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
-
-	// send to model
-	return courseModel.jsonAll(res, query, projection)
+	return courseModel.jsonAll(res, query, projection) // send search to model
 };
 
 exports.jsonFilteredCourse = (req,res) => {
-	//  define query and projection for search
-	let query = {'id':parseInt(req.params.id), 'status':1};
+	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
-
-	// send to model
-	return courseModel.jsonFiltered(res, query, projection)
+	return courseModel.jsonFiltered(res, query, projection) // send search to model
 };

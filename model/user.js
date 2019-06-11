@@ -106,17 +106,6 @@ exports.delete = (res, query) => {
 	});
 };
 
-// exports.clean = (res) =>{
-// 	return collection.deleteMany({})
-// 	.then(result => {
-// 		res.status(204).send();
-// 	})
-// 	.catch(err => {
-// 		console.error("Erro ao conectar a collection user: ", err);
-// 		res.status(500);
-// 	});
-// }
-
 exports.jsonAll = (res, query, projection) => {
 	return collection.find(query, projection).toArray()
 	.then(users => {

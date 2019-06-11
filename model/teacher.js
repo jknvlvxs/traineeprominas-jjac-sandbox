@@ -99,8 +99,8 @@ exports.put = (req, res, query) => {
 	})
 };
 
-exports.delete = (req, res, query, set) => {
-	return collection.findOneAndUpdate(query, {$set: set})
+exports.delete = (req, res, query) => {
+	return collection.findOneAndUpdate(query, {$set: {status:0}})
 	.then(async (result) => {
 		//  updates the course that contains that teacher
 		await courseModel.deleteTeacher(parseInt(req.params.id));
@@ -129,17 +129,6 @@ exports.delete = (req, res, query, set) => {
 exports.getTeacher = (id) => {
 	return collection.find({'id':id, 'status':1}).toArray();
 };
-
-// exports.clean = (res) =>{
-// 	return collection.deleteMany({})
-// 	.then(result => {
-// 		res.status(204).send();
-// 	})
-// 	.catch(err => {
-// 		console.error("Erro ao conectar a collection user: ", err);
-// 		res.status(500);
-// 	});
-// }
 
 exports.jsonAll = (res, query, projection) => {
 	return collection.find(query, projection).toArray()

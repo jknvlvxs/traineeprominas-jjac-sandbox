@@ -1,37 +1,30 @@
 const userModel = require('../model/user');
-
 const Joi = require('joi');
-const schemaUser = Joi.object().keys({
+
+const schemaUser = Joi.object().keys({ // schema for joi validate required fields
 	name: Joi.string().required(),
 	lastName: Joi.string().required(),
 	profile: Joi.string().required(),
 });
 
 exports.getAllUsers = (req, res) => {
-	//  define query and projection for search
-	let query = {status:1};
+	let query = {status:1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
-
-	// send to model
-	return userModel.getAll(res, query, projection);
+	return userModel.getAll(res, query, projection); // send search to model
 };
 
 exports.getFilteredUser = (req,res) => {
-	//  define query and projection for search
-	let query = {'id':parseInt(req.params.id), 'status':1};
+	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
-
-	// send to model
-	return userModel.getFiltered(res, query, projection)
+	return userModel.getFiltered(res, query, projection) // send search to model
 };
 
 exports.postUser = (req, res) => {
-	Joi.validate(req.body, schemaUser, (err, result) =>{
+	Joi.validate(req.body, schemaUser, (err, result) =>{ // joi check the required fields
 		if(!err){
-			// send to model
-			return userModel.post(req, res)
+			return userModel.post(req, res) // return post to model
 		}else{
-			res.status(422).json({
+			res.status(422).json({ // send joi error message
 				message: 'Não foi possível inserir o usuário', 
 				error: err.message
 			});
@@ -40,15 +33,12 @@ exports.postUser = (req, res) => {
 };
 
 exports.putUser = (req, res) => {
-	//  define query and set for search and update    
-	let query = {'id': parseInt(req.params.id), 'status': 1};
-
-	Joi.validate(req.body, schemaUser, (err, result) =>{
+	let query = {'id': parseInt(req.params.id), 'status': 1}; //  define query for search and update
+	Joi.validate(req.body, schemaUser, (err, result) =>{ // joi check the required fields
 		if(!err){
-			// send to model
-			return userModel.put(req, res, query);
+			return userModel.put(req, res, query); // send put to model
 		}else{
-			res.status(422).json({
+			res.status(422).json({ // send joi error message
 				message: 'Não foi possível editar o usuário', 
 				error: err.message
 			});
@@ -57,27 +47,18 @@ exports.putUser = (req, res) => {
 };
 
 exports.deleteUser = (req, res) => {
-	//  define query and set for search and delete    
-	let query = {'id': parseInt(req.params.id), 'status':1};
-
-	// send to model
-	return userModel.delete(res, query)
+	let query = {'id': parseInt(req.params.id), 'status':1}; //  define query for search and delete
+	return userModel.delete(res, query) // send delete request to model
 };
 
 exports.jsonAllUsers = (req, res) => {
-	//  define query and projection for search
-	let query = {status:1};
+	let query = {status:1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
-
-	// send to model
-	return userModel.jsonAll(res, query, projection);
+	return userModel.jsonAll(res, query, projection); // send search to model
 };
 
 exports.jsonFilteredUser = (req,res) => {
-	//  define query and projection for search
-	let query = {'id':parseInt(req.params.id), 'status':1};
+	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
-
-	// send to model
-	return userModel.jsonFiltered(res, query, projection)
+	return userModel.jsonFiltered(res, query, projection) // send search to model
 };

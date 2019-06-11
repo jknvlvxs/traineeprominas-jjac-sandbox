@@ -1,37 +1,32 @@
 const teacherModel = require('../model/teacher');
 const Joi = require('joi');
 
-const schemaTeacher = Joi.object().keys({
+const schemaTeacher = Joi.object().keys({ // schema for joi validate required fields
 	name: Joi.string().required(),
 	lastName: Joi.string().required(),
 	phd: Joi.boolean().required(),
 });
 
 exports.getAllTeachers = (req, res) => {
-	//  define query and projection for search
-	let query = {'status':1};
+	let query = {'status':1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
 
-	// send to model
-	return teacherModel.getAll(res, query, projection)
+	return teacherModel.getAll(res, query, projection)  // send search to model
 };
 
 exports.getFilteredTeacher = (req,res) => {
-	//  define query and projection for search    
-	let query = {'id':parseInt(req.params.id), 'status':1};
+	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
 
-	// send to model
-	return teacherModel.getFiltered(res, query, projection)
+	return teacherModel.getFiltered(res, query, projection)  // send search to model
 };
 
-exports.postTeacher = (req, res) => {
+exports.postTeacher = (req, res) => { // joi check the required fields
 	Joi.validate(req.body, schemaTeacher, (err, result) => {
 		if(!err){
-			// send to model
-			return teacherModel.post(req, res);
+			return teacherModel.post(req, res); // return post to model
 		}else{
-			res.status(422).json({
+			res.status(422).json({ // send joi error message
 				message: 'Não foi possível inserir o professor', 
 				error: err.message
 			});
@@ -40,15 +35,13 @@ exports.postTeacher = (req, res) => {
 };
 
 exports.putTeacher = (req, res) => {
-	//  define query and set for search and update    
-	let query = {'id': parseInt(req.params.id), 'status': 1};
+	let query = {'id': parseInt(req.params.id), 'status': 1}; //  define query for search and update
 
-	Joi.validate(req.body, schemaTeacher, (err, result) => {
+	Joi.validate(req.body, schemaTeacher, (err, result) => { // joi check the required fields
 		if(!err){
-			// send to model
-			return teacherModel.put(req, res, query)
+			return teacherModel.put(req, res, query) // send put to model
 		}else{
-			res.status(422).json({
+			res.status(422).json({ // send joi error message
 				message: 'Não foi possível inserir o professor', 
 				error: err.message
 			});
@@ -57,32 +50,19 @@ exports.putTeacher = (req, res) => {
 };
 
 exports.deleteTeacher = (req, res) => {
-	//  define query and set for search and delete  
-	let query = {'id': parseInt(req.params.id), 'status':1};
-	let set = {status:0};
+	let query = {'id': parseInt(req.params.id), 'status':1}; //  define query and set for search and delete  
 
-	// send to model
-	return teacherModel.delete(req, res, query, set)
+	return teacherModel.delete(req, res, query) // send delete request to model
 };
 
-// exports.clean = (req, res) => {
-// 	return teacherModel.clean(res);
-// }
-
 exports.jsonAllTeachers = (req, res) => {
-	//  define query and projection for search
-	let query = {'status':1};
+	let query = {'status':1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
-
-	// send to model
-	return teacherModel.jsonAll(res, query, projection)
+	return teacherModel.jsonAll(res, query, projection) // send search to model
 };
 
 exports.jsonFilteredTeacher = (req,res) => {
-	//  define query and projection for search    
-	let query = {'id':parseInt(req.params.id), 'status':1};
+	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
-
-	// send to model
-	return teacherModel.jsonFiltered(res, query, projection)
+	return teacherModel.jsonFiltered(res, query, projection) // send search to model
 };

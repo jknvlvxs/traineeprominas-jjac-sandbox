@@ -2,7 +2,7 @@ const studentModel = require('../model/student');
 const courseModel = require('../model/course');
 const Joi = require('joi');
 
-const schemaStudent = Joi.object().keys({
+const schemaStudent = Joi.object().keys({ // schema for joi validate required fields
 	name: Joi.string().required(),
 	lastName: Joi.string().required(),
 	age: Joi.number().required(),
@@ -10,43 +10,35 @@ const schemaStudent = Joi.object().keys({
 });
 
 exports.getAllStudents = (req, res) => {
-	//  define query and projection for search
-	let query = {status:1};
+	let query = {status:1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
-
-	// send to model
-	return studentModel.getAll(res, query, projection)
+	return studentModel.getAll(res, query, projection) // send search to model
 };
 
 exports.getFilteredStudent = (req,res) => {
-	//  define query and projection for search
-	let query = {'id':parseInt(req.params.id), 'status':1};
+	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
-
-	// send to model
-	return studentModel.getFiltered(res, query, projection)
+	return studentModel.getFiltered(res, query, projection) // send search to model
 };
 
 exports.postStudent = (req, res) => {
 	(async () => {
-		// receive the course related to the inserted id
-		if(req.body.course){
+		if(req.body.course){ // if course is inserted
 			for(let i = 0; i < req.body.course.length; i++){
 				let course = await courseModel.getCourse(req.body.course[i]);
 				if(course.length > 0){ // if course exists
-					req.body.course[i] = course[0]; 
+					req.body.course[i] = course[0]; // receive the course related to the inserted id
 				}else{
-					req.body.course.splice(i, 1);
+					req.body.course.splice(i, 1); // clean if not exists
 				}
 			} 		
 		}
-		
-		Joi.validate(req.body, schemaStudent, (err, result) =>{
+
+		Joi.validate(req.body, schemaStudent, (err, result) =>{ // joi check the required fields
 			if(!err){
-				// send to model
-				return studentModel.post(req, res)
+				return studentModel.post(req, res) // return post to model
 			}else{
-				res.status(422).json({
+				res.status(422).json({ // send joi error message
 					message: 'Não foi possível inserir o curso', 
 					error: err.message
 				});
@@ -56,28 +48,24 @@ exports.postStudent = (req, res) => {
 };
 
 exports.putStudent = (req, res) => {
-	//  define query for search    
-	let query = {'id': parseInt(req.params.id), 'status': 1};
-
+	let query = {'id': parseInt(req.params.id), 'status': 1}; //  define query for search and update
 	(async () => {
-		// receive the course related to the inserted id  
-		if(req.body.course){
+		if(req.body.course){  // if course is inserted
 			for(let i = 0; i < req.body.course.length; i++){
 				let course = await courseModel.getCourse(req.body.course[i]);
 				if(course.length > 0){ // if course exists
-					req.body.course[i] = course[0]; 
+					req.body.course[i] = course[0];  // receive the course related to the inserted id
 				}else{
-					req.body.course.splice(i, 1);
+					req.body.course.splice(i, 1); // clean if not exists
 				}
 			} 		
 		}
 		
-		Joi.validate(req.body, schemaStudent, (err, result) =>{
+		Joi.validate(req.body, schemaStudent, (err, result) =>{ // joi check the required fields
 			if(!err){
-				// send to model
-				return studentModel.put(req, res, query)
+				return studentModel.put(req, res, query) // return post to model
 			}else{
-				res.status(422).json({
+				res.status(422).json({ // send joi error message
 					message: 'Não foi possível inserir o curso', 
 					error: err.message
 				});
@@ -87,32 +75,18 @@ exports.putStudent = (req, res) => {
 };
 
 exports.deleteStudent = (req, res) => {
-	//  define query and set for search and delete    
-	let query = {'id': parseInt(req.params.id), 'status':1};
-	let set = {$set: {status:0}};
-
-	// send to model
-	studentModel.delete(res, query, set)
+	let query = {'id': parseInt(req.params.id), 'status':1}; //  define query for search and delete
+	return studentModel.delete(res, query, set) // send delete request to model
 };
 
-// exports.clean = (req, res) => {
-// 	return studentModel.clean(res);
-// }
-
 exports.jsonAllStudents = (req, res) => {
-	//  define query and projection for search
-	let query = {status:1};
+	let query = {status:1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
-
-	// send to model
-	return studentModel.jsonAll(res, query, projection)
+	return studentModel.jsonAll(res, query, projection) // send search to model
 };
 
 exports.jsonFilteredStudent = (req,res) => {
-	//  define query and projection for search
-	let query = {'id':parseInt(req.params.id), 'status':1};
+	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
 	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
-
-	// send to model
-	return studentModel.jsonFiltered(res, query, projection)
+	return studentModel.jsonFiltered(res, query, projection) // send search to model
 };
