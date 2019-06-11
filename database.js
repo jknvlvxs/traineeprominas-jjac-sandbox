@@ -5,10 +5,10 @@ let db;
 
 exports.connect = function() {
 	return new Promise((resolve, reject) => {
-    	mongoClient.connect(mdbURL, { useNewUrlParser: true })
+    	mongoClient.connect(mdbURL, { useNewUrlParser: true }) //connect to mongodb
       	.then(connection => {
         	console.log("Conectado ao MongoDB!");
-        	db = connection.db("trainee-prominas");
+        	db = connection.db("trainee-prominas"); // db receive database
         	resolve();
      	})
       	.catch(err => {
@@ -18,6 +18,6 @@ exports.connect = function() {
   	});
 };
 
-exports.getCollection = function(name) {
+exports.getCollection = function(name) { //return collection to model that require
   	return (db.collection(name));
 };
