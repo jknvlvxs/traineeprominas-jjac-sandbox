@@ -48,7 +48,7 @@ exports.postCourse = (req, res) => {
 			}else{
 				res.status(422).json({
 					message: 'Não foi possível inserir o curso', 
-					error: err.details[0].message
+					error: err.message
 				});
 			}
 		});
@@ -79,7 +79,7 @@ exports.putCourse = (req, res) => {
 			}else{
 				res.status(422).json({
 					message: 'Não foi possível inserir o curso', 
-					error: err.details[0].message
+					error: err.message
 				});
 			}
 		});

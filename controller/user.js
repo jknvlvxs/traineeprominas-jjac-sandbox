@@ -33,7 +33,7 @@ exports.postUser = (req, res) => {
 		}else{
 			res.status(422).json({
 				message: 'Não foi possível inserir o usuário', 
-				error: err.details[0].message
+				error: err.message
 			});
 		}
 	});
@@ -50,7 +50,7 @@ exports.putUser = (req, res) => {
 		}else{
 			res.status(422).json({
 				message: 'Não foi possível editar o usuário', 
-				error: err.details[0].message
+				error: err.message
 			});
 		}
 	});
