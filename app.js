@@ -6,9 +6,9 @@ const database = require('./database');
 
 app.use(bodyParser.json());
 
-database //connection to database.js
-.connect()
-.then(() => {
+// database //connection to database.js
+// .connect()
+// .then(() => {
 	app.use(baseAPI, require('./routes/student')); //routes for student
 	app.use(baseAPI, require('./routes/teacher')); //routes for teacher
 	app.use(baseAPI, require('./routes/user')); //routes for user
@@ -20,6 +20,6 @@ database //connection to database.js
 	});
 
 	app.listen(process.env.PORT || 3000); // port of project heroku||localhost
-});
+// });
 
 module.exports = app;
