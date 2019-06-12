@@ -12,7 +12,7 @@ const schemaCourse = Joi.object().keys({ // schema for joi validate required fie
 exports.getAllCourses = (req, res) => {
 	//  define query and projection for search
 	let query = {status:1};
-	let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
+	let projection = {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}
 
 	// send to model
 	return courseModel.getAll(res, query, projection)
@@ -21,7 +21,7 @@ exports.getAllCourses = (req, res) => {
 exports.getFilteredCourse = (req,res) => {
 	//  define query and projection for search
 	let query = {'id':parseInt(req.params.id), 'status':1};
-	let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
+	let projection = {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}
 
 	// send to model
 	return courseModel.getFiltered(res, query, projection)
@@ -88,12 +88,12 @@ exports.deleteCourse = (req, res) => {
 
 exports.jsonAllCourses = (req, res) => {
 	let query = {status:1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
+	let projection = {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}
 	return courseModel.jsonAll(res, query, projection) // send search to model
 };
 
 exports.jsonFilteredCourse = (req,res) => {
 	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}}
+	let projection = {_id:0, id:1, name:1, period:1, city:1, 'teacher.id':1, 'teacher.name':1, 'teacher.lastName':1, 'teacher.phd':1}
 	return courseModel.jsonFiltered(res, query, projection) // send search to model
 };

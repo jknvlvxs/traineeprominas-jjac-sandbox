@@ -9,14 +9,14 @@ const schemaTeacher = Joi.object().keys({ // schema for joi validate required fi
 
 exports.getAllTeachers = (req, res) => {
 	let query = {'status':1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, phd:1};
 
 	return teacherModel.getAll(res, query, projection)  // send search to model
 };
 
 exports.getFilteredTeacher = (req,res) => {
 	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, phd:1};
 
 	return teacherModel.getFiltered(res, query, projection)  // send search to model
 };
@@ -57,12 +57,12 @@ exports.deleteTeacher = (req, res) => {
 
 exports.jsonAllTeachers = (req, res) => {
 	let query = {'status':1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, phd:1};
 	return teacherModel.jsonAll(res, query, projection) // send search to model
 };
 
 exports.jsonFilteredTeacher = (req,res) => {
 	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, phd:1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, phd:1};
 	return teacherModel.jsonFiltered(res, query, projection) // send search to model
 };

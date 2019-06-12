@@ -9,13 +9,13 @@ const schemaUser = Joi.object().keys({ // schema for joi validate required field
 
 exports.getAllUsers = (req, res) => {
 	let query = {status:1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, profile:1};
 	return userModel.getAll(res, query, projection); // send search to model
 };
 
 exports.getFilteredUser = (req,res) => {
 	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, profile:1};
 	return userModel.getFiltered(res, query, projection) // send search to model
 };
 
@@ -53,12 +53,12 @@ exports.deleteUser = (req, res) => {
 
 exports.jsonAllUsers = (req, res) => {
 	let query = {status:1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, profile:1};
 	return userModel.jsonAll(res, query, projection); // send search to model
 };
 
 exports.jsonFilteredUser = (req,res) => {
 	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, profile:1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, profile:1};
 	return userModel.jsonFiltered(res, query, projection) // send search to model
 };

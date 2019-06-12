@@ -11,13 +11,13 @@ const schemaStudent = Joi.object().keys({ // schema for joi validate required fi
 
 exports.getAllStudents = (req, res) => {
 	let query = {status:1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1};
 	return studentModel.getAll(res, query, projection) // send search to model
 };
 
 exports.getFilteredStudent = (req,res) => {
 	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1};
 	return studentModel.getFiltered(res, query, projection) // send search to model
 };
 
@@ -81,12 +81,12 @@ exports.deleteStudent = (req, res) => {
 
 exports.jsonAllStudents = (req, res) => {
 	let query = {status:1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1};
 	return studentModel.jsonAll(res, query, projection) // send search to model
 };
 
 exports.jsonFilteredStudent = (req,res) => {
 	let query = {'id':parseInt(req.params.id), 'status':1}; //  define query and projection for search
-	let projection = {projection: {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1}};
+	let projection = {_id:0, id: 1, name: 1, lastName: 1, age:1, "course.id":1, "course.name":1, "course.period":1, "course.city":1, "course.teacher.id":1, "course.teacher.name":1, "course.teacher.lastName":1, "course.teacher.phd":1};
 	return studentModel.jsonFiltered(res, query, projection) // send search to model
 };
