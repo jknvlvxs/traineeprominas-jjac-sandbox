@@ -49,6 +49,7 @@ exports.post = (req, res) => {
 				res.status(201).send('Curso cadastrado com sucesso!');
 			})
 			.catch(err => {
+				id--;
 				console.error('Erro ao conectar a collection course:', err);
 				res.status(500);
 			});

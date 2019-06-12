@@ -50,6 +50,7 @@ exports.post = (req, res) => {
 				res.status(201).send('Professor cadastrado com sucesso!');
 			})
 			.catch(err => {
+				id--;
 				console.error("Erro ao conectar a collection teacher: ", err);
 				res.status(500);
 			});

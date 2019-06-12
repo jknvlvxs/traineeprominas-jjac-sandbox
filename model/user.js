@@ -47,6 +47,7 @@ exports.post = (req, res) => {
 				res.status(201).send('Usuário cadastrado com sucesso!');
 			})
 			.catch(err => {
+				id--;
 				console.error("Erro ao conectar a collection user: ", err);
 				res.status(500);
 			});

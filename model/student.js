@@ -47,11 +47,11 @@ exports.post = (req, res) => {
 					res.status(201).send('Estudante cadastrado com sucesso!');
 			})
 			.catch(err => {
+				id--;
 				console.error("Erro ao conectar a collection student: ", err);
 				res.status(500);
 			});
 		}else{
-			id--;
 			try{
 				res.status(401).json({
 					message: 'Não foi possível cadastrar o estudante', 
@@ -70,6 +70,8 @@ exports.post = (req, res) => {
 						error:error.errors.age.message
 					});
 				}
+			}finally{
+				id--;
 			}
 		}
 	})
