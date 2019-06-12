@@ -39,7 +39,7 @@ exports.getFiltered = (res, query, projection) => {
 };
 
 exports.post = (req, res) => {
-	var student = new Student({id: ++id, name: req.body.name, lastName: req.body.name, age: req.body.age, course:req.body.course, status:1});
+	var student = new Student({id: ++id, name: req.body.name, lastName: req.body.lastName, age: req.body.age, course:req.body.course, status:1});
 	student.validate(error =>{
 		if(!error){
 			return Student.create(student)
@@ -78,7 +78,7 @@ exports.post = (req, res) => {
 };
 
 exports.put = (req, res, query) => {
-	var student = ({id:parseInt(req.params.id), name: req.body.name, lastName: req.body.name, age: req.body.age, course:req.body.course, status:1});
+	var student = ({id:parseInt(req.params.id), name: req.body.name, lastName: req.body.lastName, age: req.body.age, course:req.body.course, status:1});
 	var validate = new Student(student)
 	validate.validate(error => {
 		if(!error){
