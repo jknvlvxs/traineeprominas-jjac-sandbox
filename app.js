@@ -2,12 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const baseAPI = "/api/v1";
-// const database = require('./database');
+const database = require('./database');
 
 app.use(bodyParser.json());
 
-// database //connection to database.js
-// .connect()
+database //connection to database.js
+.connect()
 // .then(() => {
 	app.use(baseAPI, require('./routes/student')); //routes for student
 	app.use(baseAPI, require('./routes/teacher')); //routes for teacher
