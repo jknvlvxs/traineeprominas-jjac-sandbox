@@ -1,19 +1,20 @@
-const database = require('../database');
-const collection = database.getCollection('teacher');
+const mongoose = require('mongoose');
+const mdbURL = 'mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/trainee-prominas?retryWrites=true';
+mongoose.connect(mdbURL, { useNewUrlParser: true });
+
+const teacherSchema = require('./schema').teacherSchema;
+const Teacher = mongoose.model('Teacher', teacherSchema, 'teacher');
+
 const courseModel = require('./course');
 const studentModel = require('./student');
 
-const mongoose = require('mongoose');
-const teacherSchema = require('./schema').teacherSchema;
-const Teacher = mongoose.model('Teacher', teacherSchema);
-
 var id;
-(async () => {
-	id = await collection.countDocuments({});
-})();
+Teacher.countDocuments({}, (err, count) => {
+	id = count;
+});
 
 exports.getAll = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return Teacher.find(query, projection)
 	.then(teachers => {
 		if(teachers.length > 0){
 			res.status(200).send(teachers);        
@@ -28,7 +29,7 @@ exports.getAll = (res, query, projection) => {
 };
 
 exports.getFiltered = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return Teacher.find(query, projection)
 	.then(teacher => {
 		if(teacher.length > 0){
 			res.status(200).send(teacher);        
@@ -46,7 +47,7 @@ exports.post = (req, res) => {
 	let teacher = new Teacher({id: ++id, name: req.body.name, lastName: req.body.lastName, phd: req.body.phd, status: 1});
 	teacher.validate(error => {
 		if(!error){
-			return collection.insertOne(teacher) 
+			return Teacher.create(teacher) 
 			.then(result => {
 				res.status(201).send('Professor cadastrado com sucesso!');
 			})
@@ -70,12 +71,12 @@ exports.put = (req, res, query) => {
 
 	validate.validate(error =>{
 		if(!error){
-			return collection.findOneAndUpdate(query, {$set: teacher}, {returnOriginal:false})
+			return Teacher.findOneAndUpdate(query, {$set: teacher}, {returnOriginal:false})
 			.then(async (result) => {
-				if(result.value){ // if professor exists
+				if(result){ // if professor exists
 					res.status(200).send('Professor editado com sucesso!');
 					//  updates the course that contains this teacher
-					await courseModel.updateTeacher(parseInt(req.params.id), result.value);
+					await courseModel.updateTeacher(parseInt(req.params.id), result);
 					// receives the updated teacher and updates the student that contains this teacher
 					courseModel.getCoursebyTeacher().then(courses => {
 						for(var i = 0; i<courses.length; i++){
@@ -100,7 +101,7 @@ exports.put = (req, res, query) => {
 };
 
 exports.delete = (req, res, query) => {
-	return collection.findOneAndUpdate(query, {$set: {status:0}})
+	return Teacher.findOneAndUpdate(query, {$set: {status:0}})
 	.then(async (result) => {
 		//  updates the course that contains that teacher
 		await courseModel.deleteTeacher(parseInt(req.params.id));
@@ -112,7 +113,7 @@ exports.delete = (req, res, query) => {
 			}
 		});
 		
-		if(result.value){ // if professor exists
+		if(result){ // if professor exists
 			console.log('O professor foi removido');
 			res.status(200).send('O professor foi removido com sucesso');
 		}else{
@@ -127,11 +128,11 @@ exports.delete = (req, res, query) => {
 };
 
 exports.getTeacher = (id) => {
-	return collection.find({'id':id, 'status':1}).toArray();
+	return Teacher.find({'id':id, 'status':1});
 };
 
 exports.jsonAll = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return Teacher.find(query, projection)
 	.then(teachers => {
 		if(teachers.length > 0){ 
 			res.json(teachers);        
@@ -146,7 +147,7 @@ exports.jsonAll = (res, query, projection) => {
 };
 
 exports.jsonFiltered = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return Teacher.find(query, projection)
 	.then(teacher => {
 		if(teacher.length > 0){
 			res.json(teacher);        

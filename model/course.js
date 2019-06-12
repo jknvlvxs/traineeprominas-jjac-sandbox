@@ -1,18 +1,19 @@
-const database = require('../database');
-const collection = database.getCollection('course');
+const mongoose = require('mongoose');
+const mdbURL = 'mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/trainee-prominas?retryWrites=true';
+mongoose.connect(mdbURL, { useNewUrlParser: true });
+
+const courseSchema = require('./schema').courseSchema;
+const Course = mongoose.model('Course', courseSchema, 'course');
+
 const studentModel = require('./student');
 
-const mongoose = require('mongoose');
-const courseSchema = require('./schema').courseSchema;
-const Course = mongoose.model('Course', courseSchema);
-
 var id;
-(async () => {
-		id = await collection.countDocuments({});
-})();
+Course.countDocuments({}, (err, count) => {
+	id = count;
+});
 
 exports.getAll = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return Course.find(query, projection)
 	.then(courses => {
 		if(courses.length > 0){
 			res.status(200).send(courses);        
@@ -27,7 +28,7 @@ exports.getAll = (res, query, projection) => {
 };
 
 exports.getFiltered = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return Course.find(query, projection)
 	.then(course => {
 		if(course.length > 0){
 			res.status(200).send(course);        
@@ -45,7 +46,7 @@ exports.post = (req, res) => {
 	var course = new Course({id: ++id, name: req.body.name, period: req.body.period || 8, city: req.body.city, teacher: req.body.teacher, status: 1});
 	course.validate(error => {
 		if(!error){
-			return collection.insertOne(course)
+			return Course.create(course)
 			.then(result => {
 				res.status(201).send('Curso cadastrado com sucesso!');
 			})
@@ -69,12 +70,12 @@ exports.put = (req, res, query) => {
 
 	validate.validate(error =>{
 		if(!error){
-			return collection.findOneAndUpdate(query, {$set: course}, {returnOriginal:false} )
+			return Course.findOneAndUpdate(query, {$set: course}, {returnOriginal:false} )
 			.then(result => {
 				// update course in student
-				if(result.value){
+				if(result){
 					res.status(200).send('Curso editado com sucesso!');
-					studentModel.updateCourse(parseInt(req.params.id), result.value);
+					studentModel.updateCourse(parseInt(req.params.id), result);
 				}else{
 					res.status(401).send('Não é possível editar curso inexistente');
 				}
@@ -93,11 +94,11 @@ exports.put = (req, res, query) => {
 };
 
 exports.delete = (req, res, query) => {
-	return collection.findOneAndUpdate(query, {$set: {status:0}})
+	return Course.findOneAndUpdate(query, {$set: {status:0}})
 	.then(result => {
 		// delete course in student
 		studentModel.deleteCourse(parseInt(req.params.id));
-		if(result.value){
+		if(result){
 			console.log('O curso foi removido');
 			res.status(200).send('O curso foi removido com sucesso');
 		}else{
@@ -112,23 +113,23 @@ exports.delete = (req, res, query) => {
 };
 
 exports.getCourse = (id) => {
-	return collection.find({'id':id, 'status':1}).toArray();
+	return Course.find({'id':id, 'status':1});
 };
 
 exports.updateTeacher = (id, set) => {
-	return collection.updateMany({'teacher.id':id, 'status':1}, {$set: {'teacher.$':set}});
+	return Course.updateMany({'teacher.id':id, 'status':1}, {$set: {'teacher.$':set}});
 };
 
 exports.deleteTeacher = (id) => {
-	return collection.findOneAndUpdate({'status':1, 'teacher.id':id}, {$pull: {"teacher": {'id': id}}});
+	return Course.findOneAndUpdate({'status':1, 'teacher.id':id}, {$pull: {"teacher": {'id': id}}});
 };
 
 exports.getCoursebyTeacher = () => {
-	return collection.find({"status":1}).toArray();
+	return Course.find({"status":1});
 };
 
 exports.jsonAll = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return Course.find(query, projection)
 	.then(courses => {
 		if(courses.length > 0){ 
 			res.json(courses);        
@@ -143,7 +144,7 @@ exports.jsonAll = (res, query, projection) => {
 };
 
 exports.jsonFiltered = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return Course.find(query, projection)
 	.then(course => {
 		if(course.length > 0){
 			res.json(course);        

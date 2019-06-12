@@ -1,17 +1,17 @@
-const database = require('../database');
-const collection = database.getCollection('user');
-
 const mongoose = require('mongoose');
+const mdbURL = 'mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/trainee-prominas?retryWrites=true';
+mongoose.connect(mdbURL, { useNewUrlParser: true });
+
 const userSchema = require('./schema').userSchema;
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema, 'user');
 
 var id;
-(async () => {
-	id = await collection.countDocuments({});
-})();
+User.countDocuments({}, (err, count) => {
+	id = count;
+});
 
 exports.getAll = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return User.find(query, projection)
 	.then(users => {
 		if(users.length > 0){ 
 			res.status(200).send(users);        
@@ -26,7 +26,7 @@ exports.getAll = (res, query, projection) => {
 };
 
 exports.getFiltered = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return User.find(query, projection)
 	.then(user => {
 		if(user.length > 0){
 			res.status(200).send(user);        
@@ -44,7 +44,7 @@ exports.post = (req, res) => {
 	let user = new User({id: ++id, name: req.body.name, lastName: req.body.lastName, profile: req.body.profile, status: 1});
 	user.validate(error => {
 		if(!error){
-			return collection.insertOne(user)
+			return User.create(user)
 			.then(result => {
 				res.status(201).send('Usuário cadastrado com sucesso!');
 			})
@@ -68,9 +68,9 @@ exports.put = (req, res, query) => {
 	
 	validate.validate(error =>{
 		if(!error){
-			return collection.findOneAndUpdate(query, {$set: user})
+			return User.findOneAndUpdate(query, {$set: user})
 			.then(result => {
-				if(result.value){
+				if(result){
 					res.status(200).send('Usuário editado com sucesso!');
 				}else{
 					res.status(401).send('Não é possível editar usuário inexistente');                    
@@ -90,9 +90,9 @@ exports.put = (req, res, query) => {
 };
 
 exports.delete = (res, query) => {
-	return collection.findOneAndUpdate(query, {$set: {status:0}})
+	return User.findOneAndUpdate(query, {$set: {status:0}})
 	.then(result => {
-		if(result.value){ // if user exists
+		if(result){ // if user exists
 			console.log('O usuário foi removido');
 			res.status(200).send('O usuário foi removido com sucesso');
 		  }else{
@@ -107,7 +107,7 @@ exports.delete = (res, query) => {
 };
 
 exports.jsonAll = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return User.find(query, projection)
 	.then(users => {
 		if(users.length > 0){ 
 			res.json(users);        
@@ -122,7 +122,7 @@ exports.jsonAll = (res, query, projection) => {
 };
 
 exports.jsonFiltered = (res, query, projection) => {
-	return collection.find(query, projection).toArray()
+	return User.find(query, projection)
 	.then(user => {
 		if(user.length > 0){
 			res.json(user);        
