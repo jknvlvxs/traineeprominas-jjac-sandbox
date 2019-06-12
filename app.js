@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const baseAPI = "/api/v1";
-const database = require('./database');
+// const database = require('./database');
 
 app.use(bodyParser.json());
 
