@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const mdbURL = 'mongodb+srv://admin:admin@cluster0-dp1yr.mongodb.net/trainee-prominas?retryWrites=true';
-mongoose.connect(mdbURL, { useNewUrlParser: true });
 
 const courseSchema = require('./schema').courseSchema;
 const Course = mongoose.model('Course', courseSchema, 'course');
