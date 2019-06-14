@@ -107,16 +107,18 @@ put = (req, res, query) => {
 	})
 };
 
-remove = (req, res, query) => {
-	return Teacher.findOneAndUpdate(query, {$set: {status:0}})
+remove = async (req, res, query) => {
+	const session = await mongoose.startSession();
+	session.startTransaction();
+	return Teacher.findOneAndUpdate(query, {$set: {status:0}}).session(session)
 	.then(async (result) => {
 		//  updates the course that contains that teacher
-		await courseModel.deleteTeacher(parseInt(req.params.id));
+		await courseModel.deleteTeacher(parseInt(req.params.id)).session(session);
 		
 		// receives the updated teacher and updates the student that contains this teacher
-		courseModel.getCoursebyTeacher().then(courses => {
+		await courseModel.getCoursebyTeacher().session(session).then(async courses => {
 			for(var i = 0; i<courses.length; i++){
-				studentModel.updateTeacher(courses[i]);
+				await studentModel.updateTeacher(courses[i]).session(session);
 			}
 		});
 		
@@ -124,14 +126,17 @@ remove = (req, res, query) => {
 			console.log('O professor foi removido');
 			res.status(200).send('O professor foi removido com sucesso');
 		}else{
-			console.log('Nenhum professor foi removido');
 			res.status(204).send();
+			console.log('Nenhum professor foi removido');
 		}
+		await session.commitTransaction();
+		session.endSession();
+	}).catch(async err => {
+		res.status(500).send('Ocorreu um erro interno, tente novamente mais tarde')
+		await session.abortTransaction();
+		session.endSession();
+		throw err;
 	})
-	.catch(err => {
-		console.error("Erro ao conectar a collection teacher: ", err);
-		res.status(500);
-	});
 };
 
 getTeacher = (id) => {
