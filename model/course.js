@@ -1,6 +1,16 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const courseSchema = require('./schema').courseSchema;
+const teacherSchema = require('./teacher').teacherSchema;
+courseSchema = new Schema({
+	id: {type: Number},
+	name: {type: String},
+	period: {type: Number},
+	city: {type: String},
+	teacher: {type:[teacherSchema], validate: [val => {return val.length >= 2}, 'São necessários pelo menos 2 professores válidos']},
+	status: {type: Number}
+}, {versionKey: false});
+
 const Course = mongoose.model('Course', courseSchema, 'course');
 
 const studentModel = require('./student');
@@ -10,7 +20,7 @@ Course.countDocuments({}, (err, count) => {
 	id = count;
 });
 
-exports.getAll = (res, query, projection) => {
+getAll = (res, query, projection) => {
 	return Course.find(query, projection)
 	.then(courses => {
 		if(courses.length > 0){
@@ -25,7 +35,7 @@ exports.getAll = (res, query, projection) => {
 	});
 };
 
-exports.getFiltered = (res, query, projection) => {
+getFiltered = (res, query, projection) => {
 	return Course.find(query, projection)
 	.then(course => {
 		if(course.length > 0){
@@ -40,7 +50,7 @@ exports.getFiltered = (res, query, projection) => {
 	});
 };
 
-exports.post = (req, res) => {
+post = (req, res) => {
 	var course = new Course({id: ++id, name: req.body.name, period: req.body.period || 8, city: req.body.city, teacher: req.body.teacher, status: 1});
 	course.validate(error => {
 		if(!error){
@@ -63,7 +73,7 @@ exports.post = (req, res) => {
 	})
 };
 
-exports.put = (req, res, query) => {
+put = (req, res, query) => {
 	let course = ({id:parseInt(req.params.id), name: req.body.name, period: req.body.period || 8, city: req.body.city, teacher: req.body.teacher, status: 1});
 	let validate = new Course(course);
 
@@ -92,7 +102,7 @@ exports.put = (req, res, query) => {
 	})	
 };
 
-exports.delete = (req, res, query) => {
+remove = (req, res, query) => {
 	return Course.findOneAndUpdate(query, {$set: {status:0}})
 	.then(result => {
 		// delete course in student
@@ -111,7 +121,7 @@ exports.delete = (req, res, query) => {
 	});
 };
 
-exports.getCourse = (id) => {
+getCourse = (id) => {
 	return Course.find({'id':id, 'status':1});
 };
 
@@ -127,7 +137,7 @@ exports.getCoursebyTeacher = () => {
 	return Course.find({"status":1});
 };
 
-exports.jsonAll = (res, query, projection) => {
+jsonAll = (res, query, projection) => {
 	return Course.find(query, projection)
 	.then(courses => {
 		if(courses.length > 0){ 
@@ -142,7 +152,7 @@ exports.jsonAll = (res, query, projection) => {
 	});
 };
 
-exports.jsonFiltered = (res, query, projection) => {
+jsonFiltered = (res, query, projection) => {
 	return Course.find(query, projection)
 	.then(course => {
 		if(course.length > 0){
@@ -156,3 +166,6 @@ exports.jsonFiltered = (res, query, projection) => {
 		res.status(500);
 	});
 };
+
+module.exports = {courseSchema, getAll, getFiltered, post, put, remove,
+	jsonAll, jsonFiltered, getCourse};

@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const teacherSchema = require('./schema').teacherSchema;
+teacherSchema = new Schema({
+	id: {type: Number},
+	name: {type: String},
+	lastName: {type: String},
+	phd: {type: Boolean, validate: [val => {return val == true}, 'É obrigatório o professor possuir phd']},
+	status: {type: Number}
+}, {versionKey: false});
+
 const Teacher = mongoose.model('Teacher', teacherSchema, 'teacher');
 
 const courseModel = require('./course');
@@ -11,7 +19,7 @@ Teacher.countDocuments({}, (err, count) => {
 	id = count;
 });
 
-exports.getAll = (res, query, projection) => {
+getAll = (res, query, projection) => {
 	return Teacher.find(query, projection)
 	.then(teachers => {
 		if(teachers.length > 0){
@@ -26,7 +34,7 @@ exports.getAll = (res, query, projection) => {
 	});
 };
 
-exports.getFiltered = (res, query, projection) => {
+getFiltered = (res, query, projection) => {
 	return Teacher.find(query, projection)
 	.then(teacher => {
 		if(teacher.length > 0){
@@ -41,7 +49,7 @@ exports.getFiltered = (res, query, projection) => {
 	});
 };
 
-exports.post = (req, res) => {
+post = (req, res) => {
 	let teacher = new Teacher({id: ++id, name: req.body.name, lastName: req.body.lastName, phd: req.body.phd, status: 1});
 	teacher.validate(error => {
 		if(!error){
@@ -64,7 +72,7 @@ exports.post = (req, res) => {
 	}) 
 };
 
-exports.put = (req, res, query) => {
+put = (req, res, query) => {
 	let teacher = ({id:parseInt(req.params.id), name: req.body.name, lastName: req.body.lastName, phd: req.body.phd, status: 1});
 	let validate = new Teacher(teacher);
 
@@ -99,7 +107,7 @@ exports.put = (req, res, query) => {
 	})
 };
 
-exports.delete = (req, res, query) => {
+remove = (req, res, query) => {
 	return Teacher.findOneAndUpdate(query, {$set: {status:0}})
 	.then(async (result) => {
 		//  updates the course that contains that teacher
@@ -126,11 +134,11 @@ exports.delete = (req, res, query) => {
 	});
 };
 
-exports.getTeacher = (id) => {
+getTeacher = (id) => {
 	return Teacher.find({'id':id, 'status':1});
 };
 
-exports.jsonAll = (res, query, projection) => {
+jsonAll = (res, query, projection) => {
 	return Teacher.find(query, projection)
 	.then(teachers => {
 		if(teachers.length > 0){ 
@@ -145,7 +153,7 @@ exports.jsonAll = (res, query, projection) => {
 	});
 };
 
-exports.jsonFiltered = (res, query, projection) => {
+jsonFiltered = (res, query, projection) => {
 	return Teacher.find(query, projection)
 	.then(teacher => {
 		if(teacher.length > 0){
@@ -159,3 +167,5 @@ exports.jsonFiltered = (res, query, projection) => {
 		res.status(500);
 	});
 };
+
+module.exports = {teacherSchema, getAll, getFiltered, post, put, remove, jsonAll, jsonFiltered, getTeacher};

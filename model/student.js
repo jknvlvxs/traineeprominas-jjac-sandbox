@@ -1,6 +1,16 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const courseSchema = require('./course').courseSchema;
 
-const studentSchema = require('./schema').studentSchema;
+studentSchema = new Schema({
+	id: {type: Number},
+	name: {type: String},
+	lastName: {type: String},
+	age: {type: Number, min:[17, 'A idade inserida é {VALUE} anos de idade, a idade mínima permitida é 17!']},
+	course: {type:[courseSchema], validate: [val => {return val.length == 1}, 'É necessário inserir um curso válido']},
+	status: {type: Number}
+}, {versionKey: false});
+
 const Student = mongoose.model('Student', studentSchema, 'student');
 
 var id;
@@ -8,7 +18,7 @@ Student.countDocuments({}, (err, count) => {
 	id = count;
 });
 
-exports.getAll = (res, query, projection) => {
+getAll = (res, query, projection) => {
 	return Student.find(query, projection)
 	.then(students => {
 		if(students.length > 0){
@@ -38,7 +48,7 @@ exports.getFiltered = (res, query, projection) => {
 	});
 };
 
-exports.post = (req, res) => {
+post = (req, res) => {
 	var student = new Student({id: ++id, name: req.body.name, lastName: req.body.lastName, age: req.body.age, course:req.body.course, status:1});
 	student.validate(error =>{
 		if(!error){
@@ -77,7 +87,7 @@ exports.post = (req, res) => {
 	})
 };
 
-exports.put = (req, res, query) => {
+put = (req, res, query) => {
 	var student = ({id:parseInt(req.params.id), name: req.body.name, lastName: req.body.lastName, age: req.body.age, course:req.body.course, status:1});
 	var validate = new Student(student)
 	validate.validate(error => {
@@ -118,7 +128,7 @@ exports.put = (req, res, query) => {
 	})	
 };
 
-exports.delete = (res, query) => {
+remove = (res, query) => {
 	return Student.findOneAndUpdate(query, {$set: {status:0}})
 	.then(result => {
 		if(result){ // if student exists
@@ -147,7 +157,7 @@ exports.updateTeacher = (course) => {
 	return Student.findOneAndUpdate({'status':1, 'course.id':course.id}, {$set: {'course.$':course}});
 };
 
-exports.jsonAll = (res, query, projection) => {
+jsonAll = (res, query, projection) => {
 	return Student.find(query, projection)
 	.then(students => {
 		if(students.length > 0){ 
@@ -162,7 +172,7 @@ exports.jsonAll = (res, query, projection) => {
 	});
 };
 
-exports.jsonFiltered = (res, query, projection) => {
+jsonFiltered = (res, query, projection) => {
 	return Student.find(query, projection)
 	.then(student => {
 		if(student.length > 0){
@@ -176,3 +186,5 @@ exports.jsonFiltered = (res, query, projection) => {
 		res.status(500);
 	});
 };
+
+module.exports = {studentSchema, getAll, getFiltered, post, put, remove, jsonAll, jsonFiltered};

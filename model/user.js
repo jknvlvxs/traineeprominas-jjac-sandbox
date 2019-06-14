@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const userSchema = require('./schema').userSchema;
+userSchema = new Schema({
+	id: {type: Number},
+	name: {type: String},
+	lastName: {type: String},
+	profile: {type: String, enum:{values:['guess','admin'], message: 'O profile {VALUE} é inválido'}},
+	status: {type: Number}
+}, {versionKey: false});
+
 const User = mongoose.model('User', userSchema, 'user');
 
 var id;
@@ -8,7 +16,7 @@ User.countDocuments({}, (err, count) => {
 	id = count;
 });
 
-exports.getAll = (res, query, projection) => {
+getAll = (res, query, projection) => {
 	return User.find(query, projection)
 	.then(users => {
 		if(users.length > 0){ 
@@ -23,7 +31,7 @@ exports.getAll = (res, query, projection) => {
 	});
 };
 
-exports.getFiltered = (res, query, projection) => {
+getFiltered = (res, query, projection) => {
 	return User.find(query, projection)
 	.then(user => {
 		if(user.length > 0){
@@ -38,7 +46,7 @@ exports.getFiltered = (res, query, projection) => {
 	});
 };
 
-exports.post = (req, res) => {
+post = (req, res) => {
 	let user = new User({id: ++id, name: req.body.name, lastName: req.body.lastName, profile: req.body.profile, status: 1});
 	user.validate(error => {
 		if(!error){
@@ -61,7 +69,7 @@ exports.post = (req, res) => {
 	});
 };
 
-exports.put = (req, res, query) => {
+put = (req, res, query) => {
 	let user = ({id:parseInt(req.params.id), name: req.body.name, lastName: req.body.lastName, profile: req.body.profile, status: 1});
 	let validate = new User(user);
 	
@@ -88,7 +96,7 @@ exports.put = (req, res, query) => {
 	})
 };
 
-exports.delete = (res, query) => {
+remove = (res, query) => {
 	return User.findOneAndUpdate(query, {$set: {status:0}})
 	.then(result => {
 		if(result){ // if user exists
@@ -105,7 +113,7 @@ exports.delete = (res, query) => {
 	});
 };
 
-exports.jsonAll = (res, query, projection) => {
+jsonAll = (res, query, projection) => {
 	return User.find(query, projection)
 	.then(users => {
 		if(users.length > 0){ 
@@ -120,7 +128,7 @@ exports.jsonAll = (res, query, projection) => {
 	});
 };
 
-exports.jsonFiltered = (res, query, projection) => {
+jsonFiltered = (res, query, projection) => {
 	return User.find(query, projection)
 	.then(user => {
 		if(user.length > 0){
@@ -134,3 +142,5 @@ exports.jsonFiltered = (res, query, projection) => {
 		res.status(500);
 	});
 };
+
+module.exports = {userSchema, getAll, getFiltered, post, put, remove, jsonAll, jsonFiltered};
