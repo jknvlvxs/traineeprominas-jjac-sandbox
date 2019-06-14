@@ -52,7 +52,7 @@ exports.putTeacher = (req, res) => {
 exports.deleteTeacher = (req, res) => {
 	let query = {'id': parseInt(req.params.id), 'status':1}; //  define query and set for search and delete  
 
-	return teacherModel.delete(req, res, query) // send delete request to model
+	return teacherModel.remove(req, res, query) // send delete request to model
 };
 
 exports.jsonAllTeachers = (req, res) => {

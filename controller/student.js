@@ -76,7 +76,7 @@ exports.putStudent = (req, res) => {
 
 exports.deleteStudent = (req, res) => {
 	let query = {'id': parseInt(req.params.id), 'status':1}; //  define query for search and delete
-	return studentModel.delete(res, query) // send delete request to model
+	return studentModel.remove(res, query) // send delete request to model
 };
 
 exports.jsonAllStudents = (req, res) => {

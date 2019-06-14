@@ -83,7 +83,7 @@ exports.putCourse = (req, res) => {
 
 exports.deleteCourse = (req, res) => {
 	let query = {'id': parseInt(req.params.id),'status':1}; // define query to search and delete
-	return courseModel.delete(req, res, query) // send delete request to model
+	return courseModel.remove(req, res, query) // send delete request to model
 };
 
 exports.jsonAllCourses = (req, res) => {

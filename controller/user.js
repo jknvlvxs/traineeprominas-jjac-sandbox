@@ -48,7 +48,7 @@ exports.putUser = (req, res) => {
 
 exports.deleteUser = (req, res) => {
 	let query = {'id': parseInt(req.params.id), 'status':1}; //  define query for search and delete
-	return userModel.delete(res, query) // send delete request to model
+	return userModel.remove(res, query) // send delete request to model
 };
 
 exports.jsonAllUsers = (req, res) => {
