@@ -22,9 +22,9 @@ getAll = (res, query, projection) => {
 	return Student.find(query, projection)
 	.then(students => {
 		if(students.length > 0){
-			res.status(200).send(students);        
+			res.status(200).json(students);        
 		}else{
-			res.status(404).send('Nenhum estudante cadastrado');
+			res.status(404).json('Nenhum estudante cadastrado');
 		}
 	})
 	.catch(err => {
@@ -37,9 +37,9 @@ exports.getFiltered = (res, query, projection) => {
 	return Student.find(query, projection)
 	.then(student => {
 		if(student.length > 0){
-			res.status(200).send(student);
+			res.status(200).json(student);
 		}else{
-			res.status(404).send('O estudante não foi encontrado');
+			res.status(404).json('O estudante não foi encontrado');
 		}
 	})
 	.catch(err => {
@@ -54,7 +54,7 @@ post = (req, res) => {
 		if(!error){
 			return Student.create(student)
 			.then(result => {
-					res.status(201).send('Estudante cadastrado com sucesso!');
+					res.status(201).json('Estudante cadastrado com sucesso!');
 			})
 			.catch(err => {
 				id--;
@@ -95,9 +95,9 @@ put = (req, res, query) => {
 			return Student.findOneAndUpdate(query, {$set:student})
 			.then(result => {
 					if(result){
-						res.status(200).send('Estudante editado com sucesso!'); 
+						res.status(200).json('Estudante editado com sucesso!'); 
 					}else{
-						res.status(401).send('Não é possível editar estudante inexistente');
+						res.status(401).json('Não é possível editar estudante inexistente');
 					}
 			})
 			.catch(err => {
@@ -133,10 +133,10 @@ remove = (res, query) => {
 	.then(result => {
 		if(result){ // if student exists
 			console.log('O estudante foi removido');
-			res.status(200).send('O estudante foi removido com sucesso');
+			res.status(200).json('O estudante foi removido com sucesso');
 		}else{
 			console.log('Nenhum estudante foi removido');
-			res.status(204).send();
+			res.status(204).json();
 		}
 	})
 	.catch(err => {

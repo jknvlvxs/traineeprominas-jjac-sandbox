@@ -24,9 +24,9 @@ getAll = (res, query, projection) => {
 	return Course.find(query, projection)
 	.then(courses => {
 		if(courses.length > 0){
-			res.status(200).send(courses);        
+			res.status(200).json(courses);        
 		}else{
-			res.status(404).send('Nenhum curso cadastrado');
+			res.status(404).json('Nenhum curso cadastrado');
 		}
 	})
 	.catch(err => {
@@ -39,9 +39,9 @@ getFiltered = (res, query, projection) => {
 	return Course.find(query, projection)
 	.then(course => {
 		if(course.length > 0){
-			res.status(200).send(course);        
+			res.status(200).json(course);        
 		}else{
-			res.status(404).send('O curso não foi encontrado');
+			res.status(404).json('O curso não foi encontrado');
 		}
 	})
 	.catch(err => {
@@ -56,7 +56,7 @@ post = (req, res) => {
 		if(!error){
 			return Course.create(course)
 			.then(result => {
-				res.status(201).send('Curso cadastrado com sucesso!');
+				res.status(201).json('Curso cadastrado com sucesso!');
 			})
 			.catch(err => {
 				id--;
@@ -83,10 +83,10 @@ put = (req, res, query) => {
 			.then(result => {
 				// update course in student
 				if(result){
-					res.status(200).send('Curso editado com sucesso!');
+					res.status(200).json('Curso editado com sucesso!');
 					studentModel.updateCourse(parseInt(req.params.id), result);
 				}else{
-					res.status(401).send('Não é possível editar curso inexistente');
+					res.status(401).json('Não é possível editar curso inexistente');
 				}
 			})
 			.catch(err => {
@@ -109,10 +109,10 @@ remove = (req, res, query) => {
 		studentModel.deleteCourse(parseInt(req.params.id));
 		if(result){
 			console.log('O curso foi removido');
-			res.status(200).send('O curso foi removido com sucesso');
+			res.status(200).json('O curso foi removido com sucesso');
 		}else{
 			console.log('Nenhum curso foi removido');
-			res.status(204).send();
+			res.status(204).json();
 		}
 	})
 	.catch(err => {

@@ -20,9 +20,9 @@ getAll = (res, query, projection) => {
 	return User.find(query, projection)
 	.then(users => {
 		if(users.length > 0){ 
-			res.status(200).send(users);        
+			res.status(200).json(users);        
 		}else{
-			res.status(404).send('Nenhum usuário cadastrado');
+			res.status(404).json('Nenhum usuário cadastrado');
 		}
 	})
 	.catch(err => {
@@ -35,9 +35,9 @@ getFiltered = (res, query, projection) => {
 	return User.find(query, projection)
 	.then(user => {
 		if(user.length > 0){
-			res.status(200).send(user);        
+			res.status(200).json(user);        
 		}else{
-			res.status(404).send('O usuário não foi encontrado');
+			res.status(404).json('O usuário não foi encontrado');
 		}
 	})
 	.catch(err => {
@@ -52,7 +52,7 @@ post = (req, res) => {
 		if(!error){
 			return User.create(user)
 			.then(result => {
-				res.status(201).send('Usuário cadastrado com sucesso!');
+				res.status(201).json('Usuário cadastrado com sucesso!');
 			})
 			.catch(err => {
 				id--;
@@ -78,9 +78,9 @@ put = (req, res, query) => {
 			return User.findOneAndUpdate(query, {$set: user})
 			.then(result => {
 				if(result){
-					res.status(200).send('Usuário editado com sucesso!');
+					res.status(200).json('Usuário editado com sucesso!');
 				}else{
-					res.status(401).send('Não é possível editar usuário inexistente');                    
+					res.status(401).json('Não é possível editar usuário inexistente');                    
 				}
 			})
 			.catch(err => {
@@ -101,10 +101,10 @@ remove = (res, query) => {
 	.then(result => {
 		if(result){ // if user exists
 			console.log('O usuário foi removido');
-			res.status(200).send('O usuário foi removido com sucesso');
+			res.status(200).json('O usuário foi removido com sucesso');
 		  }else{
 			console.log('Nenhum usuário foi removido');
-			res.status(204).send();
+			res.status(204).json();
 		  }
 	})
 	.catch(err => {

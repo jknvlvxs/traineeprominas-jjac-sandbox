@@ -23,9 +23,9 @@ getAll = (res, query, projection) => {
 	return Teacher.find(query, projection)
 	.then(teachers => {
 		if(teachers.length > 0){
-			res.status(200).send(teachers);        
+			res.status(200).json(teachers);        
 		}else{
-			res.status(404).send('Nenhum professor cadastrado');
+			res.status(404).json('Nenhum professor cadastrado');
 		}
 	})
 	.catch(err => {
@@ -38,9 +38,9 @@ getFiltered = (res, query, projection) => {
 	return Teacher.find(query, projection)
 	.then(teacher => {
 		if(teacher.length > 0){
-			res.status(200).send(teacher);        
+			res.status(200).json(teacher);        
 		}else{
-			res.status(404).send('O professor não foi encontrado');
+			res.status(404).json('O professor não foi encontrado');
 		}
 	})
 	.catch(err => {
@@ -55,7 +55,7 @@ post = (req, res) => {
 		if(!error){
 			return Teacher.create(teacher) 
 			.then(result => {
-				res.status(201).send('Professor cadastrado com sucesso!');
+				res.status(201).json('Professor cadastrado com sucesso!');
 			})
 			.catch(err => {
 				id--;
@@ -81,7 +81,7 @@ put = (req, res, query) => {
 			return Teacher.findOneAndUpdate(query, {$set: teacher}, {returnOriginal:false})
 			.then(async (result) => {
 				if(result){ // if professor exists
-					res.status(200).send('Professor editado com sucesso!');
+					res.status(200).json('Professor editado com sucesso!');
 					//  updates the course that contains this teacher
 					await courseModel.updateTeacher(parseInt(req.params.id), result);
 					// receives the updated teacher and updates the student that contains this teacher
@@ -91,7 +91,7 @@ put = (req, res, query) => {
 						}
 					});
 				}else{
-					res.status(401).send('Não é possível editar professor inexistente');
+					res.status(401).json('Não é possível editar professor inexistente');
 				}
 			})
 			.catch(err => {
@@ -124,15 +124,15 @@ remove = async (req, res, query) => {
 		
 		if(result){ // if professor exists
 			console.log('O professor foi removido');
-			res.status(200).send('O professor foi removido com sucesso');
+			res.status(200).json('O professor foi removido com sucesso');
 		}else{
-			res.status(204).send();
+			res.status(204).json();
 			console.log('Nenhum professor foi removido');
 		}
 		await session.commitTransaction();
 		session.endSession();
 	}).catch(async err => {
-		res.status(500).send('Ocorreu um erro interno, tente novamente mais tarde')
+		res.status(500).json('Ocorreu um erro interno, tente novamente mais tarde')
 		await session.abortTransaction();
 		session.endSession();
 		throw err;
