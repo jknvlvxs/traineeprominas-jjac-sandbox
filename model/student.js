@@ -33,7 +33,7 @@ getAll = (res, query, projection) => {
 	});
 };
 
-exports.getFiltered = (res, query, projection) => {
+getFiltered = (res, query, projection) => {
 	return Student.find(query, projection)
 	.then(student => {
 		if(student.length > 0){
