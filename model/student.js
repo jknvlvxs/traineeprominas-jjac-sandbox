@@ -145,16 +145,16 @@ remove = (res, query) => {
 	});
 };
 
-exports.updateCourse = (id, set) => {
-	return Student.findOneAndUpdate({'course.id':id, 'status':1}, {$set: {"course.$": set}});
+exports.updateCourse = async (id, set) => {
+	return await Student.findOneAndUpdate({'course.id':id, 'status':1}, {$set: {"course.$": set}});
 };
 
-exports.deleteCourse = (id, set) => {
-	return Student.findOneAndUpdate({'course.id':id, 'status':1}, {$set: {status:0}});
+exports.deleteCourse = async (id) => {
+	return await Student.findOneAndUpdate({'course.id':id, 'status':1}, {$set: {status:0}});
 };
 
-exports.updateTeacher = (course) => {
-	return Student.findOneAndUpdate({'status':1, 'course.id':course.id}, {$set: {'course.$':course}});
+exports.updateTeacher = async (course, session) => {
+	return await Student.findOneAndUpdate({'status':1, 'course.id':course.id}, {$set: {'course.$':course}}).session(session);
 };
 
 jsonAll = (res, query, projection) => {

@@ -79,7 +79,7 @@ put = (req, res, query) => {
 
 	validate.validate(error =>{
 		if(!error){
-			return Course.findOneAndUpdate(query, {$set: course}, {returnOriginal:false} )
+			return Course.findOneAndUpdate(query, {$set: course}, {new: true})
 			.then(result => {
 				// update course in student
 				if(result){

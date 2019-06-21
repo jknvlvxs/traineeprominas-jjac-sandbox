@@ -78,7 +78,7 @@ put = (req, res, query) => {
 
 	validate.validate(error =>{
 		if(!error){
-			return Teacher.findOneAndUpdate(query, {$set: teacher}, {returnOriginal:false})
+			return Teacher.findOneAndUpdate(query, {$set: teacher}, {new:true})
 			.then(async (result) => {
 				if(result){ // if professor exists
 					res.status(200).json('Professor editado com sucesso!');
@@ -118,13 +118,14 @@ remove = async (req, res, query) => {
 		// receives the updated teacher and updates the student that contains this teacher
 		await courseModel.getCoursebyTeacher().session(session).then(async courses => {
 			for(var i = 0; i<courses.length; i++){
-				await studentModel.updateTeacher(courses[i]).session(session);
+				await studentModel.updateTeacher(courses[i], session);
 			}
 		});
 		
 		if(result){ // if professor exists
 			console.log('O professor foi removido');
 			res.status(200).json('O professor foi removido com sucesso');
+			// throw('Deu certo mais deu errado'); // transaction test
 		}else{
 			res.status(204).json();
 			console.log('Nenhum professor foi removido');
