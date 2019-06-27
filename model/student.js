@@ -54,7 +54,7 @@ post = (req, res) => {
 		if(!error){
 			return Student.create(student)
 			.then(result => {
-					res.status(201).json('Estudante cadastrado com sucesso!');
+				res.status(201).json('Estudante cadastrado com sucesso!');
 			})
 			.catch(err => {
 				id--;
@@ -94,15 +94,15 @@ put = (req, res, query) => {
 		if(!error){
 			return Student.findOneAndUpdate(query, {$set:student})
 			.then(result => {
-					if(result){
-						res.status(200).json('Estudante editado com sucesso!'); 
-					}else{
-						res.status(401).json('Não é possível editar estudante inexistente');
-					}
+				if(result){
+					res.status(200).json('Estudante editado com sucesso!'); 
+				}else{
+					res.status(401).json('Não é possível editar estudante inexistente');
+				}
 			})
 			.catch(err => {
-					console.error("Erro ao conectar a collection student: ", err);
-					res.status(500);
+				console.error("Erro ao conectar a collection student: ", err);
+				res.status(500);
 			});
 		}else{
 			try{

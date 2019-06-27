@@ -90,8 +90,8 @@ put = (req, res, query) => {
 				}
 			})
 			.catch(err => {
-					console.error('Erro ao conectar a collection course:', err);
-					res.status(500);
+				console.error('Erro ao conectar a collection course:', err);
+				res.status(500);
 			});
 		}else{
 			res.status(401).json({
