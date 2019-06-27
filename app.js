@@ -1,4 +1,3 @@
-require("dotenv-safe").load();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -6,6 +5,7 @@ const app = express();
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 const database = require('./database');
+// require("dotenv-safe").load();
 
 const baseAPI = "/api/v1";
 const auth_baseAPI = "/api/v1.1";
