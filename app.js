@@ -19,15 +19,15 @@ database //connection to database.js
 .connect()
 
 var jwtCheck = jwt({
-	secret: jwks.expressJwtSecret({
-		cache: true,
-		rateLimit: true,
-		jwksRequestsPerMinute: 5,
-		jwksUri: 'https://jknvlvxs.auth0.com/.well-known/jwks.json'
-	}),
-	audience: 'https://traineeprominas-jjac-sandbox.herokuapp.com/api/v1.1/',
-	issuer: 'https://jknvlvxs.auth0.com/',
-	algorithms: ['RS256']
+     secret: jwks.expressJwtSecret({
+         cache: true,
+         rateLimit: true,
+         jwksRequestsPerMinute: 5,
+         jwksUri: 'https://dev-esfhl7on.auth0.com/.well-known/jwks.json'
+   }),
+   audience: 'https://traineeprominas-jjac-sandbox.herokuapp.com/api/v1.1/',
+   issuer: 'https://dev-esfhl7on.auth0.com/',
+   algorithms: ['RS256']
 });
 
 app.use(baseAPI, require('./routes/student')); //routes for student
