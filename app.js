@@ -25,7 +25,7 @@ var jwtCheck = jwt({
 		jwksRequestsPerMinute: 5,
 		jwksUri: 'https://jknvlvxs.auth0.com/.well-known/jwks.json'
 	}),
-	audience: 'https://traineeprominas-jjac-sandbox.herokuapp.com/ap1/v1.1/',
+	audience: 'https://traineeprominas-jjac-sandbox.herokuapp.com/api/v1.1/',
 	issuer: 'https://jknvlvxs.auth0.com/',
 	algorithms: ['RS256']
 });
